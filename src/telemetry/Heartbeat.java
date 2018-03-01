@@ -1,15 +1,14 @@
-package telemetryMessages;
+package telemetry;
 
 import java.util.Date;
 
-public class Heartbeat implements TelemetryMessage{
+public class Heartbeat extends TelemetryMessage{
 	
 	
 	public Heartbeat() {
 		
 	}
 
-	@Override
 	public boolean send() {
 		
 		return false;

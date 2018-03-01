@@ -7,7 +7,7 @@ public class Main {
 
 	public static void main(String[] args) {
 		//connect to server
-		socketConnection.connect();
+		socketConnection.connect(autopilot);
 		//connect to autopilot
 		autopilot.connect(socketConnection);
 		

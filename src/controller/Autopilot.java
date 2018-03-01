@@ -1,6 +1,7 @@
 package controller;
 
-import telemetryMessages.Heartbeat;
+import telecommand.TelecommandMessage;
+import telemetry.Heartbeat;
 
 public class Autopilot {
 
@@ -17,6 +18,12 @@ public class Autopilot {
 		//filter for altitude
 		///...
 		
+		return true;
+	}
+	
+	
+	public boolean send(TelecommandMessage cmd) {
+		//send telecommand to autopilot
 		return true;
 	}
 }
