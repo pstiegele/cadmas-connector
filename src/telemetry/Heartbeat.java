@@ -9,9 +9,6 @@ public class Heartbeat extends TelemetryMessage{
 		
 	}
 
-	public boolean send() {
-		
-		return false;
-	}
+	
 
 }
