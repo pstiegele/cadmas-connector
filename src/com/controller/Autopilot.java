@@ -34,7 +34,7 @@ public class Autopilot {
 	
 	
 	private void handlePacket(MAVLinkPacket mavpacket) {
-		System.out.println("mavpacket id: "+mavpacket.msgid);
+		//System.out.println("mavpacket id: "+mavpacket.msgid);
 		switch (mavpacket.msgid) {
 		case msg_heartbeat.MAVLINK_MSG_ID_HEARTBEAT:
 			Heartbeat hb = new Heartbeat(mavpacket);
