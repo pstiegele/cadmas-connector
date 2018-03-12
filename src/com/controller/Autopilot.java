@@ -109,6 +109,7 @@ public class Autopilot {
 			System.out.println(serialPort.getDescriptivePortName() + " | Baudrate: " + serialPort.getBaudRate());
 		}
 		SerialPort port = ports[0];
+		port.setBaudRate(115200);
 		port.openPort();
 		System.out.println("port is open: "+port.getBaudRate()+"baud. "+port.getDescriptivePortName());
 		return port;
