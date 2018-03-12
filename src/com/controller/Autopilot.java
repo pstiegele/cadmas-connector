@@ -31,11 +31,11 @@ public class Autopilot {
 		switch (mavpacket.msgid) {
 		case msg_heartbeat.MAVLINK_MSG_ID_HEARTBEAT:
 			Heartbeat hb = new Heartbeat(mavpacket);
-			socketConnection.send(hb);
+			//socketConnection.send(hb);
 			break;
 		case msg_attitude.MAVLINK_MSG_ID_ATTITUDE:
 			msg_attitude att = new msg_attitude(mavpacket);
-			//System.out.println(att);
+			System.out.println(att.pitch);
 			break;
 		case msg_scaled_pressure.MAVLINK_MSG_ID_SCALED_PRESSURE:
 			msg_scaled_pressure press = new msg_scaled_pressure(mavpacket);
