@@ -40,7 +40,7 @@
 		<mkdir dir="${dist.dir}" />
 
 		<!-- Put everything in ${build} into the {$projectName}.jar file -->
-		<jar jarfile="${dist.dir}/${projectName}-${DSTAMP}.jar" basedir="${build.dir}" >
+		<jar jarfile="${dist.dir}/${projectName}.jar" basedir="${build.dir}" >
 		    <manifest>
 			<!-- create an executable Jar -->
 			<attribute name="Main-Class" value="com.controller.Main" />
