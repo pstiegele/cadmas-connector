@@ -9,11 +9,7 @@
     <!--
         Create a classpath container which can be later used in the ant task
     -->
-    <path id="build.classpath">
-        <fileset dir="${lib.dir}">
-            <include name="*.jar" />
-        </fileset>
-    </path>
+   
 
     <!-- Deletes the existing build directory-->
     <target name="clean">
@@ -24,6 +20,12 @@
     <target name="makedir">
         <mkdir dir="${build.dir}" />
     </target>
+	
+	 <path id="build.classpath">
+	        <fileset dir="${lib.dir}">
+	            <include name="*.jar" />
+	        </fileset>
+	    </path>
 
     <!-- Compiles the java code -->
     <target name="compile" depends="clean, makedir">
