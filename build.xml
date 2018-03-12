@@ -1,41 +1,63 @@
-<?xml version="1.0"?>
-<project name="Ant-Test" default="Main" basedir=".">
-    <!-- Sets variables which can later be used. -->
-    <!-- The value of a property is accessed via ${} -->
-    <property name="src.dir" location="src" />
-    <property name="lib.dir" location="lib" />
-    <property name="build.dir" location="bin" />
+<project name="AntJavaProject" default="main" basedir=".">
+	<description>
+		Create a Java Project (JAR) with Ant build script
+	</description>
 
-    <!--
-        Create a classpath container which can be later used in the ant task
-    -->
-   
+	<property name="projectName" value="Main" />
 
-    <!-- Deletes the existing build directory-->
-    <target name="clean">
-        <delete dir="${build.dir}" />
-    </target>
-
-    <!-- Creates the  build  directory-->
-    <target name="makedir">
-        <mkdir dir="${build.dir}" />
-    </target>
+	<!-- Java sources -->
+	<property name="src.dir" location="src" />
 	
-	 <path id="build.classpath">
-	        <fileset dir="${lib.dir}">
-	            <include name="*.jar" />
-	        </fileset>
-	    </path>
+	<!-- lib sources -->
+	<property name="lib.dir" location="lib" />
 
-    <!-- Compiles the java code -->
-    <target name="compile" depends="clean, makedir">
-        <javac srcdir="${src.dir}" destdir="${build.dir}" classpathref="build.classpath" />
-    </target>
+	<!-- Java classes -->
+	<property name="build.dir" location="bin" />
 
+	<!-- Output, Jar -->
+	<property name="dist.dir" location="dist" />
 
+	<target name="init">
+		<!-- Create the time stamp -->
+		<tstamp />
+		<!-- Create the build directory structure used by compile -->
+		<mkdir dir="${build.dir}" />
+	</target>
+	
+	<path id="build.classpath">
+	  <fileset dir="${lib.dir}">
+	    <include name="*.jar"/>
+	    <include name="*.zip"/>
+	  </fileset>
+	</path>
 
-    <target name="Main" depends="compile">
-        <description>Main target</description>
-    </target>
+	<target name="compile" depends="init" description="compile the source ">
+		<!-- Compile the java code from ${src.dir} into ${build.dir} -->
+		<javac includeantruntime="false" srcdir="${src.dir}" destdir="${build.dir}" classpathref="build.classpath" />
+	</target>
+
+	<target name="dist" depends="compile" description="package, output to JAR">
+
+		<!-- Create the distribution directory -->
+		<mkdir dir="${dist.dir}" />
+
+		<!-- Put everything in ${build} into the {$projectName}-${DSTAMP}.jar file -->
+		<jar jarfile="${dist.dir}/${projectName}-${DSTAMP}.jar" basedir="${build.dir}" >
+		    <manifest>
+			<!-- create an executable Jar -->
+			<attribute name="Main-Class" value="com.controller.Main" />
+		    </manifest>
+			<fileset dir="${build.dir}" includes="**/*.class" />
+			<zipgroupfileset dir="${lib.dir}" includes="**/*.jar" />
+		</jar>
+	</target>
+
+	<target name="clean" description="clean up">
+		<delete dir="${build.dir}" />
+		<delete dir="${dist.dir}" />
+	</target>
+
+	<!-- Default, run this -->
+	<target name="main" depends="clean, compile, dist" />
 
 </project>
