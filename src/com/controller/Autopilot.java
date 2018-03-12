@@ -96,7 +96,7 @@ public class Autopilot {
 		for (SerialPort serialPort : ports) {
 			System.out.println(serialPort.getDescriptivePortName() + " | Baudrate: " + serialPort.getBaudRate());
 		}
-		SerialPort port = ports[2];
+		SerialPort port = ports[0];
 		port.openPort();
 		return port;
 	}
