@@ -2,6 +2,7 @@ package com.controller;
 
 import com.MAVLink.MAVLinkPacket;
 import com.MAVLink.Parser;
+import com.MAVLink.Messages.MAVLinkMessage;
 import com.MAVLink.common.msg_attitude;
 import com.MAVLink.common.msg_heartbeat;
 import com.MAVLink.common.msg_scaled_pressure;
@@ -11,13 +12,13 @@ import com.telemetry.Heartbeat;
 
 public class Autopilot {
 
-	SocketConnection socketConnection=null;
-	public boolean connect(SocketConnection socketConnection) {
-		this.socketConnection=socketConnection;
+	MessageHandler messageHandler=null;
+	public boolean connect(MessageHandler messageHandler) {
+		this.messageHandler=messageHandler;
 		//initialize
-		System.out.println("start init");
+		//System.out.println("start init");
 		SerialPort port = init();
-		System.out.println("init finished");
+		//System.out.println("init finished");
 		while(true) {
 			//System.out.println("start getPacket");
 			MAVLinkPacket mavpacket = getPacket(port);
@@ -99,6 +100,7 @@ public class Autopilot {
 
 
 	public boolean send(TelecommandMessage cmd) {
+		//MAVLinkMessage msg = cmd.getMAVLink();
 		//send telecommand to autopilot
 		return true;
 	}
@@ -111,7 +113,7 @@ public class Autopilot {
 		SerialPort port = ports[0];
 		port.setBaudRate(115200);
 		port.openPort();
-		System.out.println("port is open: "+port.getBaudRate()+"baud. "+port.getDescriptivePortName());
+		System.out.println(port.getDescriptivePortName()+" (Baudrate: "+port.getBaudRate()+") is open.");
 		return port;
 	}
 	

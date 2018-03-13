@@ -5,11 +5,13 @@ import com.telemetry.TelemetryMessage;
 
 public class SocketConnection {
 	
-	public boolean connect(Autopilot autopilot) {
+	MessageHandler messageHandler;
+	public boolean connect(MessageHandler messageHandler) {
+		this.messageHandler = messageHandler;
 		//initialize
 		//when received cmd
 		Waypoint waypoint= new Waypoint();
-		autopilot.send(waypoint);
+		//autopilot.send(waypoint);
 		return true;
 	}
 	
