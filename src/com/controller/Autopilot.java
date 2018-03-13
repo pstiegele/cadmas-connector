@@ -53,6 +53,25 @@ public class Autopilot {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		msg_set_home_position homeitem = new msg_set_home_position();
+		homeitem.latitude = 498186868;
+		homeitem.longitude = 98934782;
+		homeitem.altitude = 200000;
+		MAVLinkPacket phome = homeitem.pack();
+		try {
+			port.getOutputStream().write(phome.encodePacket());
+			System.out.println("home position set");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		//########## MAVLINK SEND TEST END ##########
 		
 		//port.closePort();
