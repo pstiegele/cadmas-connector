@@ -1,11 +1,19 @@
 package com.controller;
 
+import java.io.IOException;
+
 import com.MAVLink.MAVLinkPacket;
 import com.MAVLink.Parser;
 import com.MAVLink.Messages.MAVLinkMessage;
+import com.MAVLink.Messages.MAVLinkPayload;
 import com.MAVLink.common.msg_attitude;
 import com.MAVLink.common.msg_heartbeat;
+import com.MAVLink.common.msg_mission_clear_all;
+import com.MAVLink.common.msg_mission_count;
+import com.MAVLink.common.msg_mission_current;
+import com.MAVLink.common.msg_mission_item;
 import com.MAVLink.common.msg_scaled_pressure;
+import com.MAVLink.enums.MAV_CMD;
 import com.fazecast.jSerialComm.SerialPort;
 import com.telecommand.TelecommandMessage;
 import com.telemetry.Heartbeat;
@@ -19,18 +27,84 @@ public class Autopilot {
 		//System.out.println("start init");
 		SerialPort port = init();
 		//System.out.println("init finished");
-		while(true) {
+		/*while(true) {
 			//System.out.println("start getPacket");
 			MAVLinkPacket mavpacket = getPacket(port);
 			//System.out.println("finished getPacket");
 			//System.out.println("start handlePacket");
 			handlePacket(mavpacket);
 			//System.out.println("finished handlePacket");
+		}*/
+		
+		//########## MAVLINK SEND TEST ##########
+		try {
+			Thread.sleep(10000);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		System.out.println("done waiting");
+		
+		msg_mission_clear_all clearitem = new msg_mission_clear_all();
+		MAVLinkPacket pclear = clearitem.pack();
+		
+		/*msg_mission_item item = new msg_mission_item();
+		item.param2=10;
+		item.x=12;
+		item.y=12;
+		item.z=12;
+		MAVLinkPacket p = item.pack();*/
+		try {
+			port.getOutputStream().write(pclear.encodePacket());
+			System.out.println("clear sent");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		msg_mission_count countitem = new msg_mission_count();
+		countitem.count = 1;
+		MAVLinkPacket pcount = countitem.pack();
+		try {
+			port.getOutputStream().write(pcount.encodePacket());
+			System.out.println("mission count sent");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		try {
+			Thread.sleep(30);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		msg_mission_item loiter = new msg_mission_item();
+		loiter.x = 49.8187007f;
+		loiter.y = 9.8934245f;
+		loiter.z = 200;
+		loiter.command = MAV_CMD.MAV_CMD_NAV_LOITER_UNLIM;
+		MAVLinkPacket ploiter = loiter.pack();
+		try {
+			port.getOutputStream().write(pcount.encodePacket());
+			System.out.println("loiter waypoint sent");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		//########## MAVLINK SEND TEST END ##########
 		
 		//port.closePort();
-		//return true;
+		return true;
 	}
 	
 	
