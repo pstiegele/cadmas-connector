@@ -1,12 +1,17 @@
 package com.controller;
 
-public class MessageHandler {
+public class MessageHandler extends Thread {
 
 	
 	public MessageHandler() {
-		
+		start();
 	}
 	
+	@Override
+	public void run() {
+		
+	}
+
 	
 	
 
