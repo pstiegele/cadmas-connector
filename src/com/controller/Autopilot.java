@@ -13,6 +13,7 @@ import com.MAVLink.common.msg_mission_count;
 import com.MAVLink.common.msg_mission_current;
 import com.MAVLink.common.msg_mission_item;
 import com.MAVLink.common.msg_scaled_pressure;
+import com.MAVLink.common.msg_set_home_position;
 import com.MAVLink.enums.MAV_CMD;
 import com.fazecast.jSerialComm.SerialPort;
 import com.telecommand.TelecommandMessage;
@@ -101,6 +102,24 @@ public class Autopilot {
 			e.printStackTrace();
 		}
 		
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		msg_set_home_position homeitem = new msg_set_home_position();
+		homeitem.x = 49.8187007f;
+		homeitem.y = 9.8934245f;
+		homeitem.z = 200;
+		MAVLinkPacket phome = homeitem.pack();
+		try {
+			port.getOutputStream().write(phome.encodePacket());
+			System.out.println("home point sent");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		//########## MAVLINK SEND TEST END ##########
 		
 		//port.closePort();
