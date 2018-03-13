@@ -18,17 +18,6 @@ public class Main {
 		socketConnection.connect(messageHandler);
 		//connect to autopilot
 		autopilot.connect(messageHandler);
-		
-		
-		MAVLinkPayload pl = new MAVLinkPayload(3);
-		msg_mission_item item = new msg_mission_item();
-		item.param2=10;
-		item.x=12;
-		item.y=12;
-		item.z=12;
-		MAVLinkPacket p = item.pack();
-		p.encodePacket();
-		
 
 	}
 

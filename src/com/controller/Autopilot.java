@@ -8,6 +8,7 @@ import com.MAVLink.Messages.MAVLinkMessage;
 import com.MAVLink.Messages.MAVLinkPayload;
 import com.MAVLink.common.msg_attitude;
 import com.MAVLink.common.msg_heartbeat;
+import com.MAVLink.common.msg_mission_clear_all;
 import com.MAVLink.common.msg_mission_item;
 import com.MAVLink.common.msg_scaled_pressure;
 import com.fazecast.jSerialComm.SerialPort;
@@ -37,14 +38,22 @@ public class Autopilot {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		msg_mission_item item = new msg_mission_item();
+		System.out.println("done waiting");
+		
+		msg_mission_clear_all clearitem = new msg_mission_clear_all();
+		MAVLinkPacket p = clearitem.pack();
+		
+		System.out.println("item packed and ready to send");
+		
+		/*msg_mission_item item = new msg_mission_item();
 		item.param2=10;
 		item.x=12;
 		item.y=12;
 		item.z=12;
-		MAVLinkPacket p = item.pack();
+		MAVLinkPacket p = item.pack();*/
 		try {
 			port.getOutputStream().write(p.encodePacket());
+			System.out.println("item sent");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
