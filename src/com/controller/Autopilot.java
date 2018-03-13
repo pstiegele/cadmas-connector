@@ -37,7 +37,7 @@ public class Autopilot {
 			//System.out.println("finished handlePacket");
 		}*/
 		
-		//########## MAVLINK SEND TEST ##########
+		//########## MAVLINK SEND TEST BEGIN ##########
 		try {
 			Thread.sleep(5000);
 		} catch (InterruptedException e1) {
