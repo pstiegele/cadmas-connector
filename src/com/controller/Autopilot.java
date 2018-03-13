@@ -39,83 +39,16 @@ public class Autopilot {
 		
 		//########## MAVLINK SEND TEST ##########
 		try {
-			Thread.sleep(10000);
-		} catch (InterruptedException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		System.out.println("done waiting");
-		
-		msg_mission_clear_all clearitem = new msg_mission_clear_all();
-		MAVLinkPacket pclear = clearitem.pack();
-		
-		/*msg_mission_item item = new msg_mission_item();
-		item.param2=10;
-		item.x=12;
-		item.y=12;
-		item.z=12;
-		MAVLinkPacket p = item.pack();*/
-		try {
-			port.getOutputStream().write(pclear.encodePacket());
-			System.out.println("clear sent");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		
-		msg_mission_count countitem = new msg_mission_count();
-		countitem.count = 1;
-		MAVLinkPacket pcount = countitem.pack();
-		try {
-			port.getOutputStream().write(pcount.encodePacket());
-			System.out.println("mission count sent");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		try {
-			Thread.sleep(30);
-		} catch (InterruptedException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		
-		msg_mission_item loiter = new msg_mission_item();
-		loiter.x = 49.8187007f;
-		loiter.y = 9.8934245f;
-		loiter.z = 200;
-		loiter.command = MAV_CMD.MAV_CMD_NAV_LOITER_UNLIM;
-		MAVLinkPacket ploiter = loiter.pack();
-		try {
-			port.getOutputStream().write(pcount.encodePacket());
-			System.out.println("loiter waypoint sent");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		try {
 			Thread.sleep(5000);
 		} catch (InterruptedException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		msg_set_home_position homeitem = new msg_set_home_position();
-		homeitem.x = 49.8187007f;
-		homeitem.y = 9.8934245f;
-		homeitem.z = 200;
-		MAVLinkPacket phome = homeitem.pack();
+		msg_mission_clear_all clearitem = new msg_mission_clear_all();
+		MAVLinkPacket pclear = clearitem.pack();
 		try {
-			port.getOutputStream().write(phome.encodePacket());
-			System.out.println("home point sent");
+			port.getOutputStream().write(pclear.encodePacket());
+			System.out.println("clear sent");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
