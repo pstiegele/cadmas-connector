@@ -11,8 +11,14 @@ public class Main {
 		socketConnection.connect(messageHandler);
 		//connect to autopilot
 		autopilot.connect(messageHandler);
-
+<<<<<<< HEAD
 		
+		
+		
+		
+=======
+>>>>>>> a07240ffd35301f05a327224c29f28666ef1c77a
+
 	}
 
 }
