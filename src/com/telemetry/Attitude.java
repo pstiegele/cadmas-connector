@@ -3,21 +3,21 @@ package com.telemetry;
 import org.json.JSONObject;
 
 import com.MAVLink.MAVLinkPacket;
-import com.MAVLink.common.msg_heartbeat;
+import com.MAVLink.common.msg_attitude;
 
 import tools.MessageMemory;
 
-public class Heartbeat extends TelemetryMessage{
+public class Attitude extends TelemetryMessage{
 	
 	long timestamp = -1;
-	msg_heartbeat mavHeartbeat=null;
-	private static MessageMemory<Heartbeat> messageMemory = new MessageMemory<>();
-	public Heartbeat() {
+	msg_attitude mavAttitude=null;
+	private static MessageMemory<Attitude> messageMemory = new MessageMemory<>();
+	public Attitude() {
 		
 	}
 	
-	public Heartbeat(MAVLinkPacket mavpacket) {
-		mavHeartbeat = new msg_heartbeat(mavpacket);
+	public Attitude(MAVLinkPacket mavpacket) {
+		mavAttitude = new msg_attitude(mavpacket);
 		timestamp=System.currentTimeMillis();
 		messageMemory.add(this);
 	}
@@ -25,7 +25,7 @@ public class Heartbeat extends TelemetryMessage{
 	@Override
 	public String getJSON() {
 		JSONObject res = new JSONObject();
-		res.put("type", "hb").put("timestamp", timestamp).put("autopilot", mavHeartbeat.autopilot);
+		res.put("type", "hb").put("timestamp", timestamp).put("pitch", mavAttitude.pitch);
 		return res.toString();
 	}
 

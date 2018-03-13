@@ -1,10 +1,10 @@
 package com.telemetry;
 
-public class TelemetryMessage {
+import tools.MessageMemory;
+
+public abstract class TelemetryMessage {
 	
-	
-	public String getJSON() {
-		return "";
-	}
+	public abstract String getJSON();
+	public abstract MessageMemory<?> getMessageMemory();
 
 }

@@ -1,5 +1,9 @@
 package com.telecommand;
 
-public class TelecommandMessage {
+import org.json.JSONObject;
 
+public interface TelecommandMessage {
+
+	
+	public JSONObject getJSON();
 }
