@@ -1,10 +1,14 @@
 package com.controller;
 
+import java.io.IOException;
+
 import com.MAVLink.MAVLinkPacket;
 import com.MAVLink.Parser;
 import com.MAVLink.Messages.MAVLinkMessage;
+import com.MAVLink.Messages.MAVLinkPayload;
 import com.MAVLink.common.msg_attitude;
 import com.MAVLink.common.msg_heartbeat;
+import com.MAVLink.common.msg_mission_item;
 import com.MAVLink.common.msg_scaled_pressure;
 import com.fazecast.jSerialComm.SerialPort;
 import com.telecommand.TelecommandMessage;
@@ -19,18 +23,35 @@ public class Autopilot {
 		//System.out.println("start init");
 		SerialPort port = init();
 		//System.out.println("init finished");
-		while(true) {
+		/*while(true) {
 			//System.out.println("start getPacket");
 			MAVLinkPacket mavpacket = getPacket(port);
 			//System.out.println("finished getPacket");
 			//System.out.println("start handlePacket");
 			handlePacket(mavpacket);
 			//System.out.println("finished handlePacket");
+		}*/
+		try {
+			Thread.sleep(10000);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		msg_mission_item item = new msg_mission_item();
+		item.param2=10;
+		item.x=12;
+		item.y=12;
+		item.z=12;
+		MAVLinkPacket p = item.pack();
+		try {
+			port.getOutputStream().write(p.encodePacket());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
-		
 		//port.closePort();
-		//return true;
+		return true;
 	}
 	
 	
