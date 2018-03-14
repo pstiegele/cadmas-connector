@@ -1,13 +1,25 @@
-package com.controller;
+package com.controller.socketConnection;
 
+import com.controller.messageHandler.MessageHandler;
 import com.telemetry.TelemetryMessage;
 
 public class SocketConnection extends Thread{
 	
-	MessageHandler messageHandler;
-	public boolean connect(MessageHandler messageHandler) {
+	private MessageHandler messageHandler;
+	public SocketConnection(MessageHandler messageHandler) {
 		this.messageHandler = messageHandler;
 		start();
+	}
+	
+	@Override
+	public void run() {
+		connect();
+	}
+	
+	
+	
+
+	public boolean connect() {
 		//initialize
 		//when received cmd
 		//Waypoint waypoint= new Waypoint();
@@ -16,15 +28,12 @@ public class SocketConnection extends Thread{
 	}
 	
 	
+	
+	
 	public boolean send(TelemetryMessage msg) {
 		System.out.println((msg.getJSON()));
 		
 		return true;
-	}
-	
-	@Override
-	public void run() {
-		
 	}
 	
 	

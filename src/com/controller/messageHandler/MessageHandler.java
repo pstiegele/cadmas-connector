@@ -1,4 +1,4 @@
-package com.controller;
+package com.controller.messageHandler;
 
 public class MessageHandler extends Thread {
 
@@ -12,7 +12,6 @@ public class MessageHandler extends Thread {
 		
 	}
 
-	
 	
 
 }
