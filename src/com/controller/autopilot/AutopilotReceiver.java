@@ -13,15 +13,17 @@ import com.MAVLink.common.msg_mission_request;
 import com.MAVLink.common.msg_scaled_pressure;
 import com.fazecast.jSerialComm.SerialPort;
 import com.telemetry.Attitude;
+import com.telemetry.CommandAck;
 import com.telemetry.Heartbeat;
+import com.telemetry.ScaledPressure;
 
 public class AutopilotReceiver extends Thread {
 
 	private SerialPort port;
-//	private long start=System.currentTimeMillis();
-//	private double counter = 0;
-	public AutopilotReceiver(SerialPort port) {
+	private Autopilot autopilot;
+	public AutopilotReceiver(SerialPort port, Autopilot autopilot) {
 		this.port=port;
+		this.autopilot=autopilot;
 		start();
 	}
 
@@ -34,30 +36,21 @@ public class AutopilotReceiver extends Thread {
 	}
 
 	private void handlePacket(MAVLinkPacket mavpacket) {
-		// System.out.println("mavpacket id: "+mavpacket.msgid);
+		
 		
 		switch (mavpacket.msgid) {
 		case msg_heartbeat.MAVLINK_MSG_ID_HEARTBEAT:
-			//counter++;
-			//System.out.println("das macht: "+counter+" Pakete in "+((System.currentTimeMillis()-start)/1000)+" Sekunden. ("+(counter/((System.currentTimeMillis()-start)/1000.0))+" Pakete/s)");
 			Heartbeat heartbeat = new Heartbeat(mavpacket);
-			//msg_heartbeat hb = new msg_heartbeat(mavpacket);
-			//System.out.println(hb.mavlink_version);
-			//System.out.println(heartbeat);
-			// socketConnection.send(hb);
-//			System.out.println("compid: "+mavpacket.compid);
-//			System.out.println("sysid: "+mavpacket.sysid);
+			
 			break;
 		case msg_attitude.MAVLINK_MSG_ID_ATTITUDE:
 			Attitude attitude = new Attitude(mavpacket);
 			break;
 		case msg_scaled_pressure.MAVLINK_MSG_ID_SCALED_PRESSURE:
-			msg_scaled_pressure press = new msg_scaled_pressure(mavpacket);
-			// System.out.println(press);
+			ScaledPressure pressure = new ScaledPressure(mavpacket);
 			break;
 		case msg_command_ack.MAVLINK_MSG_ID_COMMAND_ACK:
-			msg_command_ack ack = new msg_command_ack(mavpacket);
-			System.out.println(ack);
+			CommandAck commandAck = new CommandAck(mavpacket);
 			break;
 		case msg_home_position.MAVLINK_MSG_ID_HOME_POSITION:
 			msg_home_position hp = new msg_home_position();

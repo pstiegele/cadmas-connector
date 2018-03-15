@@ -7,17 +7,20 @@ import com.MAVLink.common.msg_heartbeat;
 
 import tools.MessageMemory;
 
-public class Heartbeat extends TelemetryMessage{
+public class Heartbeat extends msg_heartbeat implements TelemetryMessage{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = MAVLINK_MSG_ID_HEARTBEAT;
 	long timestamp = -1;
-	msg_heartbeat mavHeartbeat=null;
 	private static MessageMemory<Heartbeat> messageMemory = new MessageMemory<>();
 	public Heartbeat() {
 		
 	}
 	
 	public Heartbeat(MAVLinkPacket mavpacket) {
-		mavHeartbeat = new msg_heartbeat(mavpacket);
+		super(mavpacket);
 		timestamp=System.currentTimeMillis();
 		messageMemory.add(this);
 	}
@@ -25,10 +28,9 @@ public class Heartbeat extends TelemetryMessage{
 	@Override
 	public String getJSON() {
 		JSONObject res = new JSONObject();
-		res.put("type", "hb").put("timestamp", timestamp).put("autopilot", mavHeartbeat.autopilot);
+		res.put("type", "hb").put("timestamp", timestamp).put("autopilot", this.autopilot);
 		return res.toString();
 	}
-
 
 	@Override
 	public MessageMemory<?> getMessageMemory() {

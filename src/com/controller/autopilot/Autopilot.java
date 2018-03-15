@@ -1,5 +1,7 @@
 package com.controller.autopilot;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 
 import com.MAVLink.MAVLinkPacket;
@@ -14,10 +16,13 @@ import com.fazecast.jSerialComm.SerialPort;
 import com.telecommand.TelecommandMessage;
 import com.telemetry.Heartbeat;
 
-public class Autopilot extends Thread {
+public class Autopilot extends Thread implements ActionListener {
 
 	private MessageHandler messageHandler;
 	private SerialPort port;
+	
+	AutopilotTransmitter transmitter;
+	AutopilotReceiver receiver;
 
 	public Autopilot(MessageHandler messageHandler) {
 		this.messageHandler = messageHandler;
@@ -34,8 +39,8 @@ public class Autopilot extends Thread {
 	public void connect() {
 		port = init();
 		//test();
-		AutopilotTransmitter transmitter = new AutopilotTransmitter(port);
-		AutopilotReceiver receiver = new AutopilotReceiver(port);
+		 transmitter = new AutopilotTransmitter(port);
+		 receiver = new AutopilotReceiver(port);
 	}
 
 	public void test() {
@@ -87,10 +92,12 @@ public class Autopilot extends Thread {
 
 	
 
-	public boolean send(TelecommandMessage cmd) {
-		// MAVLinkMessage msg = cmd.getMAVLink();
-		// send telecommand to autopilot
-		return true;
+	public void send(MAVLinkPacket packet) {
+		transmitter.send(packet);
+	}
+	
+	public void setListener() {
+		
 	}
 
 	private SerialPort init() {
@@ -104,6 +111,12 @@ public class Autopilot extends Thread {
 		System.out
 				.println("\n" + port.getDescriptivePortName() + " (Baudrate: " + port.getBaudRate() + ") is now open.");
 		return port;
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	
