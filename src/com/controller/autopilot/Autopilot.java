@@ -98,8 +98,8 @@ public class Autopilot extends Thread {
 		for (SerialPort serialPort : ports) {
 			System.out.println(serialPort.getDescriptivePortName() + " | Baudrate: " + serialPort.getBaudRate());
 		}
-		SerialPort port = ports[0];
-		port.setBaudRate(115200);
+		SerialPort port = ports[2];
+		port.setBaudRate(9600);
 		port.openPort();
 		System.out
 				.println("\n" + port.getDescriptivePortName() + " (Baudrate: " + port.getBaudRate() + ") is now open.");
