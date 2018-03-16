@@ -1,5 +1,11 @@
 package com.controller.autopilot;
 
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import com.MAVLink.MAVLinkPacket;
 import com.MAVLink.Parser;
 import com.MAVLink.common.msg_attitude;
@@ -15,15 +21,26 @@ import com.fazecast.jSerialComm.SerialPort;
 import com.telemetry.Attitude;
 import com.telemetry.CommandAck;
 import com.telemetry.Heartbeat;
+import com.telemetry.MissionRequest;
 import com.telemetry.ScaledPressure;
 
 public class AutopilotReceiver extends Thread {
 
 	private SerialPort port;
-	private Autopilot autopilot;
-	public AutopilotReceiver(SerialPort port, Autopilot autopilot) {
-		this.port=port;
-		this.autopilot=autopilot;
+	public LinkedBlockingQueue<CountDownLatch> heartBeatLatchQueue = new LinkedBlockingQueue<>();
+	Lock lock = new ReentrantLock();
+	public Condition heartBeatCondition = lock.newCondition();
+	public Condition attituteCondition = lock.newCondition();
+	public Condition scaledPressureCondition = lock.newCondition();
+	public Condition commandAckCondition = lock.newCondition();
+	public Condition homePositionCondition = lock.newCondition();
+	public Condition missionAckCondition = lock.newCondition();
+	public Condition missionRequestCondition = lock.newCondition();
+	public Condition missionItemCondition = lock.newCondition();
+	public Condition missionCountCondition = lock.newCondition();
+
+	public AutopilotReceiver(SerialPort port) {
+		this.port = port;
 		start();
 	}
 
@@ -36,21 +53,20 @@ public class AutopilotReceiver extends Thread {
 	}
 
 	private void handlePacket(MAVLinkPacket mavpacket) {
-		
-		
+
 		switch (mavpacket.msgid) {
 		case msg_heartbeat.MAVLINK_MSG_ID_HEARTBEAT:
-			Heartbeat heartbeat = new Heartbeat(mavpacket);
-			
+			new Heartbeat(mavpacket);
+			notifyEverybody(heartBeatCondition);
 			break;
 		case msg_attitude.MAVLINK_MSG_ID_ATTITUDE:
-			Attitude attitude = new Attitude(mavpacket);
+			new Attitude(mavpacket);
 			break;
 		case msg_scaled_pressure.MAVLINK_MSG_ID_SCALED_PRESSURE:
-			ScaledPressure pressure = new ScaledPressure(mavpacket);
+			new ScaledPressure(mavpacket);
 			break;
 		case msg_command_ack.MAVLINK_MSG_ID_COMMAND_ACK:
-			CommandAck commandAck = new CommandAck(mavpacket);
+			new CommandAck(mavpacket);
 			break;
 		case msg_home_position.MAVLINK_MSG_ID_HOME_POSITION:
 			msg_home_position hp = new msg_home_position();
@@ -62,9 +78,8 @@ public class AutopilotReceiver extends Thread {
 			System.out.println(ack2.toString());
 			break;
 		case msg_mission_request.MAVLINK_MSG_ID_MISSION_REQUEST:
-			//msg_mission_request req = new msg_mission_request(mavpacket);
-			System.out.println("FOUND REQUEST!");
-			//System.out.println(mavpacket);
+			new MissionRequest(mavpacket);
+			notifyEverybody(missionRequestCondition);
 			break;
 		case msg_mission_item.MAVLINK_MSG_ID_MISSION_ITEM:
 			msg_mission_item i = new msg_mission_item(mavpacket);
@@ -75,10 +90,17 @@ public class AutopilotReceiver extends Thread {
 			System.out.println(count);
 			break;
 		default:
-			//System.out.println("get: "+mavpacket.msgid);
+			// System.out.println("get: "+mavpacket.msgid);
 			break;
 		}
 
+	}
+
+	private void notifyEverybody(Condition condition) {
+		lock.lock();
+		condition.signal();
+	    lock.unlock();
+		
 	}
 
 	/**

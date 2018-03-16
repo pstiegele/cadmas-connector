@@ -6,5 +6,5 @@ import com.controller.autopilot.Autopilot;
 public interface TelecommandMessage {
 
 	
-	public MAVLinkMessage execute(Autopilot autopilot);
+	public boolean execute(Autopilot autopilot);
 }

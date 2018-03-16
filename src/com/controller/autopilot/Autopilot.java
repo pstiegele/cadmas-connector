@@ -13,16 +13,23 @@ import com.MAVLink.common.msg_scaled_pressure;
 import com.MAVLink.common.msg_set_home_position;
 import com.controller.messageHandler.MessageHandler;
 import com.fazecast.jSerialComm.SerialPort;
+import com.sun.org.apache.bcel.internal.generic.ReturnaddressType;
 import com.telecommand.TelecommandMessage;
 import com.telemetry.Heartbeat;
 
 public class Autopilot extends Thread implements ActionListener {
 
+	public volatile short droneCompID = 1;
+	public volatile short droneSysID = 1;
+	public volatile short connectorCompID = 1;
+	public volatile short connectorSysID = 1;
+	private volatile short seq = 0;
+
 	private MessageHandler messageHandler;
 	private SerialPort port;
-	
-	AutopilotTransmitter transmitter;
-	AutopilotReceiver receiver;
+
+	public AutopilotTransmitter transmitter;
+	public AutopilotReceiver receiver;
 
 	public Autopilot(MessageHandler messageHandler) {
 		this.messageHandler = messageHandler;
@@ -32,15 +39,15 @@ public class Autopilot extends Thread implements ActionListener {
 	@Override
 	public void run() {
 		connect();
-		//onClose:
-		//port.closePort();
+		// onClose:
+		// port.closePort();
 	}
 
 	public void connect() {
 		port = init();
-		//test();
-		 transmitter = new AutopilotTransmitter(port);
-		 receiver = new AutopilotReceiver(port);
+		// test();
+		transmitter = new AutopilotTransmitter(port);
+		receiver = new AutopilotReceiver(port);
 	}
 
 	public void test() {
@@ -90,14 +97,24 @@ public class Autopilot extends Thread implements ActionListener {
 		// ########## MAVLINK SEND TEST END ##########
 	}
 
-	
-
 	public void send(MAVLinkPacket packet) {
-		transmitter.send(packet);
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				transmitter.send(packet);
+			}
+		}).start();
 	}
-	
+
+	public short getSeq() {
+		// TODO: Passt das so?
+		short returnValue = seq;
+		seq = (short) (seq++ % 255);
+		return returnValue;
+	}
+
 	public void setListener() {
-		
+
 	}
 
 	private SerialPort init() {
@@ -116,8 +133,7 @@ public class Autopilot extends Thread implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
-	
 }
