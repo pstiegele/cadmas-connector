@@ -1,18 +1,16 @@
 package com.controller.autopilot;
 
 import java.io.IOException;
+import java.io.OutputStream;
 
 import com.MAVLink.MAVLinkPacket;
-import com.MAVLink.common.msg_mission_request;
-import com.MAVLink.common.msg_mission_request_list;
-import com.fazecast.jSerialComm.SerialPort;
 
 public class AutopilotTransmitter extends Thread {
 
-	private SerialPort port;
+	private OutputStream out;
 
-	public AutopilotTransmitter(SerialPort port) {
-		this.port = port;
+	public AutopilotTransmitter(OutputStream out) {
+		this.out = out;
 		start();
 	}
 
@@ -212,7 +210,7 @@ public class AutopilotTransmitter extends Thread {
 	public boolean send(MAVLinkPacket packet) {
 		byte[] output = packet.encodePacket();
 		try {
-			port.getOutputStream().write(output);
+			out.write(output);
 			return true;
 		} catch (IOException e) {
 			e.printStackTrace();

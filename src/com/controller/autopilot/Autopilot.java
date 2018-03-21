@@ -3,19 +3,18 @@ package com.controller.autopilot;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 
 import com.MAVLink.MAVLinkPacket;
-import com.MAVLink.Parser;
-import com.MAVLink.common.msg_attitude;
-import com.MAVLink.common.msg_heartbeat;
 import com.MAVLink.common.msg_mission_clear_all;
-import com.MAVLink.common.msg_scaled_pressure;
 import com.MAVLink.common.msg_set_home_position;
+import com.controller.autopilot.udp.UDPInputStream;
+import com.controller.autopilot.udp.UDPOutputStream;
 import com.controller.messageHandler.MessageHandler;
 import com.fazecast.jSerialComm.SerialPort;
-import com.sun.org.apache.bcel.internal.generic.ReturnaddressType;
-import com.telecommand.TelecommandMessage;
-import com.telemetry.Heartbeat;
 
 public class Autopilot extends Thread implements ActionListener {
 
@@ -27,6 +26,8 @@ public class Autopilot extends Thread implements ActionListener {
 
 	private MessageHandler messageHandler;
 	private SerialPort port;
+	private OutputStream out;
+	private InputStream in;
 
 	public AutopilotTransmitter transmitter;
 	public AutopilotReceiver receiver;
@@ -44,10 +45,38 @@ public class Autopilot extends Thread implements ActionListener {
 	}
 
 	public void connect() {
-		port = init();
+		boolean seriell = false;
+		if(seriell) {
+			port = init();
+			out = port.getOutputStream();
+			in = port.getInputStream();	
+		}else {
+			try {
+				 out = new UDPOutputStream("127.0.0.1", 14551);
+			} catch (UnknownHostException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (SocketException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			try {
+				in = new UDPInputStream("127.0.0.1", 14551);
+			} catch (UnknownHostException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (SocketException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		// test();
-		transmitter = new AutopilotTransmitter(port);
-		receiver = new AutopilotReceiver(port);
+		transmitter = new AutopilotTransmitter(out);
+		receiver = new AutopilotReceiver(in);
 	}
 
 	public void test() {

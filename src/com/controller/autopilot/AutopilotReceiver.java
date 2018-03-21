@@ -1,5 +1,6 @@
 package com.controller.autopilot;
 
+import java.io.InputStream;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.locks.Condition;
@@ -26,7 +27,7 @@ import com.telemetry.ScaledPressure;
 
 public class AutopilotReceiver extends Thread {
 
-	private SerialPort port;
+	private InputStream in;
 	public LinkedBlockingQueue<CountDownLatch> heartBeatLatchQueue = new LinkedBlockingQueue<>();
 	Lock lock = new ReentrantLock();
 	public Condition heartBeatCondition = lock.newCondition();
@@ -39,15 +40,15 @@ public class AutopilotReceiver extends Thread {
 	public Condition missionItemCondition = lock.newCondition();
 	public Condition missionCountCondition = lock.newCondition();
 
-	public AutopilotReceiver(SerialPort port) {
-		this.port = port;
+	public AutopilotReceiver(InputStream in) {
+		this.in = in;
 		start();
 	}
 
 	@Override
 	public void run() {
 		while (true) {
-			MAVLinkPacket mavpacket = getPacket(port);
+			MAVLinkPacket mavpacket = getPacket();
 			handlePacket(mavpacket);
 		}
 	}
@@ -108,15 +109,16 @@ public class AutopilotReceiver extends Thread {
 	 *            The SerialPort
 	 * @return return MAVLinkPacket
 	 */
-	private MAVLinkPacket getPacket(SerialPort port) {
+	private MAVLinkPacket getPacket() {
 		Parser parser = new Parser();
 		try {
 			while (true) {
-				while (port.bytesAvailable() == 0)
+				while (in.available() == 0)
 					Thread.sleep(20);
-				int bytesToRead = port.bytesAvailable();
+				System.out.println("bytes to read");
+				int bytesToRead = in.available();
 				byte[] readBuffer = new byte[bytesToRead];
-				port.readBytes(readBuffer, bytesToRead);
+				in.read(readBuffer, 0,bytesToRead);
 				int readarr[] = new int[bytesToRead];
 				for (int i = 0; i < readBuffer.length; i++) {
 					readarr[i] = unsignedToBytes(readBuffer[i]);
