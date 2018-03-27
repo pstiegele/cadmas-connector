@@ -1,8 +1,9 @@
 package com.telemetry;
 
 import tools.MessageMemory;
+import com.MAVLink.Messages.MAVLinkMessage;
 
-public abstract class TelemetryMessage {
+public interface TelemetryMessage{
 	
 	public abstract String getJSON();
 	public abstract MessageMemory<?> getMessageMemory();

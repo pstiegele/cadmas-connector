@@ -1,10 +1,19 @@
 package com.controller.autopilot;
 
+<<<<<<< HEAD
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
+=======
+import java.io.InputStream;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+>>>>>>> origin/master
 
 import com.MAVLink.MAVLinkPacket;
 import com.MAVLink.Parser;
@@ -22,15 +31,28 @@ import com.MAVLink.common.msg_scaled_pressure;
 import com.MAVLink.common.msg_vfr_hud;
 import com.fazecast.jSerialComm.SerialPort;
 import com.telemetry.Attitude;
+import com.telemetry.CommandAck;
 import com.telemetry.Heartbeat;
+import com.telemetry.MissionRequest;
+import com.telemetry.ScaledPressure;
 
 public class AutopilotReceiver extends Thread {
 
-	private SerialPort port;
-//	private long start=System.currentTimeMillis();
-//	private double counter = 0;
-	public AutopilotReceiver(SerialPort port) {
-		this.port=port;
+	private InputStream in;
+	public LinkedBlockingQueue<CountDownLatch> heartBeatLatchQueue = new LinkedBlockingQueue<>();
+	Lock lock = new ReentrantLock();
+	public Condition heartBeatCondition = lock.newCondition();
+	public Condition attituteCondition = lock.newCondition();
+	public Condition scaledPressureCondition = lock.newCondition();
+	public Condition commandAckCondition = lock.newCondition();
+	public Condition homePositionCondition = lock.newCondition();
+	public Condition missionAckCondition = lock.newCondition();
+	public Condition missionRequestCondition = lock.newCondition();
+	public Condition missionItemCondition = lock.newCondition();
+	public Condition missionCountCondition = lock.newCondition();
+
+	public AutopilotReceiver(InputStream in) {
+		this.in = in;
 		start();
 	}
 
@@ -38,24 +60,45 @@ public class AutopilotReceiver extends Thread {
 	public void run() {
 		readUDP();
 		while (true) {
+<<<<<<< HEAD
 			//MAVLinkPacket mavpacket = getPacket(port);
 			//handlePacket(mavpacket);
+=======
+			MAVLinkPacket mavpacket = getPacket();
+			handlePacket(mavpacket);
+>>>>>>> origin/master
 		}
 	}
 	
 	private void handlePacket(MAVLinkPacket mavpacket) {
+<<<<<<< HEAD
 		//System.out.println("mavpacket id: "+mavpacket.msgid);
 		
 		switch (mavpacket.msgid) {
 		case msg_heartbeat.MAVLINK_MSG_ID_HEARTBEAT:
 			Heartbeat heartbeat = new Heartbeat(mavpacket);
+=======
+
+		switch (mavpacket.msgid) {
+		case msg_heartbeat.MAVLINK_MSG_ID_HEARTBEAT:
+			new Heartbeat(mavpacket);
+			notifyEverybody(heartBeatCondition);
+>>>>>>> origin/master
 			break;
 		case msg_attitude.MAVLINK_MSG_ID_ATTITUDE:
-			Attitude attitude = new Attitude(mavpacket);
+			new Attitude(mavpacket);
 			break;
+<<<<<<< HEAD
 		case msg_command_ack.MAVLINK_MSG_ID_COMMAND_ACK:
 			msg_command_ack ack = new msg_command_ack(mavpacket);
 			//System.out.println(ack);
+=======
+		case msg_scaled_pressure.MAVLINK_MSG_ID_SCALED_PRESSURE:
+			new ScaledPressure(mavpacket);
+			break;
+		case msg_command_ack.MAVLINK_MSG_ID_COMMAND_ACK:
+			new CommandAck(mavpacket);
+>>>>>>> origin/master
 			break;
 		case msg_home_position.MAVLINK_MSG_ID_HOME_POSITION:
 			msg_home_position hp = new msg_home_position();
@@ -67,9 +110,14 @@ public class AutopilotReceiver extends Thread {
 			System.out.println(ack2.toString());
 			break;
 		case msg_mission_request.MAVLINK_MSG_ID_MISSION_REQUEST:
+<<<<<<< HEAD
 			msg_mission_request req = new msg_mission_request(mavpacket);
 			//System.out.println("FOUND REQUEST!");
 			System.out.println(req.toString());
+=======
+			new MissionRequest(mavpacket);
+			notifyEverybody(missionRequestCondition);
+>>>>>>> origin/master
 			break;
 		case msg_mission_item.MAVLINK_MSG_ID_MISSION_ITEM:
 			msg_mission_item item = new msg_mission_item(mavpacket);
@@ -88,10 +136,21 @@ public class AutopilotReceiver extends Thread {
 			//System.out.println("Altitude: " + hud.alt + "m\tGroundspeed: " + hud.groundspeed + "m/s\tHeading: " + hud.heading);
 			break;
 		default:
+<<<<<<< HEAD
 			//System.out.println("got: "+mavpacket.msgid);
+=======
+			// System.out.println("get: "+mavpacket.msgid);
+>>>>>>> origin/master
 			break;
 		}
 
+	}
+
+	private void notifyEverybody(Condition condition) {
+		lock.lock();
+		condition.signal();
+	    lock.unlock();
+		
 	}
 
 	/**
@@ -99,15 +158,16 @@ public class AutopilotReceiver extends Thread {
 	 *            The SerialPort
 	 * @return return MAVLinkPacket
 	 */
-	private MAVLinkPacket getPacket(SerialPort port) {
+	private MAVLinkPacket getPacket() {
 		Parser parser = new Parser();
 		try {
 			while (true) {
-				while (port.bytesAvailable() == 0)
+				while (in.available() == 0)
 					Thread.sleep(20);
-				int bytesToRead = port.bytesAvailable();
+				System.out.println("bytes to read");
+				int bytesToRead = in.available();
 				byte[] readBuffer = new byte[bytesToRead];
-				port.readBytes(readBuffer, bytesToRead);
+				in.read(readBuffer, 0,bytesToRead);
 				int readarr[] = new int[bytesToRead];
 				for (int i = 0; i < readBuffer.length; i++) {
 					readarr[i] = unsignedToBytes(readBuffer[i]);

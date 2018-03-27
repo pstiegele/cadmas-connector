@@ -1,9 +1,10 @@
 package com.telecommand;
 
-import org.json.JSONObject;
+import com.MAVLink.Messages.MAVLinkMessage;
+import com.controller.autopilot.Autopilot;
 
 public interface TelecommandMessage {
 
 	
-	public JSONObject getJSON();
+	public boolean execute(Autopilot autopilot);
 }

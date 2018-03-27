@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
+<<<<<<< HEAD
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -20,17 +21,22 @@ import com.MAVLink.common.msg_mission_item;
 import com.MAVLink.common.msg_mission_set_current;
 import com.MAVLink.enums.MAV_CMD;
 import com.fazecast.jSerialComm.SerialPort;
+=======
+
+import com.MAVLink.MAVLinkPacket;
+>>>>>>> origin/master
 
 public class AutopilotTransmitter extends Thread {
 
-	private SerialPort port;
+	private OutputStream out;
 
-	public AutopilotTransmitter(SerialPort port) {
-		this.port = port;
+	public AutopilotTransmitter(OutputStream out) {
+		this.out = out;
 		start();
 	}
 
 	@Override
+<<<<<<< HEAD
 	public void run(){
 		waitMillis(1500);
 		long startTime = System.currentTimeMillis();
@@ -181,9 +187,208 @@ public class AutopilotTransmitter extends Thread {
 		try {
 			dSocket.send(sendPacket);
 			dSocket.close();
+=======
+	public void run() {
+////		try {
+////			Thread.sleep(3000);
+////		} catch (InterruptedException e1) {
+////			// TODO Auto-generated catch block
+////			e1.printStackTrace();
+////		}
+////		// msg_mission_item item = new msg_mission_item();
+////		// item.command = MAV_CMD.MAV_CMD_GET_HOME_POSITION;
+////		msg_mission_count c = new msg_mission_count();
+////		c.count = 5;
+////		MAVLinkPacket packet = c.pack();
+////		try {
+////			byte[] o = packet.encodePacket();
+////			port.getOutputStream().write(packet.encodePacket());
+////			System.out.println("count sent");
+////		} catch (IOException e) {
+////			// TODO Auto-generated catch block
+////			e.printStackTrace();
+////		}
+////
+////		
+////		
+////		
+////		
+////		int i = 0;
+////		while (i < 5) {
+////			i++;
+////
+////			try {
+////				Thread.sleep(30);
+////			} catch (InterruptedException e1) {
+////				// TODO Auto-generated catch block
+////				e1.printStackTrace();
+////			}
+////			msg_mission_item item = new msg_mission_item();
+////			item.command = MAV_CMD.MAV_CMD_NAV_WAYPOINT;
+////			item.x = 49.8187007f+i*0.01f;
+////			item.y = 9.8132528f+i*0.01f;
+////			item.z = 200f+i;
+////			packet = item.pack();
+////			try {
+////				port.getOutputStream().write(packet.encodePacket());
+////				System.out.println("waypoint "+i+" sent");
+////			} catch (IOException e) {
+////				// TODO Auto-generated catch block
+////				e.printStackTrace();
+////			}
+////		}
+//		
+//		
+//		
+//		
+//		
+//		
+//		try {
+//			Thread.sleep(3000);
+//		} catch (InterruptedException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		}
+//		// msg_mission_item item = new msg_mission_item();
+//		// item.command = MAV_CMD.MAV_CMD_GET_HOME_POSITION;
+//		msg_mission_request_list list = new msg_mission_request_list();
+//		MAVLinkPacket packet = list.pack();
+//		packet.seq=250;
+//		try {
+//			byte[] o = packet.encodePacket();
+//			port.getOutputStream().write(packet.encodePacket());
+//			System.out.println("request list sent");
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//
+//		
+//		
+//		try {
+//			Thread.sleep(1000);
+//		} catch (InterruptedException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		}
+//		// msg_mission_item item = new msg_mission_item();
+//		// item.command = MAV_CMD.MAV_CMD_GET_HOME_POSITION;
+//		msg_mission_request req1 = new msg_mission_request();
+//		req1.seq=0;
+//		packet = list.pack();
+//		packet.seq=251;
+//		try {
+//			byte[] o = packet.encodePacket();
+//			port.getOutputStream().write(packet.encodePacket());
+//			System.out.println("request 0 sent");
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		
+//		
+//		try {
+//			Thread.sleep(100);
+//		} catch (InterruptedException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		}
+//		// msg_mission_item item = new msg_mission_item();
+//		// item.command = MAV_CMD.MAV_CMD_GET_HOME_POSITION;
+//		req1 = new msg_mission_request();
+//		req1.seq=1;
+//		packet = list.pack();
+//		packet.seq=252;
+//		try {
+//			byte[] o = packet.encodePacket();
+//			port.getOutputStream().write(packet.encodePacket());
+//			System.out.println("request 1 sent");
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		
+//		
+//		try {
+//			Thread.sleep(100);
+//		} catch (InterruptedException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		}
+//		// msg_mission_item item = new msg_mission_item();
+//		// item.command = MAV_CMD.MAV_CMD_GET_HOME_POSITION;
+//		req1 = new msg_mission_request();
+//		req1.seq=0;
+//		packet = list.pack();
+//		packet.seq=253;
+//		try {
+//			byte[] o = packet.encodePacket();
+//			port.getOutputStream().write(packet.encodePacket());
+//			System.out.println("request 2 sent");
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		
+//		
+//		try {
+//			Thread.sleep(100);
+//		} catch (InterruptedException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		}
+//		// msg_mission_item item = new msg_mission_item();
+//		// item.command = MAV_CMD.MAV_CMD_GET_HOME_POSITION;
+//		req1 = new msg_mission_request();
+//		req1.seq=0;
+//		packet = list.pack();
+//		packet.seq=254;
+//		try {
+//			byte[] o = packet.encodePacket();
+//			port.getOutputStream().write(packet.encodePacket());
+//			System.out.println("request 3 sent");
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		
+//		
+//		try {
+//			Thread.sleep(100);
+//		} catch (InterruptedException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		}
+//		// msg_mission_item item = new msg_mission_item();
+//		// item.command = MAV_CMD.MAV_CMD_GET_HOME_POSITION;
+//		req1 = new msg_mission_request();
+//		req1.seq=255;
+//		packet = list.pack();
+//		try {
+//			byte[] o = packet.encodePacket();
+//			port.getOutputStream().write(packet.encodePacket());
+//			System.out.println("request 4 sent");
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		
+//		
+//		
+		
+		
+
+	}
+	
+	public boolean send(MAVLinkPacket packet) {
+		byte[] output = packet.encodePacket();
+		try {
+			out.write(output);
+			return true;
+>>>>>>> origin/master
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return false;
 		}
 	}
 	
