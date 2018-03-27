@@ -1,45 +1,30 @@
 package com.controller.autopilot;
 
-<<<<<<< HEAD
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-=======
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
->>>>>>> origin/master
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
 import com.MAVLink.MAVLinkPacket;
+import com.MAVLink.Parser;
+import com.MAVLink.common.msg_attitude;
+import com.MAVLink.common.msg_heartbeat;
 import com.MAVLink.common.msg_mission_clear_all;
+import com.MAVLink.common.msg_scaled_pressure;
 import com.MAVLink.common.msg_set_home_position;
-import com.controller.autopilot.udp.UDPInputStream;
-import com.controller.autopilot.udp.UDPOutputStream;
 import com.controller.messageHandler.MessageHandler;
 import com.fazecast.jSerialComm.SerialPort;
+import com.telecommand.TelecommandMessage;
+import com.telemetry.Heartbeat;
 
-public class Autopilot extends Thread implements ActionListener {
-
-	public volatile short droneCompID = 1;
-	public volatile short droneSysID = 1;
-	public volatile short connectorCompID = 1;
-	public volatile short connectorSysID = 1;
-	private volatile short seq = 0;
+public class Autopilot extends Thread {
 
 	private MessageHandler messageHandler;
 	private SerialPort port;
-	private OutputStream out;
-	private InputStream in;
-
-	public AutopilotTransmitter transmitter;
-	public AutopilotReceiver receiver;
 
 	public Autopilot(MessageHandler messageHandler) {
 		this.messageHandler = messageHandler;
@@ -49,12 +34,11 @@ public class Autopilot extends Thread implements ActionListener {
 	@Override
 	public void run() {
 		connect();
-		// onClose:
-		// port.closePort();
+		//onClose:
+		//port.closePort();
 	}
 
 	public void connect() {
-<<<<<<< HEAD
 		//port = init();
 		AutopilotTransmitter transmitter = new AutopilotTransmitter(port);
 		AutopilotReceiver receiver = new AutopilotReceiver(port);
@@ -65,107 +49,6 @@ public class Autopilot extends Thread implements ActionListener {
 		// MAVLinkMessage msg = cmd.getMAVLink();
 		// send telecommand to autopilot
 		return true;
-=======
-		boolean seriell = false;
-		if(seriell) {
-			port = init();
-			out = port.getOutputStream();
-			in = port.getInputStream();	
-		}else {
-			try {
-				 out = new UDPOutputStream("127.0.0.1", 14551);
-			} catch (UnknownHostException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (SocketException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-			try {
-				in = new UDPInputStream("127.0.0.1", 14551);
-			} catch (UnknownHostException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (SocketException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		// test();
-		transmitter = new AutopilotTransmitter(out);
-		receiver = new AutopilotReceiver(in);
-	}
-
-	public void test() {
-		// System.out.println("init finished");
-		/*
-		 * while(true) { //System.out.println("start getPacket"); MAVLinkPacket
-		 * mavpacket = getPacket(port); //System.out.println("finished getPacket");
-		 * //System.out.println("start handlePacket"); handlePacket(mavpacket);
-		 * //System.out.println("finished handlePacket"); }
-		 */
-
-		// ########## MAVLINK SEND TEST BEGIN ##########
-		try {
-			Thread.sleep(5000);
-		} catch (InterruptedException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		msg_mission_clear_all clearitem = new msg_mission_clear_all();
-		MAVLinkPacket pclear = clearitem.pack();
-		try {
-			port.getOutputStream().write(pclear.encodePacket());
-			System.out.println("clear sent");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		try {
-			Thread.sleep(5000);
-		} catch (InterruptedException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		msg_set_home_position homeitem = new msg_set_home_position();
-		homeitem.latitude = 498186868;
-		homeitem.longitude = 98934782;
-		homeitem.altitude = 200000;
-		MAVLinkPacket phome = homeitem.pack();
-		try {
-			port.getOutputStream().write(phome.encodePacket());
-			System.out.println("home position set");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		// ########## MAVLINK SEND TEST END ##########
-	}
-
-	public void send(MAVLinkPacket packet) {
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				transmitter.send(packet);
-			}
-		}).start();
-	}
-
-	public short getSeq() {
-		// TODO: Passt das so?
-		short returnValue = seq;
-		seq = (short) (seq++ % 255);
-		return returnValue;
-	}
-
-	public void setListener() {
-
->>>>>>> origin/master
 	}
 
 	private SerialPort init() {
@@ -180,10 +63,5 @@ public class Autopilot extends Thread implements ActionListener {
 		return port;
 	}
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
+	
 }
