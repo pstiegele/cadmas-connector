@@ -21,7 +21,7 @@ public class Waypoint implements TelecommandMessage {
 		waypoint.z=altitude;
 		
 		MAVLinkPacket packet = waypoint.pack();
-		packet.seq=autopilot.getSeq();
+		//packet.seq=autopilot.getSeq();
 		autopilot.send(packet);
 		return true;
 	}

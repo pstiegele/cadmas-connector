@@ -40,11 +40,11 @@ public class Mission implements TelecommandMessage {
 
 
 	private boolean waitForMissionAckPacket() {
-		try {
-			autopilot.receiver.missionAckCondition.await(1, TimeUnit.SECONDS);
-		} catch (InterruptedException e) {
-			return false;
-		}
+//		try {
+//			autopilot.receiver.missionAckCondition.await(1, TimeUnit.SECONDS);
+//		} catch (InterruptedException e) {
+//			return false;
+//		}
 		return true;
 	}
 
@@ -57,11 +57,11 @@ public class Mission implements TelecommandMessage {
 		// ist
 		// Und es müsste dann evtl alles nochmal probiert werden, falls das nicht eine
 		// Ebene weiter oben durchgeführt wird (z.b. für die ganze Mission)
-		try {
-			autopilot.receiver.missionRequestCondition.await(1, TimeUnit.SECONDS);
-		} catch (InterruptedException e) {
-			return false;
-		}
+//		try {
+//			autopilot.receiver.missionRequestCondition.await(1, TimeUnit.SECONDS);
+//		} catch (InterruptedException e) {
+//			return false;
+//		}
 		if (MissionRequest.messageMemory.getNewestElement().seq == seq) {
 			return true;
 		} else {
@@ -72,13 +72,13 @@ public class Mission implements TelecommandMessage {
 
 	private MAVLinkPacket getMissionCountPacket() {
 		msg_mission_count mission_count = new msg_mission_count();
-		mission_count.target_component = autopilot.droneCompID;
-		mission_count.target_system = autopilot.droneSysID;
-		mission_count.count = waypoints.length;
-		mission_count.compid = autopilot.connectorCompID;
-		mission_count.sysid = autopilot.connectorSysID;
+//		mission_count.target_component = autopilot.droneCompID;
+//		mission_count.target_system = autopilot.droneSysID;
+//		mission_count.count = waypoints.length;
+//		mission_count.compid = autopilot.connectorCompID;
+//		mission_count.sysid = autopilot.connectorSysID;
 		MAVLinkPacket packet = mission_count.pack();
-		packet.seq = autopilot.getSeq();
+//		packet.seq = autopilot.getSeq();
 		return packet;
 	}
 

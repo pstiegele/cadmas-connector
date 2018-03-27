@@ -27,6 +27,7 @@ public class Autopilot extends Thread {
 	private SerialPort port;
 
 	public Autopilot(MessageHandler messageHandler) {
+		this.setName("Autopilot");
 		this.messageHandler = messageHandler;
 		start();
 	}
@@ -40,12 +41,12 @@ public class Autopilot extends Thread {
 
 	public void connect() {
 		//port = init();
-		AutopilotTransmitter transmitter = new AutopilotTransmitter(port);
+		//AutopilotTransmitter transmitter = new AutopilotTransmitter(port);
 		AutopilotReceiver receiver = new AutopilotReceiver(port);
 		//MissionReceiver missionreceiver = new MissionReceiver(port);
 	}
 
-	public boolean send(TelecommandMessage cmd) {
+	public boolean send(MAVLinkPacket mavLinkPacket) {
 		// MAVLinkMessage msg = cmd.getMAVLink();
 		// send telecommand to autopilot
 		return true;

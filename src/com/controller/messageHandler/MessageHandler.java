@@ -4,6 +4,7 @@ public class MessageHandler extends Thread {
 
 	
 	public MessageHandler() {
+		this.setName("MessageHandler");
 		start();
 	}
 	

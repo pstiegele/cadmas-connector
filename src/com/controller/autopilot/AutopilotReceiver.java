@@ -85,7 +85,7 @@ public class AutopilotReceiver extends Thread {
 			break;
 		case msg_vfr_hud.MAVLINK_MSG_ID_VFR_HUD:
 			msg_vfr_hud hud = new msg_vfr_hud(mavpacket);
-			//System.out.println("Altitude: " + hud.alt + "m\tGroundspeed: " + hud.groundspeed + "m/s\tHeading: " + hud.heading);
+			System.out.println("Altitude: " + hud.alt + "m\tGroundspeed: " + hud.groundspeed + "m/s\tHeading: " + hud.heading);
 			break;
 		default:
 			//System.out.println("got: "+mavpacket.msgid);
@@ -154,7 +154,7 @@ public class AutopilotReceiver extends Thread {
 							mavpacket = parser.mavlink_parse_char(readarr[i]);
 							if (mavpacket != null) {
 								//System.out.println("received message id: " + mavpacket.msgid + "\t size: " + mavpacket.len);
-								System.out.println(receivePacket.getAddress() + " port: " + receivePacket.getPort());
+								//System.out.println(receivePacket.getAddress() + " port: " + receivePacket.getPort());
 								handlePacket(mavpacket);
 							}
 						}
