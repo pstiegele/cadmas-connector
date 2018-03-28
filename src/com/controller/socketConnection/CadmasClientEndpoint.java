@@ -39,10 +39,13 @@ public class CadmasClientEndpoint {
      */
     @OnOpen
     public void onOpen(Session userSession) {
-    	System.out.println("onOpen");
         this.userSession = userSession;
         JSONObject authenticateMessage = new JSONObject();
-        authenticateMessage.put("method","authenticate").put("payload", new JSONObject().put("username", "ps").put("password", "123"));
+        String username = "";
+        String password = "";
+        username = System.getenv().get("CADMAS_USERNAME");
+        password = System.getenv().get("CADMAS_PASSWORD");
+        authenticateMessage.put("method","authenticate").put("payload", new JSONObject().put("username", username).put("password", password));
         sendMessage(authenticateMessage.toString());
     }
  
@@ -56,6 +59,7 @@ public class CadmasClientEndpoint {
      */
     @OnClose
     public void onClose(Session userSession, CloseReason reason) {
+    	System.out.println("websocket connection closed");
         this.userSession = null;
     }
  

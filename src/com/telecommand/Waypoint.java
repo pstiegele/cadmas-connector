@@ -6,8 +6,11 @@ import com.controller.autopilot.Autopilot;
 
 public class Waypoint implements TelecommandMessage {
 	
-	float latitude,longitude,altitude;
-	public Waypoint(float latitude, float longitude, float altitude) {
+	float latitude,longitude;
+	String type;
+	int altitude;
+	public Waypoint(String type, float latitude, float longitude, int altitude) {
+		this.type = type;
 		this.latitude=latitude;
 		this.longitude=longitude;
 		this.altitude=altitude;

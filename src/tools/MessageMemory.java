@@ -2,22 +2,25 @@ package tools;
 
 import java.util.ArrayList;
 
-public class MessageMemory<T> extends ArrayList<T> {
+import com.sun.javafx.collections.ObservableListWrapper;
+
+import javafx.collections.ObservableList;
+
+public class MessageMemory<T> extends ObservableListWrapper<T> {
+	
+	
 	
 	public MessageMemory(){
-		super();
+		super(new ArrayList<>());
 	}
 	
-	public MessageMemory(int size) {
-		super(size);
-	}
+	
 	
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -2625617557391637807L;
 	T newestElement;
-	
+	@Override
 	public boolean add(T element) {
 		super.add(element);
 		newestElement=element;
@@ -25,6 +28,18 @@ public class MessageMemory<T> extends ArrayList<T> {
 	}
 	public T getNewestElement() {
 		return newestElement;
+	}
+
+	@Override
+	public T get(int index) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int size() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 

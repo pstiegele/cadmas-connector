@@ -21,7 +21,7 @@
 	<classpathentry kind="lib" path="lib/websockets/javax.websocket-client-api-1.0.jar"/>
 	<classpathentry kind="lib" path="lib/websockets/tyrus-client-1.1.jar" sourcepath="C:/Users/pstiegele/.m2/repository/org/glassfish/tyrus/tyrus-client/1.1/tyrus-client-1.1-sources.jar"/>
 	<classpathentry kind="lib" path="lib/websockets/tyrus-container-grizzly-1.1.jar"/>
-	<classpathentry kind="lib" path="lib/websockets/tyrus-core-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/websockets/tyrus-core-1.1.jar" sourcepath="C:/Users/pstiegele/.m2/repository/org/glassfish/tyrus/tyrus-core/1.1/tyrus-core-1.1-sources.jar"/>
 	<classpathentry kind="lib" path="lib/websockets/tyrus-spi-1.1.jar"/>
 	<classpathentry kind="lib" path="lib/websockets/tyrus-websocket-core-1.1.jar" sourcepath="C:/Users/pstiegele/.m2/repository/org/glassfish/tyrus/tyrus-websocket-core/1.1/tyrus-websocket-core-1.1-sources.jar"/>
 	<classpathentry kind="output" path="bin"/>

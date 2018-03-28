@@ -4,17 +4,17 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.concurrent.CountDownLatch;
 
-import javax.websocket.DeploymentException;
-
 import org.json.JSONObject;
 
 import com.controller.messageHandler.MessageHandler;
 import com.controller.socketConnection.CadmasClientEndpoint.SocketMessageHandler;
+import com.telecommand.Mission;
 import com.telemetry.TelemetryMessage;
 
 public class SocketConnection extends Thread {
 
 	private MessageHandler messageHandler;
+	CadmasClientEndpoint clientEndPoint = null;
 	private String token = null;
 
 	public SocketConnection(MessageHandler messageHandler) {
@@ -39,28 +39,35 @@ public class SocketConnection extends Thread {
 	private SocketMessageHandler getSocketMessageHandler() {
 		return new CadmasClientEndpoint.SocketMessageHandler() {
 			public void handleMessage(String message) {
-				JSONObject jsonMessage = new JSONObject(message);
-				System.out.println(message);
-				switch (jsonMessage.getString("method")) {
-				case "authenticate":
-					if (jsonMessage.getJSONObject("payload").getBoolean("authenticated")) {
-						System.out.println("we are authenticated");
-						token = jsonMessage.getJSONObject("payload").getString("token");
-					} else {
-						System.out.println("wrong credentials");
-					}
-					break;
-				case "heartbeat":
-					System.out.println("server heartbeat received");
-					break;
-				case "newMission":
-					System.out.println("new mission received");
-					break;
+				try {
+					System.out.println(message);
+					JSONObject jsonMessage = new JSONObject(message);
+					switch (jsonMessage.getString("method")) {
+					case "authenticate":
+						if (jsonMessage.getJSONObject("payload").getBoolean("authenticated")) {
+							System.out.println("we are authenticated");
+							token = jsonMessage.getJSONObject("payload").getString("token");
+							requestMission();
+						} else {
+							System.out.println("wrong credentials");
+						}
+						break;
+					case "heartbeat":
+						System.out.println("server heartbeat received");
+						break;
+					case "newMission":
+						System.out.println("new mission received");
+						new Mission(jsonMessage.getJSONObject("payload"));
+						break;
 
-				default:
-					System.out.println(jsonMessage.getString("method"));
-					break;
+					default:
+						System.out.println(jsonMessage.getString("method"));
+						break;
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
+
 			}
 		};
 	}
@@ -80,10 +87,10 @@ public class SocketConnection extends Thread {
 	public void connect() throws URISyntaxException {
 		String uri = System.getenv().get("CADMAS_URI");
 		if (uri == null) {
-		uri = "ws://localhost/connector";
-//			uri = "wss://cadmasapp.raapvdzcqu.eu-west-1.elasticbeanstalk.com/connector";
+			uri = "ws://localhost/connector";
+			// uri = "wss://cadmasapp.raapvdzcqu.eu-west-1.elasticbeanstalk.com/connector";
 		}
-		final CadmasClientEndpoint clientEndPoint = new CadmasClientEndpoint(new URI(uri));
+		clientEndPoint = new CadmasClientEndpoint(new URI(uri));
 		clientEndPoint.addMessageHandler(getSocketMessageHandler());
 
 	}
@@ -92,6 +99,12 @@ public class SocketConnection extends Thread {
 		System.out.println((msg.getJSON()));
 
 		return true;
+	}
+
+	public void requestMission() {
+		JSONObject req = new JSONObject().put("token", token).put("method", "getRoute");
+		clientEndPoint.sendMessage(req.toString());
+
 	}
 
 }

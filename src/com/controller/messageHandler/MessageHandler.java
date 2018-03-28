@@ -1,6 +1,9 @@
 package com.controller.messageHandler;
 
 import java.util.concurrent.CountDownLatch;
+import com.telecommand.Mission;
+
+import javafx.collections.ListChangeListener;
 
 public class MessageHandler extends Thread {
 
@@ -13,6 +16,7 @@ public class MessageHandler extends Thread {
 	@Override
 	public void run() {
 		CountDownLatch latch = new CountDownLatch(1);
+		setListeners();
 		
 		try {
 			latch.await();
@@ -20,6 +24,18 @@ public class MessageHandler extends Thread {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	private void setListeners() {
+		Mission.getMessageMemory().addListener((ListChangeListener<? super Mission>)(c ->{
+			new Thread(new Runnable() {
+			    @Override public void run() {
+			    System.out.println("listener thread called from: "+Thread.currentThread().getName());
+			    }
+			}).start();
+			
+		}));
+		
 	}
 
 	
