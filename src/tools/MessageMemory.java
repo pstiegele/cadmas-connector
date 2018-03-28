@@ -1,8 +1,8 @@
 package tools;
 
-import org.apache.commons.collections4.queue.CircularFifoQueue;
+import java.util.ArrayList;
 
-public class MessageMemory<T> extends CircularFifoQueue<T> {
+public class MessageMemory<T> extends ArrayList<T> {
 	
 	public MessageMemory(){
 		super();
@@ -25,9 +25,6 @@ public class MessageMemory<T> extends CircularFifoQueue<T> {
 	}
 	public T getNewestElement() {
 		return newestElement;
-	}
-	public T getOldestElement() {
-		return super.element();
 	}
 
 
