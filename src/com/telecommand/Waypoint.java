@@ -29,4 +29,10 @@ public class Waypoint implements TelecommandMessage {
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		return "Waypoint [latitude=" + latitude + ", longitude=" + longitude + ", altitude="
+				+ altitude + ", type=" + type + "]";
+	}
+
 }

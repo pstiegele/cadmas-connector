@@ -53,7 +53,7 @@ public class Mission implements TelecommandMessage {
 	public Mission(JSONObject payload) {
 		super();
 		missionID = payload.getInt("missionID");
-		dtcreated = payload.getLong("dtcreated");
+		dtcreated = payload.getLong("dtCreated");
 		name = payload.getString("name");
 		note = payload.getString("note");
 		onConnectionLostMode = OnConnectionLostMode.valueOf(payload.getString("onConnectionLostMode"));
@@ -132,4 +132,10 @@ public class Mission implements TelecommandMessage {
 		return messageMemory;
 	}
 
+	@Override
+	public String toString() {
+		return "Mission [autopilot=" + autopilot + ", missionID=" + missionID + ", dtcreated=" + dtcreated + ", name="
+				+ name + ", note=" + note + ", onConnectionLostMode=" + onConnectionLostMode + ", waypoints="
+				+ waypoints + "]";
+	}
 }

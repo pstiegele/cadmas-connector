@@ -20,6 +20,7 @@ import com.MAVLink.common.msg_mission_item;
 import com.MAVLink.common.msg_mission_set_current;
 import com.MAVLink.enums.MAV_CMD;
 import com.fazecast.jSerialComm.SerialPort;
+import com.telemetry.Heartbeat;
 
 public class AutopilotTransmitter extends Thread {
 
