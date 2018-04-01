@@ -33,8 +33,8 @@ public class Attitude extends msg_attitude implements TelemetryMessage{
 	}
 
 
-	@Override
-	public MessageMemory<?> getMessageMemory() {
+
+	public static MessageMemory<Attitude> getMessageMemory() {
 		return messageMemory;
 	}
 

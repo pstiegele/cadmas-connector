@@ -33,8 +33,8 @@ public class MissionRequest extends msg_mission_request implements TelemetryMess
 		return res.toString();
 	}
 
-	@Override
-	public MessageMemory<?> getMessageMemory() {
+	
+	public static MessageMemory<?> getMessageMemory() {
 		return messageMemory;
 	}
 

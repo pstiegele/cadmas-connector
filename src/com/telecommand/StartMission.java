@@ -10,7 +10,6 @@ public class StartMission implements TelecommandMessage {
 
 	private static MessageMemory<StartMission> messageMemory = new MessageMemory<>();
 	
-	Autopilot autopilot;
 	int missionID = -1;
 	int missionVersion = -1;
 	/**
@@ -32,8 +31,7 @@ public class StartMission implements TelecommandMessage {
 	
 
 	@Override
-	public boolean execute(Autopilot autopilot) {
-		this.autopilot = autopilot;
+	public boolean execute() {
 		
 //		autopilot.send(getMissionCountPacket());
 //		int iteration = 0;
@@ -54,7 +52,7 @@ public class StartMission implements TelecommandMessage {
 
 	@Override
 	public String toString() {
-		return "StartMission [autopilot=" + autopilot + ", missionID=" + missionID + ", missionVersion="
+		return "StartMission [missionID=" + missionID + ", missionVersion="
 				+ missionVersion + "]";
 	}
 

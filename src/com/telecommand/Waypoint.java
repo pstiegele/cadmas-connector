@@ -17,7 +17,7 @@ public class Waypoint implements TelecommandMessage {
 	}
 
 	@Override
-	public boolean execute(Autopilot autopilot) {
+	public boolean execute() {
 		msg_mission_item waypoint = new msg_mission_item();
 		waypoint.x=latitude;
 		waypoint.y=longitude;
@@ -25,7 +25,7 @@ public class Waypoint implements TelecommandMessage {
 		
 		MAVLinkPacket packet = waypoint.pack();
 		//packet.seq=autopilot.getSeq();
-		autopilot.send(packet);
+		Autopilot.getAutopilot().send(packet);
 		return true;
 	}
 

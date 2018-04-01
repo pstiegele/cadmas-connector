@@ -6,7 +6,6 @@ import java.util.concurrent.CountDownLatch;
 
 import org.json.JSONObject;
 
-import com.controller.messageHandler.MessageHandler;
 import com.controller.socketConnection.CadmasClientEndpoint.SocketMessageHandler;
 import com.telecommand.Arm;
 import com.telecommand.Mission;
@@ -14,16 +13,24 @@ import com.telemetry.TelemetryMessage;
 
 public class SocketConnection extends Thread {
 
-	private MessageHandler messageHandler;
 	private CadmasClientEndpoint clientEndPoint = null;
 	private String apikey = "";
+	
+	private static SocketConnection socketConnection;
 
-	public SocketConnection(MessageHandler messageHandler) {
+	public SocketConnection() {
+		socketConnection=this;
 		this.setName("SocketConnection");
-		this.messageHandler = messageHandler;
 		apikey = System.getenv().get("CADMAS_APIKEY");
 
 		start();
+	}
+	
+	public static SocketConnection getSocketConnection() {
+		if(socketConnection==null) {
+			new SocketConnection();
+		}
+		return socketConnection;
 	}
 
 	@Override

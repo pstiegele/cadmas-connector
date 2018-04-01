@@ -10,9 +10,10 @@ public class Main {
 	
 
 	public static void main(String[] args) {
-		MessageHandler messageHandler = new MessageHandler();
-		new Autopilot(messageHandler);
-		new SocketConnection(messageHandler);
+		
+		MessageHandler.getMessageHandler();
+		Autopilot.getAutopilot();
+		SocketConnection.getSocketConnection();
 		
 	}
 

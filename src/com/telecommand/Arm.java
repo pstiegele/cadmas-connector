@@ -29,8 +29,7 @@ public class Arm implements TelecommandMessage {
 	
 
 	@Override
-	public boolean execute(Autopilot autopilot) {
-		this.autopilot = autopilot;
+	public boolean execute() {
 		
 //		autopilot.send(getMissionCountPacket());
 //		int iteration = 0;

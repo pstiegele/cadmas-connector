@@ -1,35 +1,25 @@
 package com.controller.autopilot;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.SocketException;
-import java.net.UnknownHostException;
-
 import com.MAVLink.MAVLinkPacket;
-import com.MAVLink.Parser;
-import com.MAVLink.common.msg_attitude;
-import com.MAVLink.common.msg_heartbeat;
-import com.MAVLink.common.msg_mission_clear_all;
-import com.MAVLink.common.msg_scaled_pressure;
-import com.MAVLink.common.msg_set_home_position;
-import com.controller.messageHandler.MessageHandler;
 import com.fazecast.jSerialComm.SerialPort;
-import com.telecommand.TelecommandMessage;
-import com.telemetry.Heartbeat;
 
 public class Autopilot extends Thread {
 
-	private MessageHandler messageHandler;
+	
 	private SerialPort port;
+	private static Autopilot autopilot;
 
-	public Autopilot(MessageHandler messageHandler) {
+	public Autopilot() {
+		Autopilot.autopilot=this;
 		this.setName("Autopilot");
-		this.messageHandler = messageHandler;
 		start();
+	}
+	
+	public static Autopilot getAutopilot() {
+		if(autopilot==null) {
+			new Autopilot();
+		}
+		return autopilot;
 	}
 
 	@Override

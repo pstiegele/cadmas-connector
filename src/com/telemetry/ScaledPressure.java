@@ -33,8 +33,8 @@ public class ScaledPressure extends msg_scaled_pressure implements TelemetryMess
 	}
 
 
-	@Override
-	public MessageMemory<?> getMessageMemory() {
+	
+	public static MessageMemory<?> getMessageMemory() {
 		return messageMemory;
 	}
 

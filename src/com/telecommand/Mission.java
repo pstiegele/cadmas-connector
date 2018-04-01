@@ -19,7 +19,6 @@ public class Mission implements TelecommandMessage {
 
 	private static MessageMemory<Mission> messageMemory = new MessageMemory<>();
 	
-	Autopilot autopilot;
 	int missionID = 0;
 	OnConnectionLostMode onConnectionLostMode = OnConnectionLostMode.RTL;
 	List<Waypoint> waypoints = new ArrayList<>();
@@ -52,14 +51,13 @@ public class Mission implements TelecommandMessage {
 	
 
 	@Override
-	public boolean execute(Autopilot autopilot) {
-		this.autopilot = autopilot;
+	public boolean execute() {
 		
-		autopilot.send(getMissionCountPacket());
+		Autopilot.getAutopilot().send(getMissionCountPacket());
 		int iteration = 0;
 		for (Waypoint waypoint : waypoints) {
 			waitForMissionRequestPacket(iteration);
-			waypoint.execute(autopilot);
+			waypoint.execute();
 			iteration++;
 		}
 		if(waitForMissionAckPacket()) return false;
@@ -123,7 +121,7 @@ public class Mission implements TelecommandMessage {
 	@Override
 	public String toString() {
 		final int maxLen = 10;
-		return "Mission [autopilot=" + autopilot + ", missionID=" + missionID + ", onConnectionLostMode="
+		return "Mission [missionID=" + missionID + ", onConnectionLostMode="
 				+ onConnectionLostMode + ", waypoints="
 				+ (waypoints != null ? waypoints.subList(0, Math.min(waypoints.size(), maxLen)) : null) + "]";
 	}

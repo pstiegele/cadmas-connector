@@ -34,8 +34,8 @@ public class CommandAck extends msg_command_ack implements TelemetryMessage{
 	}
 
 
-	@Override
-	public MessageMemory<?> getMessageMemory() {
+
+	public static MessageMemory<?> getMessageMemory() {
 		return messageMemory;
 	}
 

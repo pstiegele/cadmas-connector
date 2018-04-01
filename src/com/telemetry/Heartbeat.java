@@ -32,8 +32,8 @@ public class Heartbeat extends msg_heartbeat implements TelemetryMessage{
 		return res.toString();
 	}
 
-	@Override
-	public MessageMemory<?> getMessageMemory() {
+	
+	public static MessageMemory<Heartbeat> getMessageMemory() {
 		return messageMemory;
 	}
 
