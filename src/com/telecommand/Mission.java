@@ -20,26 +20,17 @@ public class Mission implements TelecommandMessage {
 	
 	Autopilot autopilot;
 	int missionID = 0;
-	long dtcreated = 0;
-	String name = "";
-	String note = "";
 	OnConnectionLostMode onConnectionLostMode = OnConnectionLostMode.RTL;
 	List<Waypoint> waypoints = new ArrayList<>();
 	/**
 	 * @param missionID
-	 * @param dtcreated
-	 * @param name
-	 * @param note
 	 * @param onConnectionLostMode
 	 * @param waypoints
 	 */
-	public Mission(int missionID, long dtcreated, String name, String note, OnConnectionLostMode onConnectionLostMode,
+	public Mission(int missionID,OnConnectionLostMode onConnectionLostMode,
 			List<Waypoint> waypoints) {
 		super();
 		this.missionID = missionID;
-		this.dtcreated = dtcreated;
-		this.name = name;
-		this.note = note;
 		this.onConnectionLostMode = onConnectionLostMode;
 		this.waypoints = waypoints;
 		messageMemory.add(this);
@@ -53,9 +44,6 @@ public class Mission implements TelecommandMessage {
 	public Mission(JSONObject payload) {
 		super();
 		missionID = payload.getInt("missionID");
-		dtcreated = payload.getLong("dtCreated");
-		name = payload.getString("name");
-		note = payload.getString("note");
 		onConnectionLostMode = OnConnectionLostMode.valueOf(payload.getString("onConnectionLostMode"));
 		parseJSONWaypoints(payload.getJSONArray("waypoints"));
 		messageMemory.add(this);

@@ -55,7 +55,7 @@ public class SocketConnection extends Thread {
 					case "heartbeat":
 						System.out.println("server heartbeat received");
 						break;
-					case "newMission":
+					case "Mission":
 						System.out.println("new mission received");
 						new Mission(jsonMessage.getJSONObject("payload"));
 						break;
@@ -102,7 +102,7 @@ public class SocketConnection extends Thread {
 	}
 
 	public void requestMission() {
-		JSONObject req = new JSONObject().put("token", token).put("method", "getRoute");
+		JSONObject req = new JSONObject().put("token", token).put("method", "getMission");
 		clientEndPoint.sendMessage(req.toString());
 
 	}
