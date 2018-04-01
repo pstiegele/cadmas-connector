@@ -119,11 +119,13 @@ public class Mission implements TelecommandMessage {
 	public static MessageMemory<Mission> getMessageMemory() {
 		return messageMemory;
 	}
-
 	@Override
 	public String toString() {
-		return "Mission [autopilot=" + autopilot + ", missionID=" + missionID + ", dtcreated=" + dtcreated + ", name="
-				+ name + ", note=" + note + ", onConnectionLostMode=" + onConnectionLostMode + ", waypoints="
-				+ waypoints + "]";
+		final int maxLen = 10;
+		return "Mission [autopilot=" + autopilot + ", missionID=" + missionID + ", onConnectionLostMode="
+				+ onConnectionLostMode + ", waypoints="
+				+ (waypoints != null ? waypoints.subList(0, Math.min(waypoints.size(), maxLen)) : null) + "]";
 	}
+
+	
 }
