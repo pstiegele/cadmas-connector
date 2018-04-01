@@ -40,13 +40,6 @@ public class CadmasClientEndpoint {
     @OnOpen
     public void onOpen(Session userSession) {
         this.userSession = userSession;
-        JSONObject authenticateMessage = new JSONObject();
-        String username = "";
-        String password = "";
-        username = System.getenv().get("CADMAS_USERNAME");
-        password = System.getenv().get("CADMAS_PASSWORD");
-        authenticateMessage.put("method","authenticate").put("payload", new JSONObject().put("username", username).put("password", password));
-        sendMessage(authenticateMessage.toString());
     }
  
     /**

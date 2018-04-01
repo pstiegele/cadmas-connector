@@ -9,6 +9,7 @@ import org.json.JSONObject;
 import com.MAVLink.MAVLinkPacket;
 import com.MAVLink.common.msg_mission_count;
 import com.controller.autopilot.Autopilot;
+import com.telecommand.enums.OnConnectionLostMode;
 import com.telemetry.MissionRequest;
 
 import javafx.collections.ListChangeListener;

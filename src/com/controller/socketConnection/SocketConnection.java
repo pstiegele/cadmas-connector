@@ -8,18 +8,20 @@ import org.json.JSONObject;
 
 import com.controller.messageHandler.MessageHandler;
 import com.controller.socketConnection.CadmasClientEndpoint.SocketMessageHandler;
+import com.telecommand.Arm;
 import com.telecommand.Mission;
 import com.telemetry.TelemetryMessage;
 
 public class SocketConnection extends Thread {
 
 	private MessageHandler messageHandler;
-	CadmasClientEndpoint clientEndPoint = null;
-	private String token = null;
+	private CadmasClientEndpoint clientEndPoint = null;
+	private String apikey = "";
 
 	public SocketConnection(MessageHandler messageHandler) {
 		this.setName("SocketConnection");
 		this.messageHandler = messageHandler;
+		apikey = System.getenv().get("CADMAS_APIKEY");
 
 		start();
 	}
@@ -40,28 +42,21 @@ public class SocketConnection extends Thread {
 		return new CadmasClientEndpoint.SocketMessageHandler() {
 			public void handleMessage(String message) {
 				try {
-					System.out.println(message);
+					System.out.println("Message received: "+message);
 					JSONObject jsonMessage = new JSONObject(message);
 					switch (jsonMessage.getString("method")) {
-					case "authenticate":
-						if (jsonMessage.getJSONObject("payload").getBoolean("authenticated")) {
-							System.out.println("we are authenticated");
-							token = jsonMessage.getJSONObject("payload").getString("token");
-							requestMission();
-						} else {
-							System.out.println("wrong credentials");
-						}
+					case "arm":
+						new Arm(jsonMessage.getJSONObject("payload"));
 						break;
-					case "heartbeat":
-						System.out.println("server heartbeat received");
+					case "startMission":
+						System.out.println("startMission received");
 						break;
-					case "Mission":
-						System.out.println("new mission received");
+					case "mission":
+						System.out.println("mission received");
 						new Mission(jsonMessage.getJSONObject("payload"));
 						break;
-
 					default:
-						System.out.println(jsonMessage.getString("method"));
+						System.out.println("message with unresolvable method received: "+jsonMessage.getString("method"));
 						break;
 					}
 				} catch (Exception e) {
@@ -101,10 +96,9 @@ public class SocketConnection extends Thread {
 		return true;
 	}
 
-	public void requestMission() {
-		JSONObject req = new JSONObject().put("token", token).put("method", "getMission");
-		clientEndPoint.sendMessage(req.toString());
-
-	}
+//	public void requestMission() {
+//		JSONObject req = new JSONObject().put("apikey", apikey).put("method", "getMission");
+//		clientEndPoint.sendMessage(req.toString());
+//	}
 
 }
