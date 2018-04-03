@@ -131,7 +131,7 @@ public class AutopilotReceiver extends Thread {
 	
 	public void readUDP() {  
 		Parser parser = new Parser();
-		int port = 14550;
+		int port = 14551;
 	      try {
 		        DatagramSocket dSocket = new DatagramSocket(port);
 		        byte[] buffer = new byte[2048];

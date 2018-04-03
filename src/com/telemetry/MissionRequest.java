@@ -38,5 +38,10 @@ public class MissionRequest extends msg_mission_request implements TelemetryMess
 		return messageMemory;
 	}
 
+	@Override
+	public String getSocketMethodName() {
+		return "getMission";
+	}
+
 
 }

@@ -27,14 +27,19 @@ public class Heartbeat extends msg_heartbeat implements TelemetryMessage{
 	
 	@Override
 	public String getJSON() {
-		JSONObject res = new JSONObject();
-		res.put("type", "hb").put("timestamp", timestamp).put("autopilot", this.autopilot);
-		return res.toString();
+		JSONObject payload = new JSONObject();
+		payload.put("autopilot_connected", true).put("autopilot_mode", "AUTO").put("armed", false);
+		return payload.toString();
 	}
 
 	
 	public static MessageMemory<Heartbeat> getMessageMemory() {
 		return messageMemory;
+	}
+
+	@Override
+	public String getSocketMethodName() {
+		return "heartbeat";
 	}
 
 

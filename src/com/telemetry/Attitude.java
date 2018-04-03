@@ -38,5 +38,10 @@ public class Attitude extends msg_attitude implements TelemetryMessage{
 		return messageMemory;
 	}
 
+	@Override
+	public String getSocketMethodName() {
+		return "attitude";
+	}
+
 
 }

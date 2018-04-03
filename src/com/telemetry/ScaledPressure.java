@@ -38,5 +38,10 @@ public class ScaledPressure extends msg_scaled_pressure implements TelemetryMess
 		return messageMemory;
 	}
 
+	@Override
+	public String getSocketMethodName() {
+		return "scaledPressure";
+	}
+
 
 }

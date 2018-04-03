@@ -39,5 +39,10 @@ public class CommandAck extends msg_command_ack implements TelemetryMessage{
 		return messageMemory;
 	}
 
+	@Override
+	public String getSocketMethodName() {
+		return "commandACK";
+	}
+
 
 }
