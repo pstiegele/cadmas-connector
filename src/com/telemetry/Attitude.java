@@ -2,36 +2,30 @@ package com.telemetry;
 
 import org.json.JSONObject;
 
-import com.MAVLink.MAVLinkPacket;
 import com.MAVLink.common.msg_attitude;
 
 import tools.MessageMemory;
 
-public class Attitude extends msg_attitude implements TelemetryMessage{
+public class Attitude implements TelemetryMessage{
 	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = MAVLINK_MSG_ID_ATTITUDE;
-	long timestamp = -1;
+	float pitch, roll, heading;
+	long timestamp;
+	
 	private static MessageMemory<Attitude> messageMemory = new MessageMemory<>();
-	public Attitude() {
-		
-	}
-	
-	public Attitude(MAVLinkPacket mavpacket) {
-		super(mavpacket);
+	public Attitude(msg_attitude message) {
 		timestamp=System.currentTimeMillis();
+		pitch = message.pitch;
+		roll = message.roll;
+		heading = message.yaw;
 		messageMemory.add(this);
 	}
 	
 	@Override
 	public String getJSON() {
 		JSONObject res = new JSONObject();
-		res.put("type", "hb").put("timestamp", timestamp).put("pitch", this.pitch);
+		res.put("pitch", pitch).put("roll", roll).put("heading", heading);
 		return res.toString();
 	}
-
 
 
 	public static MessageMemory<Attitude> getMessageMemory() {
@@ -41,6 +35,11 @@ public class Attitude extends msg_attitude implements TelemetryMessage{
 	@Override
 	public String getSocketMethodName() {
 		return "attitude";
+	}
+
+	@Override
+	public long getTimestamp() {
+		return timestamp;
 	}
 
 

@@ -47,7 +47,7 @@ public class SocketConnection extends Thread {
 			while (!clientEndPoint.userSession.isOpen())
 				;
 			System.out.println("is Open");
-			send(new Heartbeat());
+			send(new Heartbeat(null));
 			latch.await();
 
 		} catch (URISyntaxException | InterruptedException e) {
@@ -91,10 +91,10 @@ public class SocketConnection extends Thread {
 	 * @param message
 	 * @return
 	 */
-	private String createMessage(String payload, String method) {
+	private String createMessage(TelemetryMessage telemetryMSG) {
 		JSONObject msg = new JSONObject();
-		msg.put("time", System.currentTimeMillis()).put("id", getMsgID()).put("apikey", apikey).put("method", method)
-				.put("payload", payload);
+		msg.put("time", telemetryMSG.getTimestamp()).put("id", getMsgID()).put("apikey", apikey).put("method", telemetryMSG.getSocketMethodName())
+				.put("payload", telemetryMSG.getJSON());
 		return msg.toString();
 	}
 
@@ -114,7 +114,7 @@ public class SocketConnection extends Thread {
 		if (sending) {
 
 			clientEndPoint.userSession.getAsyncRemote()
-					.sendText(createMessage(msg.getJSON(), msg.getSocketMethodName()), new SendHandler() {
+					.sendText(createMessage(msg), new SendHandler() {
 
 						@Override
 						public void onResult(SendResult result) {
