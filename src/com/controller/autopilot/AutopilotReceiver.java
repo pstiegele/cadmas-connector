@@ -48,10 +48,10 @@ public class AutopilotReceiver extends Thread {
 		
 		switch (mavpacket.msgid) {
 		case msg_heartbeat.MAVLINK_MSG_ID_HEARTBEAT:
-			Heartbeat heartbeat = new Heartbeat(mavpacket);
+			Heartbeat heartbeat = new Heartbeat(new msg_heartbeat(mavpacket));
 			break;
 		case msg_attitude.MAVLINK_MSG_ID_ATTITUDE:
-			Attitude attitude = new Attitude(mavpacket);
+			Attitude attitude = new Attitude(new msg_attitude(mavpacket));
 			break;
 		case msg_command_ack.MAVLINK_MSG_ID_COMMAND_ACK:
 			msg_command_ack ack = new msg_command_ack(mavpacket);
