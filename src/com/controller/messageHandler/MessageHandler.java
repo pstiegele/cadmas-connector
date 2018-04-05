@@ -7,7 +7,11 @@ import com.telecommand.Arm;
 import com.telecommand.Mission;
 import com.telecommand.StartMission;
 import com.telemetry.Attitude;
+import com.telemetry.Battery;
 import com.telemetry.Heartbeat;
+import com.telemetry.MissionState;
+import com.telemetry.Position;
+import com.telemetry.Velocity;
 
 import javafx.collections.ListChangeListener;
 
@@ -103,41 +107,41 @@ public class MessageHandler extends Thread {
 			
 		}));
 		// Battery
-		Attitude.getMessageMemory().addListener((ListChangeListener<? super Attitude>) (c -> {
+		Battery.getMessageMemory().addListener((ListChangeListener<? super Battery>) (c -> {
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
-					SocketConnection.getSocketConnection().send(Attitude.getMessageMemory().getNewestElement());
+					SocketConnection.getSocketConnection().send(Battery.getMessageMemory().getNewestElement());
 				}
 			}).start();
 
 		}));
 		// MissionState
-		Attitude.getMessageMemory().addListener((ListChangeListener<? super Attitude>) (c -> {
+		MissionState.getMessageMemory().addListener((ListChangeListener<? super MissionState>) (c -> {
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
-					SocketConnection.getSocketConnection().send(Attitude.getMessageMemory().getNewestElement());
+					SocketConnection.getSocketConnection().send(MissionState.getMessageMemory().getNewestElement());
 				}
 			}).start();
 			
 		}));
 		// Position
-		Attitude.getMessageMemory().addListener((ListChangeListener<? super Attitude>) (c -> {
+		Position.getMessageMemory().addListener((ListChangeListener<? super Position>) (c -> {
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
-					SocketConnection.getSocketConnection().send(Attitude.getMessageMemory().getNewestElement());
+					SocketConnection.getSocketConnection().send(Position.getMessageMemory().getNewestElement());
 				}
 			}).start();
 			
 		}));
 		// Velocity
-		Attitude.getMessageMemory().addListener((ListChangeListener<? super Attitude>) (c -> {
+		Velocity.getMessageMemory().addListener((ListChangeListener<? super Velocity>) (c -> {
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
-					SocketConnection.getSocketConnection().send(Attitude.getMessageMemory().getNewestElement());
+					SocketConnection.getSocketConnection().send(Velocity.getMessageMemory().getNewestElement());
 				}
 			}).start();
 			
