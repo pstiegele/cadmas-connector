@@ -20,6 +20,8 @@ import com.MAVLink.common.msg_mission_item;
 import com.MAVLink.common.msg_mission_request;
 import com.MAVLink.common.msg_scaled_pressure;
 import com.MAVLink.common.msg_vfr_hud;
+import com.MAVLink.enums.MAV_CMD;
+import com.MAVLink.enums.MAV_CMD_ACK;
 import com.fazecast.jSerialComm.SerialPort;
 import com.telemetry.Attitude;
 import com.telemetry.Heartbeat;
@@ -85,6 +87,7 @@ public class AutopilotReceiver extends Thread {
 			break;
 		case msg_vfr_hud.MAVLINK_MSG_ID_VFR_HUD:
 			msg_vfr_hud hud = new msg_vfr_hud(mavpacket);
+			//System.out.println("connected...");
 			System.out.println("Altitude: " + hud.alt + "m\tGroundspeed: " + hud.groundspeed + "m/s\tHeading: " + hud.heading);
 			break;
 		default:
@@ -131,7 +134,7 @@ public class AutopilotReceiver extends Thread {
 	
 	public void readUDP() {  
 		Parser parser = new Parser();
-		int port = 14551;
+		int port = 14550;
 	      try {
 		        DatagramSocket dSocket = new DatagramSocket(port);
 		        byte[] buffer = new byte[2048];
@@ -153,6 +156,9 @@ public class AutopilotReceiver extends Thread {
 						for (int i = 0; i < readarr.length; i++) {
 							mavpacket = parser.mavlink_parse_char(readarr[i]);
 							if (mavpacket != null) {
+								if(mavpacket.msgid == msg_mission_ack.MAVLINK_MSG_ID_MISSION_ACK){
+									System.out.println("received on port: " + port);
+								}
 								//System.out.println("received message id: " + mavpacket.msgid + "\t size: " + mavpacket.len);
 								//System.out.println(receivePacket.getAddress() + " port: " + receivePacket.getPort());
 								handlePacket(mavpacket);
