@@ -20,7 +20,6 @@ import com.MAVLink.common.msg_mission_item;
 import com.MAVLink.common.msg_mission_set_current;
 import com.MAVLink.enums.MAV_CMD;
 import com.fazecast.jSerialComm.SerialPort;
-import com.telemetry.Heartbeat;
 
 public class AutopilotTransmitter extends Thread {
 
@@ -34,12 +33,22 @@ public class AutopilotTransmitter extends Thread {
 	@Override
 	public void run(){
 		waitMillis(1500);
-		long startTime = System.currentTimeMillis();
+		/*for(int i = 0; i < 100000; i++){
+			try {
+				//waitMillis(10);
+				udpTest(i);
+				//System.out.println(i);
+			} catch (UnknownHostException | SocketException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}*/		
+		//long startTime = System.currentTimeMillis();
 		//ArrayList<CustomMissionItem> mission = generateFromCSV();
-		ArrayList<CustomMissionItem> mission = randomMissionGenerator(3, -35f, 150f, 100, 200);
 		try {
 			while(true){
-				waitMillis(100);
+				waitMillis(1000);
+				ArrayList<CustomMissionItem> mission = randomMissionGenerator(10, -35f, 150f, 100, 200);
 				sendMission(mission);
 			}
 		} catch (UnknownHostException | SocketException e) {
@@ -84,6 +93,32 @@ public class AutopilotTransmitter extends Thread {
 		current.seq = currentSequence;
 		packet = current.pack();
 		send(packet);
+	}
+	
+	public void returnToLaunch() throws UnknownHostException, SocketException{
+		ArrayList<CustomMissionItem> mission = new ArrayList<>();
+		CustomMissionItem rtl = new CustomMissionItem(-1, 0, 0, 0);
+		mission.add(rtl);
+		sendMission(mission);
+	}
+	
+	public void udpTest(int port) throws UnknownHostException, SocketException{
+		msg_mission_clear_all clear = new msg_mission_clear_all();
+		MAVLinkPacket clearPacket = clear.pack();
+		int p = port;
+		//InetAddress ipAdress = InetAddress.getByName("127.0.0.1");
+		InetAddress ipAdress = InetAddress.getByName("192.168.178.40");
+		//InetAddress ipAdress = InetAddress.getByName("192.168.178.45");
+		DatagramSocket dSocket = new DatagramSocket(p);
+		DatagramPacket sendPacket = new DatagramPacket(clearPacket.encodePacket(), clearPacket.encodePacket().length, ipAdress, p);
+		try {
+			dSocket.send(sendPacket);
+			dSocket.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		//System.out.println("clear sent");
 	}
 	
 	public void sendMission(ArrayList<CustomMissionItem> mission) throws UnknownHostException, SocketException{
@@ -175,12 +210,16 @@ public class AutopilotTransmitter extends Thread {
 	}
 	
 	public void sendUDP(MAVLinkPacket packet) throws UnknownHostException, SocketException{
-		int port = 14557;
+		int port = 14551;
+		//InetAddress ipAdress = InetAddress.getByName("191.168.178.40");
 		InetAddress ipAdress = InetAddress.getByName("127.0.0.1");
+		//InetAddress ipAdress = InetAddress.getByName("10.0.2.2");
+		//InetAddress ipAdress = InetAddress.getByName("192.168.178.45");
 		DatagramSocket dSocket = new DatagramSocket(port);
 		DatagramPacket sendPacket = new DatagramPacket(packet.encodePacket(), packet.encodePacket().length, ipAdress, port);
 		try {
 			dSocket.send(sendPacket);
+			System.out.println("sent to " + ipAdress + ":" + port);
 			dSocket.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
