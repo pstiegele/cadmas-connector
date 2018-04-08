@@ -10,7 +10,9 @@ import com.MAVLink.MAVLinkPacket;
 import com.MAVLink.Parser;
 import com.MAVLink.Messages.MAVLinkMessage;
 import com.MAVLink.common.msg_attitude;
+import com.MAVLink.common.msg_battery_status;
 import com.MAVLink.common.msg_command_ack;
+import com.MAVLink.common.msg_global_position_int;
 import com.MAVLink.common.msg_heartbeat;
 import com.MAVLink.common.msg_home_position;
 import com.MAVLink.common.msg_mission_ack;
@@ -24,7 +26,11 @@ import com.MAVLink.enums.MAV_CMD;
 import com.MAVLink.enums.MAV_CMD_ACK;
 import com.fazecast.jSerialComm.SerialPort;
 import com.telemetry.Attitude;
+import com.telemetry.Battery;
 import com.telemetry.Heartbeat;
+import com.telemetry.MissionState;
+import com.telemetry.Position;
+import com.telemetry.Velocity;
 
 public class AutopilotReceiver extends Thread {
 
@@ -52,8 +58,20 @@ public class AutopilotReceiver extends Thread {
 		case msg_heartbeat.MAVLINK_MSG_ID_HEARTBEAT:
 			Heartbeat heartbeat = new Heartbeat(new msg_heartbeat(mavpacket));
 			break;
+		case msg_battery_status.MAVLINK_MSG_ID_BATTERY_STATUS:
+			Battery battery = new Battery(new msg_battery_status(mavpacket));
+			break;
 		case msg_attitude.MAVLINK_MSG_ID_ATTITUDE:
 			Attitude attitude = new Attitude(new msg_attitude(mavpacket));
+			break;
+		case msg_global_position_int.MAVLINK_MSG_ID_GLOBAL_POSITION_INT:
+			Position position = new Position(new msg_global_position_int(mavpacket));
+			break;
+		case msg_vfr_hud.MAVLINK_MSG_ID_VFR_HUD:
+			Velocity velocity = new Velocity(new msg_vfr_hud(mavpacket));
+			msg_vfr_hud hud = new msg_vfr_hud(mavpacket);
+			//System.out.println("connected...");
+			System.out.println("Altitude: " + hud.alt + "m\tGroundspeed: " + hud.groundspeed + "m/s\tHeading: " + hud.heading);
 			break;
 		case msg_command_ack.MAVLINK_MSG_ID_COMMAND_ACK:
 			msg_command_ack ack = new msg_command_ack(mavpacket);
@@ -82,13 +100,7 @@ public class AutopilotReceiver extends Thread {
 			//System.out.println(count);
 			break;
 		case msg_mission_current.MAVLINK_MSG_ID_MISSION_CURRENT:
-			msg_mission_current current = new msg_mission_current(mavpacket);
-			//System.out.println(current);
-			break;
-		case msg_vfr_hud.MAVLINK_MSG_ID_VFR_HUD:
-			msg_vfr_hud hud = new msg_vfr_hud(mavpacket);
-			//System.out.println("connected...");
-			System.out.println("Altitude: " + hud.alt + "m\tGroundspeed: " + hud.groundspeed + "m/s\tHeading: " + hud.heading);
+			MissionState missionState = new MissionState(new msg_mission_current(mavpacket));
 			break;
 		default:
 			//System.out.println("got: "+mavpacket.msgid);

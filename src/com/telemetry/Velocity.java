@@ -5,7 +5,7 @@ import com.MAVLink.common.msg_vfr_hud;
 import tools.MessageMemory;
 
 public class Velocity implements TelemetryMessage{
-	float groundspeed, airspeed, climbrate;
+	float groundspeed, airspeed, climbrate, altitude;
 	long timestamp;
 	
 	private static MessageMemory<Velocity> messageMemory = new MessageMemory<>();
@@ -14,6 +14,7 @@ public class Velocity implements TelemetryMessage{
 		groundspeed = message.groundspeed;
 		airspeed = message.airspeed;
 		climbrate = message.climb;
+		altitude = message.alt;
 		messageMemory.add(this);
 	}
 
