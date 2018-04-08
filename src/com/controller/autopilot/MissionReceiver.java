@@ -39,6 +39,12 @@ public class MissionReceiver extends Thread{
 			msg_mission_item item = sendAndWaitRequest(i);
 			int type = 0;
 			switch(item.command){
+			case MAV_CMD.MAV_CMD_NAV_LAND:
+				type = -3;
+				break;
+			case MAV_CMD.MAV_CMD_NAV_TAKEOFF:
+				type = -2;
+				break;
 			case MAV_CMD.MAV_CMD_NAV_WAYPOINT:
 				type = 0;
 				break;

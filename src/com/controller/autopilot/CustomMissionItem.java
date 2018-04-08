@@ -1,7 +1,7 @@
 package com.controller.autopilot;
 
 public class CustomMissionItem {
-	int type = 0; // 0=Waypoint 1=Loiter 2=RTL ...
+	int type = 0; // 0=Waypoint -1=RTL -2=TakeOff -3=Land n=Loiter for n secs ...
 	float latitude = 0;
 	float longitude = 0;
 	int height = 0;
@@ -17,6 +17,12 @@ public class CustomMissionItem {
 	public String toString() {
 		String typeString;
 		switch(type){
+		case -3:
+			typeString = "Land";
+			break;
+		case -2:
+			typeString = "Take Off";
+			break;
 		case -1:
 			typeString = "RTL";
 			break;

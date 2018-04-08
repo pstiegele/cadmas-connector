@@ -162,6 +162,11 @@ public class AutopilotTransmitter extends Thread {
 			item.y = mission.get(i).longitude;
 			item.z = mission.get(i).height;
 			switch(mission.get(i).type){
+			case -3:
+				item.command = MAV_CMD.MAV_CMD_NAV_LAND;
+			case -2:
+				item.command = MAV_CMD.MAV_CMD_NAV_TAKEOFF;
+				break;
 			case -1:
 				item.command = MAV_CMD.MAV_CMD_NAV_RETURN_TO_LAUNCH;
 				break;
