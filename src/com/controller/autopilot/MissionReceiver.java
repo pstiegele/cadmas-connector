@@ -62,7 +62,7 @@ public class MissionReceiver extends Thread{
 			System.out.println("got item " + i);
 		}
 		missionReceived = true;
-		//printMission(mission);
+		printMission(mission);
 	}
 	
 	public static void printMission(ArrayList<CustomMissionItem> mission){

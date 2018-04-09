@@ -44,10 +44,10 @@ public class AutopilotReceiver extends Thread {
 
 	@Override
 	public void run() {
-		readUDP();
+		//readUDP();
 		while (true) {
-			//MAVLinkPacket mavpacket = getPacket(port);
-			//handlePacket(mavpacket);
+			MAVLinkPacket mavpacket = getPacket(port);
+			handlePacket(mavpacket);
 		}
 	}
 	

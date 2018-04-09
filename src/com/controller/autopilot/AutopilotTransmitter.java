@@ -45,7 +45,7 @@ public class AutopilotTransmitter extends Thread {
 		}*/		
 		//long startTime = System.currentTimeMillis();
 		//ArrayList<CustomMissionItem> mission = generateFromCSV();
-		try {
+		/*try {
 			while(true){
 				waitMillis(1000);
 				ArrayList<CustomMissionItem> mission = randomMissionGenerator(10, -35f, 150f, 100, 200);
@@ -64,6 +64,14 @@ public class AutopilotTransmitter extends Thread {
 				e.printStackTrace();
 			}
 		}*/
+		
+		ArrayList<CustomMissionItem> mission = randomMissionGenerator(200, 50, 10, 100, 200);
+		try {
+			sendMission(mission);
+		} catch (UnknownHostException | SocketException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		//flyToHere(new CustomMissionItem(45, 49.789f, 10.456f, 123));
 		//System.out.println("COMMAND DURATION: " + (System.currentTimeMillis()-startTime));
@@ -130,8 +138,7 @@ public class AutopilotTransmitter extends Thread {
 		waitMillis(50);
 		msg_mission_clear_all clear = new msg_mission_clear_all();
 		packet = clear.pack();
-		//send(packet);
-		sendUDP(packet);
+		send(packet);
 		System.out.println("old mission cleared");
 		
 		//SEND MISSION COUNT
@@ -139,8 +146,7 @@ public class AutopilotTransmitter extends Thread {
 		msg_mission_count count = new msg_mission_count();
 		count.count = missionCount + 1;
 		packet = count.pack();
-		//send(packet);
-		sendUDP(packet);
+		send(packet);
 		System.out.println("mission count sent");
 		
 		//SEND EMPTY MISSION ITEM
@@ -149,8 +155,7 @@ public class AutopilotTransmitter extends Thread {
 		item.command = MAV_CMD.MAV_CMD_NAV_WAYPOINT;
 		item.seq = 0;
 		packet = item.pack();
-		//send(packet);
-		sendUDP(packet);
+		send(packet);
 		System.out.println("empty mission item sent");
 		
 		//SEND MISSION ITEMS
@@ -164,8 +169,10 @@ public class AutopilotTransmitter extends Thread {
 			switch(mission.get(i).type){
 			case -3:
 				item.command = MAV_CMD.MAV_CMD_NAV_LAND;
+				item.param1 = 10; //abort altitude in meters
 			case -2:
 				item.command = MAV_CMD.MAV_CMD_NAV_TAKEOFF;
+				item.param1 = 10; //pitch angle in degrees
 				break;
 			case -1:
 				item.command = MAV_CMD.MAV_CMD_NAV_RETURN_TO_LAUNCH;
@@ -179,8 +186,7 @@ public class AutopilotTransmitter extends Thread {
 				break;
 			}
 			packet = item.pack();
-			//send(packet);
-			sendUDP(packet);
+			send(packet);
 			System.out.println("mission item " + (i+1) + " sent");
 		}
 		System.out.println("mission sent");
@@ -199,12 +205,16 @@ public class AutopilotTransmitter extends Thread {
 	public void clearMission() throws IOException{
 		msg_mission_clear_all clear = new msg_mission_clear_all();
 		MAVLinkPacket packet = clear.pack();
-		//send(packet);
-		sendUDP(packet);
+		send(packet);
 		System.out.println("mission cleared");
 	}
 	
 	public void send(MAVLinkPacket packet){
+		sendSerial(packet);
+		//sendUDP(packet);
+	}
+	
+	public void sendSerial(MAVLinkPacket packet){
 		try {
 			port.getOutputStream().write(packet.encodePacket());
 			//System.out.println("message sent, id: " + packet.msgid);
@@ -230,14 +240,6 @@ public class AutopilotTransmitter extends Thread {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
-	
-	public void sendUDP2(MAVLinkPacket packet) throws IOException{
-		int port = 14551;
-		InetAddress ipAdress = InetAddress.getByName("127.0.0.1");
-		Socket socket = new Socket(ipAdress, port);
-		OutputStream sOutputStream = socket.getOutputStream();
-		sOutputStream.write(packet.encodePacket());
 	}
 	
 	public ArrayList<CustomMissionItem> randomMissionGenerator(int size, float baseLat, float baseLong, int minAlt, int maxAlt){
