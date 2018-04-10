@@ -4,13 +4,13 @@ public class CustomMissionItem {
 	int type = 0; // 0=Waypoint -1=RTL -2=TakeOff -3=Land n=Loiter for n secs ...
 	float latitude = 0;
 	float longitude = 0;
-	int height = 0;
+	int altitude = 0;
 	
 	public CustomMissionItem(int type, float latitude, float longitude, int height){
 		this.type = type;
 		this.latitude = latitude;
 		this.longitude = longitude;
-		this.height = height;
+		this.altitude = height;
 	}
 
 	@Override
@@ -33,7 +33,7 @@ public class CustomMissionItem {
 			typeString = "Loiter(" + type +"s)";
 			break;
 		}
-		return typeString + "\tLat: " + latitude + "\tLong: " + longitude + "\tAlt: " + height;
+		return typeString + "\tLat: " + latitude + "\tLong: " + longitude + "\tAlt: " + altitude;
 	}
 	
 	

@@ -14,6 +14,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 import com.MAVLink.MAVLinkPacket;
+import com.MAVLink.common.msg_command_long;
 import com.MAVLink.common.msg_mission_clear_all;
 import com.MAVLink.common.msg_mission_count;
 import com.MAVLink.common.msg_mission_item;
@@ -65,13 +66,16 @@ public class AutopilotTransmitter extends Thread {
 			}
 		}*/
 		
-		ArrayList<CustomMissionItem> mission = randomMissionGenerator(200, 50, 10, 100, 200);
+		/*ArrayList<CustomMissionItem> mission = randomMissionGenerator(5, -35f, 150f, 100, 200);
 		try {
 			sendMission(mission);
 		} catch (UnknownHostException | SocketException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
+		
+		setHomePosition(new CustomMissionItem(0, -12.3456789f, 123.456789f, 123));
+		System.out.println(getHomePosition());
 		
 		//flyToHere(new CustomMissionItem(45, 49.789f, 10.456f, 123));
 		//System.out.println("COMMAND DURATION: " + (System.currentTimeMillis()-startTime));
@@ -80,16 +84,16 @@ public class AutopilotTransmitter extends Thread {
 	public void flyToHere(CustomMissionItem item) throws UnknownHostException, SocketException{
 		MAVLinkPacket packet;
 		//get current mission
-		MissionReceiver missionReceiver = new MissionReceiver(port);
-		boolean x = missionReceiver.missionReceived;
+		MissionGetter missionGetter = new MissionGetter(port);
+		boolean x = missionGetter.missionReceived;
 		while(!x){
 			waitMillis(20);
-			x = missionReceiver.missionReceived;
+			x = missionGetter.missionReceived;
 		}
-		ArrayList<CustomMissionItem> currentMission = missionReceiver.mission;
+		ArrayList<CustomMissionItem> currentMission = missionGetter.mission;
 		
 		//get current active mission sequence
-		int currentSequence = missionReceiver.sequence;
+		int currentSequence = missionGetter.sequence;
 		
 		//create new mission with cmi at sequence position
 		ArrayList<CustomMissionItem> newMission = new ArrayList<>(currentMission);
@@ -108,6 +112,26 @@ public class AutopilotTransmitter extends Thread {
 		CustomMissionItem rtl = new CustomMissionItem(-1, 0, 0, 0);
 		mission.add(rtl);
 		sendMission(mission);
+	}
+	
+	public CustomMissionItem getHomePosition(){
+		HomePointGetter hpg = new HomePointGetter(port);
+		boolean x = hpg.homeReceived;
+		while(!x){
+			waitMillis(20);
+			x = hpg.homeReceived;
+		}
+		return hpg.homePosition;
+	}
+	
+	public void setHomePosition(CustomMissionItem hp){
+		msg_command_long setHome = new msg_command_long();
+		setHome.command = MAV_CMD.MAV_CMD_DO_SET_HOME;
+		setHome.param1 = 0;
+		setHome.param5 = hp.latitude;
+		setHome.param6 = hp.longitude;
+		setHome.param7 = hp.altitude;
+		send(setHome.pack());
 	}
 	
 	public void udpTest(int port) throws UnknownHostException, SocketException{
@@ -149,14 +173,19 @@ public class AutopilotTransmitter extends Thread {
 		send(packet);
 		System.out.println("mission count sent");
 		
-		//SEND EMPTY MISSION ITEM
+		//SEND HOME POSITION
 		waitMillis(50);
 		item = new msg_mission_item();
-		item.command = MAV_CMD.MAV_CMD_NAV_WAYPOINT;
+		item.command = MAV_CMD.MAV_CMD_DO_SET_HOME;
+		//item.command = MAV_CMD.MAV_CMD_NAV_WAYPOINT;
 		item.seq = 0;
+		//item.param1 = 0; //0 = specified location; 1 = current location
+		//item.x = mission.get(0).latitude;
+		//item.y = mission.get(0).longitude;
+		//item.x = mission.get(0).altitude;
 		packet = item.pack();
 		send(packet);
-		System.out.println("empty mission item sent");
+		System.out.println("home position sent");
 		
 		//SEND MISSION ITEMS
 		for (int i = 0; i < missionCount; i++) {
@@ -165,7 +194,7 @@ public class AutopilotTransmitter extends Thread {
 			item.seq = i + 1;
 			item.x = mission.get(i).latitude;
 			item.y = mission.get(i).longitude;
-			item.z = mission.get(i).height;
+			item.z = mission.get(i).altitude;
 			switch(mission.get(i).type){
 			case -3:
 				item.command = MAV_CMD.MAV_CMD_NAV_LAND;

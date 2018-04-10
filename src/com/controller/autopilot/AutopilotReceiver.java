@@ -44,10 +44,17 @@ public class AutopilotReceiver extends Thread {
 
 	@Override
 	public void run() {
-		//readUDP();
-		while (true) {
-			MAVLinkPacket mavpacket = getPacket(port);
-			handlePacket(mavpacket);
+		boolean udpInsteadOfSerial = false;
+		//udpInsteadOfSerial = true;
+		
+		if(udpInsteadOfSerial){
+			readUDP();
+		}
+		else{
+			while (true) {
+				MAVLinkPacket mavpacket = getPacket(port);
+				handlePacket(mavpacket);
+			}
 		}
 	}
 	
@@ -71,15 +78,14 @@ public class AutopilotReceiver extends Thread {
 			Velocity velocity = new Velocity(new msg_vfr_hud(mavpacket));
 			msg_vfr_hud hud = new msg_vfr_hud(mavpacket);
 			//System.out.println("connected...");
-			System.out.println("Altitude: " + hud.alt + "m\tGroundspeed: " + hud.groundspeed + "m/s\tHeading: " + hud.heading);
+			//System.out.println("Altitude: " + hud.alt + "m\tGroundspeed: " + hud.groundspeed + "m/s\tHeading: " + hud.heading);
 			break;
 		case msg_command_ack.MAVLINK_MSG_ID_COMMAND_ACK:
 			msg_command_ack ack = new msg_command_ack(mavpacket);
-			//System.out.println(ack);
+			System.out.println(ack);
 			break;
 		case msg_home_position.MAVLINK_MSG_ID_HOME_POSITION:
-			msg_home_position hp = new msg_home_position();
-			//System.out.println("HOME POINT FOUND!");
+			msg_home_position hp = new msg_home_position(mavpacket);
 			//System.out.println(hp);
 			break;
 		case msg_mission_ack.MAVLINK_MSG_ID_MISSION_ACK:

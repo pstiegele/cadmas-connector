@@ -13,7 +13,7 @@ import com.MAVLink.common.msg_mission_request_list;
 import com.MAVLink.enums.MAV_CMD;
 import com.fazecast.jSerialComm.SerialPort;
 
-public class MissionReceiver extends Thread{
+public class MissionGetter extends Thread{
 	
 	private static SerialPort port;
 	static int sequence;
@@ -21,8 +21,8 @@ public class MissionReceiver extends Thread{
 	static boolean missionReceived = false;
 	
 	
-	public MissionReceiver(SerialPort port) {
-		MissionReceiver.port=port;
+	public MissionGetter(SerialPort port) {
+		MissionGetter.port=port;
 		start();
 	}
 
