@@ -34,6 +34,7 @@ import com.telemetry.Velocity;
 
 public class AutopilotReceiver extends Thread {
 
+	boolean udpInsteadOfSerial = false;
 	private SerialPort port;
 //	private long start=System.currentTimeMillis();
 //	private double counter = 0;
@@ -44,8 +45,7 @@ public class AutopilotReceiver extends Thread {
 
 	@Override
 	public void run() {
-		boolean udpInsteadOfSerial = false;
-		//udpInsteadOfSerial = true;
+		udpInsteadOfSerial = true;
 		
 		if(udpInsteadOfSerial){
 			readUDP();
@@ -78,7 +78,7 @@ public class AutopilotReceiver extends Thread {
 			Velocity velocity = new Velocity(new msg_vfr_hud(mavpacket));
 			msg_vfr_hud hud = new msg_vfr_hud(mavpacket);
 			//System.out.println("connected...");
-			//System.out.println("Altitude: " + hud.alt + "m\tGroundspeed: " + hud.groundspeed + "m/s\tHeading: " + hud.heading);
+			System.out.println("Altitude: " + hud.alt + "m\tGroundspeed: " + hud.groundspeed + "m/s\tHeading: " + hud.heading);
 			break;
 		case msg_command_ack.MAVLINK_MSG_ID_COMMAND_ACK:
 			msg_command_ack ack = new msg_command_ack(mavpacket);
@@ -152,7 +152,7 @@ public class AutopilotReceiver extends Thread {
 	
 	public void readUDP() {  
 		Parser parser = new Parser();
-		int port = 14550;
+		int port = 14551;
 	      try {
 		        DatagramSocket dSocket = new DatagramSocket(port);
 		        byte[] buffer = new byte[2048];

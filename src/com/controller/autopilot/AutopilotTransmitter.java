@@ -23,10 +23,13 @@ import com.MAVLink.enums.MAV_CMD;
 import com.fazecast.jSerialComm.SerialPort;
 
 public class AutopilotTransmitter extends Thread {
-
+	
+	boolean udpInsteadOfSerial = false;
 	private SerialPort port;
 
 	public AutopilotTransmitter(SerialPort port) {
+		udpInsteadOfSerial = true;
+		
 		this.port = port;
 		start();
 	}
@@ -34,51 +37,7 @@ public class AutopilotTransmitter extends Thread {
 	@Override
 	public void run(){
 		waitMillis(1500);
-		/*for(int i = 0; i < 100000; i++){
-			try {
-				//waitMillis(10);
-				udpTest(i);
-				//System.out.println(i);
-			} catch (UnknownHostException | SocketException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}*/		
-		//long startTime = System.currentTimeMillis();
-		//ArrayList<CustomMissionItem> mission = generateFromCSV();
-		/*try {
-			while(true){
-				waitMillis(1000);
-				ArrayList<CustomMissionItem> mission = randomMissionGenerator(10, -35f, 150f, 100, 200);
-				sendMission(mission);
-			}
-		} catch (UnknownHostException | SocketException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		/*while(true){
-			waitMillis(100);
-			try {
-				clearMission();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}*/
 		
-		/*ArrayList<CustomMissionItem> mission = randomMissionGenerator(5, -35f, 150f, 100, 200);
-		try {
-			sendMission(mission);
-		} catch (UnknownHostException | SocketException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
-		
-		setHomePosition(new CustomMissionItem(0, -12.3456789f, 123.456789f, 123));
-		System.out.println(getHomePosition());
-		
-		//flyToHere(new CustomMissionItem(45, 49.789f, 10.456f, 123));
-		//System.out.println("COMMAND DURATION: " + (System.currentTimeMillis()-startTime));
 	}
 	
 	public void flyToHere(CustomMissionItem item) throws UnknownHostException, SocketException{
@@ -124,7 +83,7 @@ public class AutopilotTransmitter extends Thread {
 		return hpg.homePosition;
 	}
 	
-	public void setHomePosition(CustomMissionItem hp){
+	public void setHomePosition(CustomMissionItem hp) throws UnknownHostException, SocketException{
 		msg_command_long setHome = new msg_command_long();
 		setHome.command = MAV_CMD.MAV_CMD_DO_SET_HOME;
 		setHome.param1 = 0;
@@ -173,19 +132,14 @@ public class AutopilotTransmitter extends Thread {
 		send(packet);
 		System.out.println("mission count sent");
 		
-		//SEND HOME POSITION
+		//SEND EMPTY MISSION ITEM
 		waitMillis(50);
 		item = new msg_mission_item();
-		item.command = MAV_CMD.MAV_CMD_DO_SET_HOME;
-		//item.command = MAV_CMD.MAV_CMD_NAV_WAYPOINT;
+		item.command = MAV_CMD.MAV_CMD_NAV_WAYPOINT;
 		item.seq = 0;
-		//item.param1 = 0; //0 = specified location; 1 = current location
-		//item.x = mission.get(0).latitude;
-		//item.y = mission.get(0).longitude;
-		//item.x = mission.get(0).altitude;
 		packet = item.pack();
 		send(packet);
-		System.out.println("home position sent");
+		System.out.println("empty mission item sent");
 		
 		//SEND MISSION ITEMS
 		for (int i = 0; i < missionCount; i++) {
@@ -238,9 +192,13 @@ public class AutopilotTransmitter extends Thread {
 		System.out.println("mission cleared");
 	}
 	
-	public void send(MAVLinkPacket packet){
-		sendSerial(packet);
-		//sendUDP(packet);
+	public void send(MAVLinkPacket packet) throws UnknownHostException, SocketException{
+		if(udpInsteadOfSerial){
+			sendUDP(packet);
+		}
+		else{
+			sendSerial(packet);
+		}
 	}
 	
 	public void sendSerial(MAVLinkPacket packet){
@@ -254,11 +212,11 @@ public class AutopilotTransmitter extends Thread {
 	}
 	
 	public void sendUDP(MAVLinkPacket packet) throws UnknownHostException, SocketException{
-		int port = 14551;
-		//InetAddress ipAdress = InetAddress.getByName("191.168.178.40");
-		InetAddress ipAdress = InetAddress.getByName("127.0.0.1");
-		//InetAddress ipAdress = InetAddress.getByName("10.0.2.2");
-		//InetAddress ipAdress = InetAddress.getByName("192.168.178.45");
+		int port = 14550;
+		InetAddress ipAdress;
+		//ipAdress = InetAddress.getByName("127.0.0.1");
+		//ipAdress = InetAddress.getByName("10.0.2.2");
+		ipAdress = InetAddress.getByName("192.168.178.58");
 		DatagramSocket dSocket = new DatagramSocket(port);
 		DatagramPacket sendPacket = new DatagramPacket(packet.encodePacket(), packet.encodePacket().length, ipAdress, port);
 		try {
