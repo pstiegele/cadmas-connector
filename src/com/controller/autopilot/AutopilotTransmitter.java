@@ -28,7 +28,7 @@ public class AutopilotTransmitter extends Thread {
 	private SerialPort port;
 
 	public AutopilotTransmitter(SerialPort port) {
-		udpInsteadOfSerial = true;
+		//udpInsteadOfSerial = true;
 		
 		this.port = port;
 		start();
@@ -37,7 +37,21 @@ public class AutopilotTransmitter extends Thread {
 	@Override
 	public void run(){
 		waitMillis(1500);
-		
+		//insert commands here
+	}
+	
+	public void arm() throws UnknownHostException, SocketException{
+		msg_command_long arm = new msg_command_long();
+		arm.command = MAV_CMD.MAV_CMD_COMPONENT_ARM_DISARM;
+		arm.param1 = 1;
+		send(arm.pack());
+	}
+	
+	public void disarm() throws UnknownHostException, SocketException{
+		msg_command_long disarm = new msg_command_long();
+		disarm.command = MAV_CMD.MAV_CMD_COMPONENT_ARM_DISARM;
+		disarm.param1 = 0;
+		send(disarm.pack());
 	}
 	
 	public void flyToHere(CustomMissionItem item) throws UnknownHostException, SocketException{

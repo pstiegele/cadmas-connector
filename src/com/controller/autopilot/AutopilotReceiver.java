@@ -45,7 +45,7 @@ public class AutopilotReceiver extends Thread {
 
 	@Override
 	public void run() {
-		udpInsteadOfSerial = true;
+		//udpInsteadOfSerial = true;
 		
 		if(udpInsteadOfSerial){
 			readUDP();
