@@ -21,6 +21,7 @@ import com.MAVLink.common.msg_mission_current;
 import com.MAVLink.common.msg_mission_item;
 import com.MAVLink.common.msg_mission_request;
 import com.MAVLink.common.msg_scaled_pressure;
+import com.MAVLink.common.msg_statustext;
 import com.MAVLink.common.msg_vfr_hud;
 import com.MAVLink.enums.MAV_CMD;
 import com.MAVLink.enums.MAV_CMD_ACK;
@@ -62,6 +63,9 @@ public class AutopilotReceiver extends Thread {
 		//System.out.println("mavpacket id: "+mavpacket.msgid);
 		
 		switch (mavpacket.msgid) {
+		case msg_statustext.MAVLINK_MSG_ID_STATUSTEXT:
+			System.out.println(new String(new msg_statustext(mavpacket).text));
+			break;
 		case msg_heartbeat.MAVLINK_MSG_ID_HEARTBEAT:
 			Heartbeat heartbeat = new Heartbeat(new msg_heartbeat(mavpacket));
 			break;
@@ -78,11 +82,11 @@ public class AutopilotReceiver extends Thread {
 			Velocity velocity = new Velocity(new msg_vfr_hud(mavpacket));
 			msg_vfr_hud hud = new msg_vfr_hud(mavpacket);
 			//System.out.println("connected...");
-			System.out.println("Altitude: " + hud.alt + "m\tGroundspeed: " + hud.groundspeed + "m/s\tHeading: " + hud.heading);
+			//System.out.println("Altitude: " + hud.alt + "m\tGroundspeed: " + hud.groundspeed + "m/s\tHeading: " + hud.heading);
 			break;
 		case msg_command_ack.MAVLINK_MSG_ID_COMMAND_ACK:
 			msg_command_ack ack = new msg_command_ack(mavpacket);
-			System.out.println(ack);
+			//System.out.println(ack);
 			break;
 		case msg_home_position.MAVLINK_MSG_ID_HOME_POSITION:
 			msg_home_position hp = new msg_home_position(mavpacket);
@@ -90,12 +94,12 @@ public class AutopilotReceiver extends Thread {
 			break;
 		case msg_mission_ack.MAVLINK_MSG_ID_MISSION_ACK:
 			msg_mission_ack ack2 = new msg_mission_ack(mavpacket);
-			System.out.println(ack2.toString());
+			//System.out.println(ack2.toString());
 			break;
 		case msg_mission_request.MAVLINK_MSG_ID_MISSION_REQUEST:
 			msg_mission_request req = new msg_mission_request(mavpacket);
 			//System.out.println("FOUND REQUEST!");
-			System.out.println(req.toString());
+			//System.out.println(req.toString());
 			break;
 		case msg_mission_item.MAVLINK_MSG_ID_MISSION_ITEM:
 			msg_mission_item item = new msg_mission_item(mavpacket);

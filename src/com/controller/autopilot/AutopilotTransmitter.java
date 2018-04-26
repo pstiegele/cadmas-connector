@@ -26,6 +26,8 @@ public class AutopilotTransmitter extends Thread {
 	
 	boolean udpInsteadOfSerial = false;
 	private SerialPort port;
+	
+	boolean inUse = true;
 
 	public AutopilotTransmitter(SerialPort port) {
 		//udpInsteadOfSerial = true;
@@ -36,12 +38,24 @@ public class AutopilotTransmitter extends Thread {
 
 	@Override
 	public void run(){
-		waitMillis(1500);
-		//insert commands here
+		waitMillis(5000);
+		inUse = false;
+		
+		//INSERT COMMANDS HERE
+		
+		waitMillis(2000);
+		try {
+			calibrate();
+		} catch (UnknownHostException | SocketException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("done");
 	}
 	
 	//PREFLIGHT CALIBRATION (airspeed + baro)
 	public void calibrate() throws UnknownHostException, SocketException{
+		inUse = true;
 		msg_command_long cali;
 		
 		//ground pressure
@@ -55,7 +69,7 @@ public class AutopilotTransmitter extends Thread {
 		cali = new msg_command_long();
 		cali.command = MAV_CMD.MAV_CMD_PREFLIGHT_CALIBRATION;
 		cali.param6 = 2;
-		send(cali.pack());
+		//send(cali.pack());
 		
 		waitMillis(100);
 		//barometer temperature
@@ -63,20 +77,35 @@ public class AutopilotTransmitter extends Thread {
 		cali.command = MAV_CMD.MAV_CMD_PREFLIGHT_CALIBRATION;
 		cali.param7 = 3;
 		send(cali.pack());
+		
+		waitMillis(1000);
+		//stop calibration
+		cali = new msg_command_long();
+		cali.command = MAV_CMD.MAV_CMD_PREFLIGHT_CALIBRATION;
+		cali.param3 = 0;
+		cali.param6 = 0;
+		cali.param7 = 0;
+		//send(cali.pack());
+		
+		inUse = false;
 	}
 	
 	public void arm() throws UnknownHostException, SocketException{
+		inUse = true;
 		msg_command_long arm = new msg_command_long();
 		arm.command = MAV_CMD.MAV_CMD_COMPONENT_ARM_DISARM;
 		arm.param1 = 1;
 		send(arm.pack());
+		inUse = false;
 	}
 	
 	public void disarm() throws UnknownHostException, SocketException{
+		inUse = true;
 		msg_command_long disarm = new msg_command_long();
 		disarm.command = MAV_CMD.MAV_CMD_COMPONENT_ARM_DISARM;
 		disarm.param1 = 0;
 		send(disarm.pack());
+		inUse = false;
 	}
 	
 	public void flyToHere(CustomMissionItem item) throws UnknownHostException, SocketException{
@@ -106,10 +135,12 @@ public class AutopilotTransmitter extends Thread {
 	}
 	
 	public void returnToLaunch() throws UnknownHostException, SocketException{
+		inUse = true;
 		ArrayList<CustomMissionItem> mission = new ArrayList<>();
 		CustomMissionItem rtl = new CustomMissionItem(-1, 0, 0, 0);
 		mission.add(rtl);
 		sendMission(mission);
+		inUse = false;
 	}
 	
 	public CustomMissionItem getHomePosition(){
