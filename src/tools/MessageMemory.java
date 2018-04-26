@@ -33,13 +33,13 @@ public class MessageMemory<T> extends ObservableListWrapper<T> {
 	@Override
 	public T get(int index) {
 		// TODO Auto-generated method stub
-		return null;
+		return super.get(index);
 	}
 
 	@Override
 	public int size() {
 		// TODO Auto-generated method stub
-		return 0;
+		return super.size();
 	}
 
 
