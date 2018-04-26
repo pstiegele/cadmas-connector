@@ -40,6 +40,31 @@ public class AutopilotTransmitter extends Thread {
 		//insert commands here
 	}
 	
+	//PREFLIGHT CALIBRATION (airspeed + baro)
+	public void calibrate() throws UnknownHostException, SocketException{
+		msg_command_long cali;
+		
+		//ground pressure
+		cali = new msg_command_long();
+		cali.command = MAV_CMD.MAV_CMD_PREFLIGHT_CALIBRATION;
+		cali.param3 = 1;
+		send(cali.pack());
+		
+		waitMillis(100);
+		//airspeed
+		cali = new msg_command_long();
+		cali.command = MAV_CMD.MAV_CMD_PREFLIGHT_CALIBRATION;
+		cali.param6 = 2;
+		send(cali.pack());
+		
+		waitMillis(100);
+		//barometer temperature
+		cali = new msg_command_long();
+		cali.command = MAV_CMD.MAV_CMD_PREFLIGHT_CALIBRATION;
+		cali.param7 = 3;
+		send(cali.pack());
+	}
+	
 	public void arm() throws UnknownHostException, SocketException{
 		msg_command_long arm = new msg_command_long();
 		arm.command = MAV_CMD.MAV_CMD_COMPONENT_ARM_DISARM;
