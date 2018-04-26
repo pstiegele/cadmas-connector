@@ -1,4 +1,4 @@
 git pull
 ant
 cd dist
-java -jar Skywalker-Connector.jar
+java -jar Ardupilot Connector.jar

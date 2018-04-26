@@ -205,6 +205,7 @@ public class AutopilotTransmitter extends Thread {
 			default:
 				item.command = MAV_CMD.MAV_CMD_NAV_LOITER_TIME;
 				item.param1 = mission.get(i).type; //loiter time in seconds
+				item.param3 = 50; //loiter radius in meters
 				break;
 			}
 			packet = item.pack();

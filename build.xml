@@ -3,7 +3,7 @@
 		Create a Java Project (JAR) with Ant build script
 	</description>
 
-	<property name="projectName" value="Skywalker-Connector" />
+	<property name="projectName" value="Ardupilot Connector" />
 
 	<!-- Java sources -->
 	<property name="src.dir" location="src" />
