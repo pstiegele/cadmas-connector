@@ -21,10 +21,10 @@ public class Attitude implements TelemetryMessage{
 	}
 	
 	@Override
-	public String getJSON() {
+	public JSONObject getJSON() {
 		JSONObject res = new JSONObject();
 		res.put("pitch", pitch).put("roll", roll).put("heading", heading);
-		return res.toString();
+		return res;
 	}
 
 

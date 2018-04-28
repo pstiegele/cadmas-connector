@@ -1,11 +1,10 @@
 package com.telemetry;
 
-import tools.MessageMemory;
-import com.MAVLink.Messages.MAVLinkMessage;
+import org.json.JSONObject;
 
 public interface TelemetryMessage{
 	
-	public abstract String getJSON();
+	public abstract JSONObject getJSON();
 	public abstract String getSocketMethodName();
 	public abstract long getTimestamp();
 

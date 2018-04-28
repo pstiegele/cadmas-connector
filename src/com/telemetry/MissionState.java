@@ -1,5 +1,7 @@
 package com.telemetry;
 
+import org.json.JSONObject;
+
 import com.MAVLink.common.msg_mission_current;
 
 import tools.MessageMemory;
@@ -16,9 +18,10 @@ public class MissionState implements TelemetryMessage{
 	}
 
 	@Override
-	public String getJSON() {
-		// TODO Auto-generated method stub
-		return null;
+	public JSONObject getJSON() {
+		JSONObject res = new JSONObject();
+		res.put("timestamp", timestamp).put("currentItem", currentItem);
+		return res;
 	}
 
 	public static MessageMemory<MissionState> getMessageMemory() {

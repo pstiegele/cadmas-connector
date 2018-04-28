@@ -1,5 +1,7 @@
 package com.telemetry;
 
+import org.json.JSONObject;
+
 import com.MAVLink.common.msg_battery_status;
 
 import tools.MessageMemory;
@@ -23,9 +25,10 @@ public class Battery implements TelemetryMessage{
 	}
 
 	@Override
-	public String getJSON() {
-		// TODO Auto-generated method stub
-		return null;
+	public JSONObject getJSON() {
+		JSONObject res = new JSONObject();
+		res.put("timestamp", timestamp).put("voltage", voltage).put("current", current).put("percentage", percentage);
+		return res;
 	}
 
 	public static MessageMemory<Battery> getMessageMemory() {

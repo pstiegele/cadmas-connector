@@ -1,8 +1,12 @@
 package com.telemetry;
 
 
+import org.json.JSONObject;
+
 import com.MAVLink.common.msg_heartbeat;
 
+import jdk.nashorn.internal.parser.JSONParser;
+import jdk.nashorn.internal.runtime.JSONFunctions;
 import tools.MessageMemory;
 
 public class Heartbeat implements TelemetryMessage{
@@ -19,8 +23,10 @@ public class Heartbeat implements TelemetryMessage{
 	}
 	
 	@Override
-	public String getJSON() {
-		return null;
+	public JSONObject getJSON() {
+		JSONObject res = new JSONObject();
+		res.put("timestamp", timestamp).put("baseMode", baseMode).put("customMode", customMode);
+		return res;
 	}
 
 	public static MessageMemory<Heartbeat> getMessageMemory() {

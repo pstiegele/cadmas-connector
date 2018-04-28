@@ -9,12 +9,23 @@ import javax.websocket.SendResult;
 
 import org.json.JSONObject;
 
+import com.MAVLink.common.msg_attitude;
+import com.MAVLink.common.msg_battery_status;
+import com.MAVLink.common.msg_global_position_int;
+import com.MAVLink.common.msg_heartbeat;
+import com.MAVLink.common.msg_mission_current;
+import com.MAVLink.common.msg_vfr_hud;
 import com.controller.messageHandler.MessageHandler;
 import com.controller.socketConnection.CadmasClientEndpoint.SocketMessageHandler;
 import com.telecommand.Arm;
 import com.telecommand.Mission;
+import com.telemetry.Attitude;
+import com.telemetry.Battery;
 import com.telemetry.Heartbeat;
+import com.telemetry.MissionState;
+import com.telemetry.Position;
 import com.telemetry.TelemetryMessage;
+import com.telemetry.Velocity;
 
 public class SocketConnection extends Thread {
 
@@ -44,15 +55,24 @@ public class SocketConnection extends Thread {
 		CountDownLatch latch = new CountDownLatch(1);
 		try {
 			connect();
-			while (!clientEndPoint.userSession.isOpen())
-				;
+			while (!clientEndPoint.userSession.isOpen());
 			System.out.println("is Open");
-			send(new Heartbeat(null));
+			test();
 			latch.await();
 
 		} catch (URISyntaxException | InterruptedException e) {
 			throw new RuntimeException(e);
 		}
+	}
+	
+	
+	private void test() {
+		msg_vfr_hud vfr = new msg_vfr_hud();
+		vfr.groundspeed = 1;
+		vfr.airspeed = 2;
+		vfr.climb = 3;
+		vfr.alt = 4;
+		new Velocity(vfr);
 	}
 
 	private SocketMessageHandler getSocketMessageHandler() {
@@ -93,7 +113,7 @@ public class SocketConnection extends Thread {
 	 */
 	private String createMessage(TelemetryMessage telemetryMSG) {
 		JSONObject msg = new JSONObject();
-		msg.put("time", telemetryMSG.getTimestamp()).put("id", getMsgID()).put("apikey", apikey).put("method", telemetryMSG.getSocketMethodName())
+		msg.put("id", getMsgID()).put("method", telemetryMSG.getSocketMethodName())
 				.put("payload", telemetryMSG.getJSON());
 		return msg.toString();
 	}
@@ -111,7 +131,8 @@ public class SocketConnection extends Thread {
 	}
 
 	public void send(TelemetryMessage msg) {
-		boolean sending = false;
+		System.out.println("send msg: "+msg);
+		boolean sending = true;
 		if (sending) {
 
 			clientEndPoint.userSession.getAsyncRemote()

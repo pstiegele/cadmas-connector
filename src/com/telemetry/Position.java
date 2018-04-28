@@ -1,5 +1,7 @@
 package com.telemetry;
 
+import org.json.JSONObject;
+
 import com.MAVLink.common.msg_global_position_int;
 
 import tools.MessageMemory;
@@ -18,9 +20,10 @@ public class Position implements TelemetryMessage{
 		messageMemory.add(this);
 	}
 	@Override
-	public String getJSON() {
-		// TODO Auto-generated method stub
-		return null;
+	public JSONObject getJSON() {
+		JSONObject res = new JSONObject();
+		res.put("timestamp", timestamp).put("latitude", latitude).put("longitude", longitude).put("altitude",altitude);
+		return res;
 	}
 
 	public static MessageMemory<Position> getMessageMemory() {
