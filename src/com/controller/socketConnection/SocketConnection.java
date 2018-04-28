@@ -100,11 +100,12 @@ public class SocketConnection extends Thread {
 
 	public void connect() throws URISyntaxException {
 		String uri = System.getenv().get("CADMAS_URI");
+		String apikey = System.getenv().get("CADMAS_APIKEY");
 		if (uri == null) {
-			uri = "ws://localhost/connector";
+			uri = "ws://localhost/connector?apikey="+apikey;
 			// uri = "wss://cadmasapp.raapvdzcqu.eu-west-1.elasticbeanstalk.com/connector";
 		}
-		clientEndPoint = new CadmasClientEndpoint(new URI(uri));
+		clientEndPoint = new CadmasClientEndpoint(new URI(uri),apikey);
 		clientEndPoint.addMessageHandler(getSocketMessageHandler());
 
 	}

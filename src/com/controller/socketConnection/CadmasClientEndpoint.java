@@ -1,29 +1,35 @@
 package com.controller.socketConnection;
 
 import java.net.URI;
+import java.util.ArrayList;
 
 import javax.websocket.ClientEndpoint;
+import javax.websocket.ClientEndpointConfig;
 import javax.websocket.CloseReason;
 import javax.websocket.ContainerProvider;
+import javax.websocket.Endpoint;
+import javax.websocket.EndpointConfig;
 import javax.websocket.OnClose;
 import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.WebSocketContainer;
 
-import org.json.JSONObject;
-
 
 
 @ClientEndpoint
-public class CadmasClientEndpoint {
+public class CadmasClientEndpoint extends Endpoint{
 	Session userSession = null;
 	private SocketMessageHandler socketMessageHandler;
 
-	public CadmasClientEndpoint(URI endpointURI) {
+	public CadmasClientEndpoint(URI endpointURI, String apikey) {
 			try {
 				WebSocketContainer container = ContainerProvider.getWebSocketContainer();
-				container.connectToServer(this, endpointURI);
+				ArrayList<String> protocol = new ArrayList<>();
+				protocol.add(apikey);
+				ClientEndpointConfig cec = ClientEndpointConfig.Builder.create().preferredSubprotocols(protocol).build();
+				container.connectToServer(this, cec, endpointURI);
+				
 			} catch (Exception e) {
 				e.printStackTrace();
 				System.out.println("Cannot connect to Cadmas. Try again.");
@@ -38,7 +44,7 @@ public class CadmasClientEndpoint {
      *            the userSession which is opened.
      */
     @OnOpen
-    public void onOpen(Session userSession) {
+    public void onOpen(Session userSession, EndpointConfig config) {
         this.userSession = userSession;
     }
  
@@ -91,4 +97,6 @@ public class CadmasClientEndpoint {
 	public static interface SocketMessageHandler {
 		public void handleMessage(String message);
 	}
+
+	
 }
