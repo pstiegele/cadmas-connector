@@ -19,7 +19,9 @@ import com.MAVLink.common.msg_mission_clear_all;
 import com.MAVLink.common.msg_mission_count;
 import com.MAVLink.common.msg_mission_item;
 import com.MAVLink.common.msg_mission_set_current;
+import com.MAVLink.common.msg_set_mode;
 import com.MAVLink.enums.MAV_CMD;
+import com.MAVLink.enums.MAV_MODE_FLAG;
 import com.fazecast.jSerialComm.SerialPort;
 
 public class AutopilotTransmitter extends Thread {
@@ -44,13 +46,34 @@ public class AutopilotTransmitter extends Thread {
 		//INSERT COMMANDS HERE
 		
 		waitMillis(2000);
-		try {
-			calibrate();
-		} catch (UnknownHostException | SocketException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		System.out.println("done");
+	}
+	
+	public void setMode(int mode) throws UnknownHostException, SocketException{
+//		MANUAL        = 0
+//	    CIRCLE        = 1
+//	    STABILIZE     = 2
+//	    TRAINING      = 3
+//	    ACRO          = 4
+//	    FLY_BY_WIRE_A = 5
+//	    FLY_BY_WIRE_B = 6
+//	    CRUISE        = 7
+//	    AUTOTUNE      = 8
+//	    AUTO          = 10
+//	    RTL           = 11
+//	    LOITER        = 12
+//	    AVOID_ADSB    = 14
+//	    GUIDED        = 15
+//	    INITIALISING  = 16
+//	    QSTABILIZE    = 17
+//	    QHOVER        = 18
+//	    QLOITER       = 19
+//	    QLAND         = 20
+//	    QRTL          = 21
+		msg_set_mode changeMode = new msg_set_mode();
+		changeMode.base_mode = MAV_MODE_FLAG.MAV_MODE_FLAG_CUSTOM_MODE_ENABLED;
+		changeMode.custom_mode = mode;
+		send(changeMode.pack());
 	}
 	
 	//PREFLIGHT CALIBRATION (airspeed + baro)

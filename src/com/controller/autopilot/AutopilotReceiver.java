@@ -86,7 +86,7 @@ public class AutopilotReceiver extends Thread {
 			break;
 		case msg_command_ack.MAVLINK_MSG_ID_COMMAND_ACK:
 			msg_command_ack ack = new msg_command_ack(mavpacket);
-			//System.out.println(ack);
+			System.out.println(ack);
 			break;
 		case msg_home_position.MAVLINK_MSG_ID_HOME_POSITION:
 			msg_home_position hp = new msg_home_position(mavpacket);
