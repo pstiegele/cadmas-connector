@@ -65,7 +65,8 @@ public class AutopilotReceiver extends Thread {
 		
 		switch (mavpacket.msgid) {
 		case msg_statustext.MAVLINK_MSG_ID_STATUSTEXT:
-			System.out.println(new String(new msg_statustext(mavpacket).text));
+			CommandAck statusText = new CommandAck(new msg_statustext(mavpacket));
+			//System.out.println(new String(new msg_statustext(mavpacket).text));
 			break;
 		case msg_heartbeat.MAVLINK_MSG_ID_HEARTBEAT:
 			Heartbeat heartbeat = new Heartbeat(new msg_heartbeat(mavpacket));
@@ -87,6 +88,7 @@ public class AutopilotReceiver extends Thread {
 			break;
 		case msg_command_ack.MAVLINK_MSG_ID_COMMAND_ACK:
 			CommandAck commandAck = new CommandAck(new msg_command_ack(mavpacket));
+			//System.out.println(new msg_command_ack(mavpacket).toString());
 			break;
 		case msg_home_position.MAVLINK_MSG_ID_HOME_POSITION:
 			msg_home_position hp = new msg_home_position(mavpacket);

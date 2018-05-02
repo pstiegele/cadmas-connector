@@ -22,6 +22,7 @@ import com.MAVLink.common.msg_mission_item;
 import com.MAVLink.common.msg_mission_set_current;
 import com.MAVLink.common.msg_set_mode;
 import com.MAVLink.enums.MAV_CMD;
+import com.MAVLink.enums.MAV_COMPONENT;
 import com.MAVLink.enums.MAV_MODE_FLAG;
 import com.MAVLink.enums.MAV_RESULT;
 import com.fazecast.jSerialComm.SerialPort;
@@ -45,10 +46,11 @@ public class AutopilotTransmitter extends Thread {
 	public void run(){
 		waitMillis(5000);
 		inUse = false;
-		
+
 		//INSERT COMMANDS HERE
 		System.out.println("start");
 		waitMillis(2000);
+		
 	}
 	
 	public int setMode(int mode) throws UnknownHostException, SocketException{
@@ -138,22 +140,66 @@ public class AutopilotTransmitter extends Thread {
 		inUse = false;
 	}
 	
-	public void arm() throws UnknownHostException, SocketException{
+	public int arm() throws UnknownHostException, SocketException{
 		inUse = true;
 		msg_command_long arm = new msg_command_long();
 		arm.command = MAV_CMD.MAV_CMD_COMPONENT_ARM_DISARM;
 		arm.param1 = 1;
-		send(arm.pack());
-		inUse = false;
+		int attempts = 3;
+		int maxTime = 500;
+		for(int i = 0; i < attempts; i++){
+			int arraySize = CommandAck.getMessageMemory().size();
+			long sendTime = System.currentTimeMillis();
+			send(arm.pack());
+			while(System.currentTimeMillis() - sendTime < maxTime){
+				waitMillis(20);
+				if(CommandAck.getMessageMemory().size() > arraySize){
+					if(CommandAck.getMessageMemory().get(arraySize).getCommand() == MAV_CMD.MAV_CMD_COMPONENT_ARM_DISARM){
+						if(CommandAck.getMessageMemory().get(arraySize).getResult() == MAV_RESULT.MAV_RESULT_ACCEPTED){
+							return MAV_RESULT.MAV_RESULT_ACCEPTED;
+						}
+						else if(i == 2){
+							return CommandAck.getMessageMemory().get(arraySize).getResult();
+						}
+					}
+					if(CommandAck.getMessageMemory().size() > arraySize){
+						arraySize += 1;
+					}
+				}
+			}
+		}
+		return MAV_RESULT.MAV_RESULT_FAILED;
 	}
 	
-	public void disarm() throws UnknownHostException, SocketException{
+	public int disarm() throws UnknownHostException, SocketException{
 		inUse = true;
 		msg_command_long disarm = new msg_command_long();
 		disarm.command = MAV_CMD.MAV_CMD_COMPONENT_ARM_DISARM;
 		disarm.param1 = 0;
-		send(disarm.pack());
-		inUse = false;
+		int attempts = 3;
+		int maxTime = 500;
+		for(int i = 0; i < attempts; i++){
+			int arraySize = CommandAck.getMessageMemory().size();
+			long sendTime = System.currentTimeMillis();
+			send(disarm.pack());
+			while(System.currentTimeMillis() - sendTime < maxTime){
+				waitMillis(20);
+				if(CommandAck.getMessageMemory().size() > arraySize){
+					if(CommandAck.getMessageMemory().get(arraySize).getCommand() == MAV_CMD.MAV_CMD_COMPONENT_ARM_DISARM){
+						if(CommandAck.getMessageMemory().get(arraySize).getResult() == MAV_RESULT.MAV_RESULT_ACCEPTED){
+							return MAV_RESULT.MAV_RESULT_ACCEPTED;
+						}
+						else if(i == 2){
+							return CommandAck.getMessageMemory().get(arraySize).getResult();
+						}
+					}
+					if(CommandAck.getMessageMemory().size() > arraySize){
+						arraySize += 1;
+					}
+				}
+			}
+		}
+		return MAV_RESULT.MAV_RESULT_FAILED;
 	}
 	
 	public void flyToHere(CustomMissionItem item) throws UnknownHostException, SocketException{

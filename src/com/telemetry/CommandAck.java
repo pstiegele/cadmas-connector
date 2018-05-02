@@ -3,6 +3,8 @@ package com.telemetry;
 import org.json.JSONObject;
 
 import com.MAVLink.common.msg_command_ack;
+import com.MAVLink.common.msg_statustext;
+import com.MAVLink.enums.MAV_CMD;
 
 import tools.MessageMemory;
 
@@ -16,6 +18,21 @@ public class CommandAck implements TelemetryMessage{
 		timestamp=System.currentTimeMillis();
 		command = message.command;
 		result = message.result;
+		messageMemory.add(this);
+	}
+	
+	public CommandAck(msg_statustext status) {
+		timestamp=System.currentTimeMillis();
+		switch(new String(new String(status.text).replaceAll("\0", "").getBytes())){
+		case "Throttle armed":
+			command = MAV_CMD.MAV_CMD_COMPONENT_ARM_DISARM;
+			result = 0;
+			break;
+		case "Throttle disarmed":
+			command = MAV_CMD.MAV_CMD_COMPONENT_ARM_DISARM;
+			result = 0;
+			break;
+		}
 		messageMemory.add(this);
 	}
 	
