@@ -28,6 +28,7 @@ import com.MAVLink.enums.MAV_CMD_ACK;
 import com.fazecast.jSerialComm.SerialPort;
 import com.telemetry.Attitude;
 import com.telemetry.Battery;
+import com.telemetry.CommandAck;
 import com.telemetry.Heartbeat;
 import com.telemetry.MissionState;
 import com.telemetry.Position;
@@ -85,8 +86,7 @@ public class AutopilotReceiver extends Thread {
 			//System.out.println("Altitude: " + hud.alt + "m\tGroundspeed: " + hud.groundspeed + "m/s\tHeading: " + hud.heading);
 			break;
 		case msg_command_ack.MAVLINK_MSG_ID_COMMAND_ACK:
-			msg_command_ack ack = new msg_command_ack(mavpacket);
-			System.out.println(ack);
+			CommandAck commandAck = new CommandAck(new msg_command_ack(mavpacket));
 			break;
 		case msg_home_position.MAVLINK_MSG_ID_HOME_POSITION:
 			msg_home_position hp = new msg_home_position(mavpacket);

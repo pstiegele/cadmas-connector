@@ -4,8 +4,6 @@ import java.util.ArrayList;
 
 import com.sun.javafx.collections.ObservableListWrapper;
 
-import javafx.collections.ObservableList;
-
 public class MessageMemory<T> extends ObservableListWrapper<T> {
 	
 	

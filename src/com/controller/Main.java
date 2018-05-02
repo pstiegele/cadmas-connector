@@ -11,9 +11,9 @@ public class Main {
 
 	public static void main(String[] args) {
 		
-		MessageHandler.getMessageHandler();
+		//MessageHandler.getMessageHandler();
 		Autopilot.getAutopilot();
-		SocketConnection.getSocketConnection();
+		//SocketConnection.getSocketConnection();
 		
 	}
 

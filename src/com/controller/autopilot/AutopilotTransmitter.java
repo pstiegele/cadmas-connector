@@ -14,6 +14,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 import com.MAVLink.MAVLinkPacket;
+import com.MAVLink.common.msg_command_ack;
 import com.MAVLink.common.msg_command_long;
 import com.MAVLink.common.msg_mission_clear_all;
 import com.MAVLink.common.msg_mission_count;
@@ -22,7 +23,9 @@ import com.MAVLink.common.msg_mission_set_current;
 import com.MAVLink.common.msg_set_mode;
 import com.MAVLink.enums.MAV_CMD;
 import com.MAVLink.enums.MAV_MODE_FLAG;
+import com.MAVLink.enums.MAV_RESULT;
 import com.fazecast.jSerialComm.SerialPort;
+import com.telemetry.CommandAck;
 
 public class AutopilotTransmitter extends Thread {
 	
@@ -44,12 +47,11 @@ public class AutopilotTransmitter extends Thread {
 		inUse = false;
 		
 		//INSERT COMMANDS HERE
-		
+		System.out.println("start");
 		waitMillis(2000);
-		System.out.println("done");
 	}
 	
-	public void setMode(int mode) throws UnknownHostException, SocketException{
+	public int setMode(int mode) throws UnknownHostException, SocketException{
 //		MANUAL        = 0
 //	    CIRCLE        = 1
 //	    STABILIZE     = 2
@@ -73,7 +75,30 @@ public class AutopilotTransmitter extends Thread {
 		msg_set_mode changeMode = new msg_set_mode();
 		changeMode.base_mode = MAV_MODE_FLAG.MAV_MODE_FLAG_CUSTOM_MODE_ENABLED;
 		changeMode.custom_mode = mode;
-		send(changeMode.pack());
+		int attempts = 3;
+		int maxTime = 500;
+		for(int i = 0; i < attempts; i++){
+			int arraySize = CommandAck.getMessageMemory().size();
+			long sendTime = System.currentTimeMillis();
+			send(changeMode.pack());
+			while(System.currentTimeMillis() - sendTime < maxTime){
+				waitMillis(20);
+				if(CommandAck.getMessageMemory().size() > arraySize){
+					if(CommandAck.getMessageMemory().get(arraySize).getCommand() == msg_set_mode.MAVLINK_MSG_ID_SET_MODE){
+						if(CommandAck.getMessageMemory().get(arraySize).getResult() == MAV_RESULT.MAV_RESULT_ACCEPTED){
+							return MAV_RESULT.MAV_RESULT_ACCEPTED;
+						}
+						else if(i == 2){
+							return CommandAck.getMessageMemory().get(arraySize).getResult();
+						}
+					}
+					if(CommandAck.getMessageMemory().size() > arraySize){
+						arraySize += 1;
+					}
+				}
+			}
+		}
+		return MAV_RESULT.MAV_RESULT_FAILED;
 	}
 	
 	//PREFLIGHT CALIBRATION (airspeed + baro)
@@ -287,6 +312,7 @@ public class AutopilotTransmitter extends Thread {
 	}
 	
 	public void send(MAVLinkPacket packet) throws UnknownHostException, SocketException{
+		//System.out.println("sending message");
 		if(udpInsteadOfSerial){
 			sendUDP(packet);
 		}
