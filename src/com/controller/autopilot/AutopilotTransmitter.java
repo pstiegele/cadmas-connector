@@ -33,9 +33,7 @@ public class AutopilotTransmitter extends Thread {
 	boolean udpInsteadOfSerial = false;
 	private SerialPort port;
 	
-	boolean inUse = true;
-
-	public AutopilotTransmitter(SerialPort port) {
+	AutopilotTransmitter(SerialPort port) {
 		//udpInsteadOfSerial = true;
 		
 		this.port = port;
@@ -45,12 +43,11 @@ public class AutopilotTransmitter extends Thread {
 	@Override
 	public void run(){
 		waitMillis(5000);
-		inUse = false;
+		
 
 		//INSERT COMMANDS HERE
 		System.out.println("start");
 		waitMillis(2000);
-		
 	}
 	
 	public int setMode(int mode) throws UnknownHostException, SocketException{
@@ -104,44 +101,41 @@ public class AutopilotTransmitter extends Thread {
 	}
 	
 	//PREFLIGHT CALIBRATION (airspeed + baro)
-	public void calibrate() throws UnknownHostException, SocketException{
-		inUse = true;
+	public int calibrate() throws UnknownHostException, SocketException{
 		msg_command_long cali;
 		
 		//ground pressure
 		cali = new msg_command_long();
 		cali.command = MAV_CMD.MAV_CMD_PREFLIGHT_CALIBRATION;
 		cali.param3 = 1;
-		send(cali.pack());
-		
-		waitMillis(100);
-		//airspeed
-		cali = new msg_command_long();
-		cali.command = MAV_CMD.MAV_CMD_PREFLIGHT_CALIBRATION;
-		cali.param6 = 2;
-		//send(cali.pack());
-		
-		waitMillis(100);
-		//barometer temperature
-		cali = new msg_command_long();
-		cali.command = MAV_CMD.MAV_CMD_PREFLIGHT_CALIBRATION;
-		cali.param7 = 3;
-		send(cali.pack());
-		
-		waitMillis(1000);
-		//stop calibration
-		cali = new msg_command_long();
-		cali.command = MAV_CMD.MAV_CMD_PREFLIGHT_CALIBRATION;
-		cali.param3 = 0;
-		cali.param6 = 0;
-		cali.param7 = 0;
-		//send(cali.pack());
-		
-		inUse = false;
+		int attempts = 3;
+		int maxTime = 10000;
+		for(int i = 0; i < attempts; i++){
+			int arraySize = CommandAck.getMessageMemory().size();
+			long sendTime = System.currentTimeMillis();
+			send(cali.pack());
+			while(System.currentTimeMillis() - sendTime < maxTime){
+				waitMillis(20);
+				if(CommandAck.getMessageMemory().size() > arraySize){
+					if(CommandAck.getMessageMemory().get(arraySize).getCommand() == MAV_CMD.MAV_CMD_PREFLIGHT_CALIBRATION){
+						if(CommandAck.getMessageMemory().get(arraySize).getResult() == MAV_RESULT.MAV_RESULT_ACCEPTED){
+							return MAV_RESULT.MAV_RESULT_ACCEPTED;
+						}
+						else if(i == 2){
+							return CommandAck.getMessageMemory().get(arraySize).getResult();
+						}
+					}
+					if(CommandAck.getMessageMemory().size() > arraySize){
+						arraySize += 1;
+					}
+				}
+			}
+		}
+		return MAV_RESULT.MAV_RESULT_FAILED;
 	}
 	
 	public int arm() throws UnknownHostException, SocketException{
-		inUse = true;
+		
 		msg_command_long arm = new msg_command_long();
 		arm.command = MAV_CMD.MAV_CMD_COMPONENT_ARM_DISARM;
 		arm.param1 = 1;
@@ -172,7 +166,7 @@ public class AutopilotTransmitter extends Thread {
 	}
 	
 	public int disarm() throws UnknownHostException, SocketException{
-		inUse = true;
+		
 		msg_command_long disarm = new msg_command_long();
 		disarm.command = MAV_CMD.MAV_CMD_COMPONENT_ARM_DISARM;
 		disarm.param1 = 0;
@@ -229,12 +223,12 @@ public class AutopilotTransmitter extends Thread {
 	}
 	
 	public void returnToLaunch() throws UnknownHostException, SocketException{
-		inUse = true;
+		
 		ArrayList<CustomMissionItem> mission = new ArrayList<>();
 		CustomMissionItem rtl = new CustomMissionItem(-1, 0, 0, 0);
 		mission.add(rtl);
 		sendMission(mission);
-		inUse = false;
+		
 	}
 	
 	public CustomMissionItem getHomePosition(){

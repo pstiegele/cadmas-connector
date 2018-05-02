@@ -5,6 +5,7 @@ import org.json.JSONObject;
 import com.MAVLink.common.msg_command_ack;
 import com.MAVLink.common.msg_statustext;
 import com.MAVLink.enums.MAV_CMD;
+import com.MAVLink.enums.MAV_RESULT;
 
 import tools.MessageMemory;
 
@@ -26,11 +27,19 @@ public class CommandAck implements TelemetryMessage{
 		switch(new String(new String(status.text).replaceAll("\0", "").getBytes())){
 		case "Throttle armed":
 			command = MAV_CMD.MAV_CMD_COMPONENT_ARM_DISARM;
-			result = 0;
+			result = MAV_RESULT.MAV_RESULT_ACCEPTED;
 			break;
 		case "Throttle disarmed":
 			command = MAV_CMD.MAV_CMD_COMPONENT_ARM_DISARM;
-			result = 0;
+			result = MAV_RESULT.MAV_RESULT_ACCEPTED;
+			break;
+		case "Calibrating barometer":
+			command = MAV_CMD.MAV_CMD_PREFLIGHT_CALIBRATION;
+			result = MAV_RESULT.MAV_RESULT_IN_PROGRESS;
+			break;
+		case "Airspeed sensor calibrated":
+			command = MAV_CMD.MAV_CMD_PREFLIGHT_CALIBRATION;
+			result = MAV_RESULT.MAV_RESULT_ACCEPTED;
 			break;
 		}
 		messageMemory.add(this);
