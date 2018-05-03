@@ -16,16 +16,20 @@ import java.util.ArrayList;
 import com.MAVLink.MAVLinkPacket;
 import com.MAVLink.common.msg_command_ack;
 import com.MAVLink.common.msg_command_long;
+import com.MAVLink.common.msg_mission_ack;
 import com.MAVLink.common.msg_mission_clear_all;
 import com.MAVLink.common.msg_mission_count;
 import com.MAVLink.common.msg_mission_item;
+import com.MAVLink.common.msg_mission_request;
 import com.MAVLink.common.msg_mission_set_current;
 import com.MAVLink.common.msg_set_mode;
 import com.MAVLink.enums.MAV_CMD;
 import com.MAVLink.enums.MAV_COMPONENT;
+import com.MAVLink.enums.MAV_MISSION_RESULT;
 import com.MAVLink.enums.MAV_MODE_FLAG;
 import com.MAVLink.enums.MAV_RESULT;
 import com.fazecast.jSerialComm.SerialPort;
+import com.telemetry.Attitude;
 import com.telemetry.CommandAck;
 
 public class AutopilotTransmitter extends Thread {
@@ -270,7 +274,7 @@ public class AutopilotTransmitter extends Thread {
 		//System.out.println("clear sent");
 	}
 	
-	public void sendMission(ArrayList<CustomMissionItem> mission) throws UnknownHostException, SocketException{
+	public int sendMission(ArrayList<CustomMissionItem> mission) throws UnknownHostException, SocketException{
 		int missionCount = mission.size();
 		MAVLinkPacket packet;
 		msg_mission_item item;
@@ -280,7 +284,7 @@ public class AutopilotTransmitter extends Thread {
 		msg_mission_clear_all clear = new msg_mission_clear_all();
 		packet = clear.pack();
 		send(packet);
-		System.out.println("old mission cleared");
+		//System.out.println("old mission cleared");
 		
 		//SEND MISSION COUNT
 		waitMillis(50);
@@ -288,7 +292,7 @@ public class AutopilotTransmitter extends Thread {
 		count.count = missionCount + 1;
 		packet = count.pack();
 		send(packet);
-		System.out.println("mission count sent");
+		//System.out.println("mission count sent");
 		
 		//SEND EMPTY MISSION ITEM
 		waitMillis(50);
@@ -297,9 +301,10 @@ public class AutopilotTransmitter extends Thread {
 		item.seq = 0;
 		packet = item.pack();
 		send(packet);
-		System.out.println("empty mission item sent");
+		//System.out.println("empty mission item sent");
 		
 		//SEND MISSION ITEMS
+		int arraySize = 0;
 		for (int i = 0; i < missionCount; i++) {
 			waitMillis(20);
 			item = new msg_mission_item();
@@ -328,10 +333,13 @@ public class AutopilotTransmitter extends Thread {
 				break;
 			}
 			packet = item.pack();
+			if(i == missionCount-1){
+				arraySize = CommandAck.getMessageMemory().size();
+			}
 			send(packet);
-			System.out.println("mission item " + (i+1) + " sent");
+			//System.out.println("mission item " + (i+1) + " sent");
 		}
-		System.out.println("mission sent");
+		return MAV_RESULT.MAV_RESULT_ACCEPTED;
 	}
 	
 	public void waitMillis(long t){

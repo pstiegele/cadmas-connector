@@ -95,13 +95,12 @@ public class AutopilotReceiver extends Thread {
 			//System.out.println(hp);
 			break;
 		case msg_mission_ack.MAVLINK_MSG_ID_MISSION_ACK:
-			msg_mission_ack ack2 = new msg_mission_ack(mavpacket);
-			//System.out.println(ack2.toString());
+			//System.out.println(new msg_mission_ack(mavpacket).toString());
+			new CommandAck(new msg_mission_ack(mavpacket));
 			break;
 		case msg_mission_request.MAVLINK_MSG_ID_MISSION_REQUEST:
-			msg_mission_request req = new msg_mission_request(mavpacket);
-			//System.out.println("FOUND REQUEST!");
-			//System.out.println(req.toString());
+			//System.out.println(new msg_mission_request(mavpacket).toString());
+			new CommandAck(new msg_mission_request(mavpacket));
 			break;
 		case msg_mission_item.MAVLINK_MSG_ID_MISSION_ITEM:
 			msg_mission_item item = new msg_mission_item(mavpacket);
@@ -130,8 +129,9 @@ public class AutopilotReceiver extends Thread {
 		Parser parser = new Parser();
 		try {
 			while (true) {
-				while (port.bytesAvailable() == 0)
-					Thread.sleep(20);
+				while (port.bytesAvailable() == 0){
+					//Thread.sleep(20);
+				}
 				int bytesToRead = port.bytesAvailable();
 				byte[] readBuffer = new byte[bytesToRead];
 				port.readBytes(readBuffer, bytesToRead);
@@ -147,7 +147,6 @@ public class AutopilotReceiver extends Thread {
 
 					}
 				}
-
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
