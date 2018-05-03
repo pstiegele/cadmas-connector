@@ -2,6 +2,7 @@ package com.controller.autopilot;
 
 import com.MAVLink.common.msg_mission_item;
 import com.MAVLink.enums.MAV_CMD;
+import com.MAVLink.enums.MAV_RESULT;
 
 public class CustomMissionItem {
 	int type = 0; // 0=Waypoint -1=RTL -2=TakeOff -3=Land n=Loiter for n secs ...
@@ -46,7 +47,7 @@ public class CustomMissionItem {
 	public String toString() {
 		String typeString;
 		switch(type){
-		case -4:
+		case MAV_RESULT.MAV_RESULT_FAILED:	//-4
 			typeString = "invalid";
 			break;
 		case -3:
@@ -66,6 +67,26 @@ public class CustomMissionItem {
 			break;
 		}
 		return typeString + "\tLat: " + latitude + "\tLong: " + longitude + "\tAlt: " + altitude;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		CustomMissionItem other = (CustomMissionItem) obj;
+		if (altitude != other.altitude)
+			return false;
+		if (Math.abs(latitude - other.latitude) > 1e-5)
+			return false;
+		if (Math.abs(longitude - other.longitude) > 1e-5)
+			return false;
+		if (type != other.type)
+			return false;
+		return true;
 	}
 	
 	

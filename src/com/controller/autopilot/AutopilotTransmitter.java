@@ -34,6 +34,7 @@ import com.fazecast.jSerialComm.SerialPort;
 import com.telemetry.Attitude;
 import com.telemetry.CommandAck;
 import com.telemetry.MissionItem;
+import com.telemetry.MissionState;
 
 public class AutopilotTransmitter extends Thread {
 	
@@ -222,7 +223,7 @@ public class AutopilotTransmitter extends Thread {
 		//create new mission with cmi at sequence position
 		ArrayList<CustomMissionItem> newMission = new ArrayList<>(currentMission);
 		newMission.add(currentSequence, item);
-		sendMission(newMission);
+		sendMission(newMission, false);
 		
 		//set current active mission sequence to sequence(in case of a change since new mission creation)
 		msg_mission_set_current current = new msg_mission_set_current();
@@ -236,7 +237,7 @@ public class AutopilotTransmitter extends Thread {
 		ArrayList<CustomMissionItem> mission = new ArrayList<>();
 		CustomMissionItem rtl = new CustomMissionItem(-1, 0, 0, 0);
 		mission.add(rtl);
-		sendMission(mission);
+		sendMission(mission, true);
 		
 	}
 	
@@ -302,7 +303,15 @@ public class AutopilotTransmitter extends Thread {
 		//System.out.println("clear sent");
 	}
 	
-	public int sendMission(ArrayList<CustomMissionItem> mission) throws UnknownHostException, SocketException{
+	public int sendMission(ArrayList<CustomMissionItem> mission, boolean restart) throws UnknownHostException, SocketException{
+		int currentSequence = getSequence();
+		if(currentSequence == MAV_RESULT.MAV_RESULT_FAILED){
+			return MAV_RESULT.MAV_RESULT_FAILED;
+		}
+		if(restart || currentSequence >= mission.size()){
+			currentSequence = 0;
+		}
+		
 		int missionCount = mission.size();
 		MAVLinkPacket packet;
 		msg_mission_item item;
@@ -332,7 +341,6 @@ public class AutopilotTransmitter extends Thread {
 		//System.out.println("empty mission item sent");
 		
 		//SEND MISSION ITEMS
-		int arraySize = 0;
 		for (int i = 0; i < missionCount; i++) {
 			waitMillis(20);
 			item = new msg_mission_item();
@@ -360,19 +368,68 @@ public class AutopilotTransmitter extends Thread {
 				item.param3 = 50; //loiter radius in meters
 				break;
 			}
-			packet = item.pack();
-			if(i == missionCount-1){
-				arraySize = CommandAck.getMessageMemory().size();
-			}
-			send(packet);
+			send(item.pack());
 			//System.out.println("mission item " + (i+1) + " sent");
+		}
+		
+		ArrayList<CustomMissionItem> verification = getMission();
+		
+		if(verification.get(0).type == MAV_RESULT.MAV_RESULT_FAILED){
+			return MAV_RESULT.MAV_RESULT_FAILED;
+		}
+		
+		for(int i = 0; i < verification.size(); i++){
+			if(!verification.get(i).equals(mission.get(i))){
+				System.out.println("fail at " + i + ": " + mission.get(i).toString() + " ### " + verification.get(i).toString());
+				return MAV_RESULT.MAV_RESULT_FAILED;
+			}
+		}
+		
+		//SEND SEQUENCE
+		if(setSequence(currentSequence) != MAV_RESULT.MAV_RESULT_ACCEPTED){
+			return MAV_RESULT.MAV_RESULT_FAILED;
 		}
 		return MAV_RESULT.MAV_RESULT_ACCEPTED;
 	}
 	
+	public int setSequence(int sequence) throws UnknownHostException, SocketException{
+		msg_mission_set_current current = new msg_mission_set_current();
+		current.seq = sequence;
+		int attempts = 3;
+		int maxTime = 500;
+		for(int i = 0; i < attempts; i++){
+			int arraySize = MissionState.getMessageMemory().size();
+			long sendTime = System.currentTimeMillis();
+			send(current.pack());
+			while(System.currentTimeMillis() - sendTime < maxTime){
+				waitMillis(20);
+				if(MissionState.getMessageMemory().size() > arraySize){
+					if(MissionState.getMessageMemory().get(arraySize).getCurrentSequence() == sequence){
+						return MAV_RESULT.MAV_RESULT_ACCEPTED;
+					}
+					if(MissionState.getMessageMemory().size() > arraySize){
+						arraySize += 1;
+					}
+				}
+			}
+		}
+		return MAV_RESULT.MAV_RESULT_FAILED;
+	}
+	
+	public int getSequence(){
+		int timeOut = 3000;
+		long start = System.currentTimeMillis();
+		while(MissionState.getMessageMemory().size() == 0){
+			if(System.currentTimeMillis() - start > timeOut){
+				return MAV_RESULT.MAV_RESULT_FAILED;
+			}
+		}
+		return MissionState.getMessageMemory().getNewestElement().getCurrentSequence();
+	}
+	
 	public ArrayList<CustomMissionItem> getMission() throws UnknownHostException, SocketException{
 		ArrayList<CustomMissionItem> failed = new ArrayList<>();
-		failed.add(new CustomMissionItem(-4, 0, 0, 0));
+		failed.add(new CustomMissionItem(MAV_RESULT.MAV_RESULT_FAILED, 0, 0, 0));
 		
 		ArrayList<CustomMissionItem> mission = new ArrayList<>();
 		
@@ -387,7 +444,7 @@ public class AutopilotTransmitter extends Thread {
 		CustomMissionItem item;
 		for(int i = 1; i < missionCount; i++){
 			item = getMissionItem(i);
-			if(item.type == -4){
+			if(item.type == MAV_RESULT.MAV_RESULT_FAILED){
 				return failed;
 			}
 			mission.add(item);
@@ -396,7 +453,7 @@ public class AutopilotTransmitter extends Thread {
 	}
 	
 	public CustomMissionItem getMissionItem(int sequence) throws UnknownHostException, SocketException{
-		CustomMissionItem failed = new CustomMissionItem(-4, 0, 0, 0);
+		CustomMissionItem failed = new CustomMissionItem(MAV_RESULT.MAV_RESULT_FAILED, 0, 0, 0);
 		msg_mission_request request = new msg_mission_request();
 		request.seq = sequence;
 		int attempts = 50;
