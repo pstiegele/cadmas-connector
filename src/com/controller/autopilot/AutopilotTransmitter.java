@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import com.MAVLink.MAVLinkPacket;
 import com.MAVLink.common.msg_command_ack;
 import com.MAVLink.common.msg_command_long;
+import com.MAVLink.common.msg_home_position;
 import com.MAVLink.common.msg_mission_ack;
 import com.MAVLink.common.msg_mission_clear_all;
 import com.MAVLink.common.msg_mission_count;
@@ -31,6 +32,7 @@ import com.MAVLink.enums.MAV_RESULT;
 import com.fazecast.jSerialComm.SerialPort;
 import com.telemetry.Attitude;
 import com.telemetry.CommandAck;
+import com.telemetry.MissionItem;
 
 public class AutopilotTransmitter extends Thread {
 	
@@ -52,6 +54,8 @@ public class AutopilotTransmitter extends Thread {
 		//INSERT COMMANDS HERE
 		System.out.println("start");
 		waitMillis(2000);
+		
+		
 	}
 	
 	public int setMode(int mode) throws UnknownHostException, SocketException{
@@ -245,14 +249,37 @@ public class AutopilotTransmitter extends Thread {
 		return hpg.homePosition;
 	}
 	
-	public void setHomePosition(CustomMissionItem hp) throws UnknownHostException, SocketException{
+	public int setHomePosition(CustomMissionItem hp) throws UnknownHostException, SocketException{
 		msg_command_long setHome = new msg_command_long();
 		setHome.command = MAV_CMD.MAV_CMD_DO_SET_HOME;
 		setHome.param1 = 0;
 		setHome.param5 = hp.latitude;
 		setHome.param6 = hp.longitude;
 		setHome.param7 = hp.altitude;
-		send(setHome.pack());
+		int attempts = 3;
+		int maxTime = 500;
+		for(int i = 0; i < attempts; i++){
+			int arraySize = MissionItem.getMessageMemory().size();
+			long sendTime = System.currentTimeMillis();
+			send(setHome.pack());
+			while(System.currentTimeMillis() - sendTime < maxTime){
+				waitMillis(20);
+				if(MissionItem.getMessageMemory().size() > arraySize){
+					if(MissionItem.getMessageMemory().get(arraySize).getCommand() == msg_home_position.MAVLINK_MSG_ID_HOME_POSITION){
+						if(MissionItem.getMessageMemory().get(arraySize).getMissionItem().latitude == hp.latitude && MissionItem.getMessageMemory().get(arraySize).getMissionItem().longitude == hp.longitude && MissionItem.getMessageMemory().get(arraySize).getMissionItem().altitude == hp.altitude){
+							return MAV_RESULT.MAV_RESULT_ACCEPTED;
+						}
+						else if(i == 2){
+							return MissionItem.getMessageMemory().get(arraySize).getResult();
+						}
+					}
+					if(MissionItem.getMessageMemory().size() > arraySize){
+						arraySize += 1;
+					}
+				}
+			}
+		}
+		return MAV_RESULT.MAV_RESULT_FAILED;
 	}
 	
 	public void udpTest(int port) throws UnknownHostException, SocketException{

@@ -30,6 +30,7 @@ import com.telemetry.Attitude;
 import com.telemetry.Battery;
 import com.telemetry.CommandAck;
 import com.telemetry.Heartbeat;
+import com.telemetry.MissionItem;
 import com.telemetry.MissionState;
 import com.telemetry.Position;
 import com.telemetry.Velocity;
@@ -91,7 +92,8 @@ public class AutopilotReceiver extends Thread {
 			//System.out.println(new msg_command_ack(mavpacket).toString());
 			break;
 		case msg_home_position.MAVLINK_MSG_ID_HOME_POSITION:
-			msg_home_position hp = new msg_home_position(mavpacket);
+			new MissionItem(new msg_home_position(mavpacket));
+			//msg_home_position hp = new msg_home_position(mavpacket);
 			//System.out.println(hp);
 			break;
 		case msg_mission_ack.MAVLINK_MSG_ID_MISSION_ACK:

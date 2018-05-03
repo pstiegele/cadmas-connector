@@ -4,6 +4,7 @@ import org.json.JSONObject;
 
 import com.MAVLink.common.msg_command_ack;
 import com.MAVLink.common.msg_mission_ack;
+import com.MAVLink.common.msg_mission_count;
 import com.MAVLink.common.msg_mission_request;
 import com.MAVLink.common.msg_statustext;
 import com.MAVLink.enums.MAV_CMD;
@@ -28,6 +29,13 @@ public class CommandAck implements TelemetryMessage{
 		timestamp=System.currentTimeMillis();
 		command = msg_mission_ack.MAVLINK_MSG_ID_MISSION_ACK;
 		result = mission.type;
+		messageMemory.add(this);
+	}
+	
+	public CommandAck(msg_mission_count count){
+		timestamp=System.currentTimeMillis();
+		command = msg_mission_count.MAVLINK_MSG_ID_MISSION_COUNT;
+		result = count.count;
 		messageMemory.add(this);
 	}
 	
