@@ -66,29 +66,29 @@ public class AutopilotReceiver extends Thread {
 		
 		switch (mavpacket.msgid) {
 		case msg_statustext.MAVLINK_MSG_ID_STATUSTEXT:
-			CommandAck statusText = new CommandAck(new msg_statustext(mavpacket));
+			new CommandAck(new msg_statustext(mavpacket));
 			//System.out.println(new String(new msg_statustext(mavpacket).text));
 			break;
 		case msg_heartbeat.MAVLINK_MSG_ID_HEARTBEAT:
-			Heartbeat heartbeat = new Heartbeat(new msg_heartbeat(mavpacket));
+			new Heartbeat(new msg_heartbeat(mavpacket));
 			break;
 		case msg_battery_status.MAVLINK_MSG_ID_BATTERY_STATUS:
-			Battery battery = new Battery(new msg_battery_status(mavpacket));
+			new Battery(new msg_battery_status(mavpacket));
 			break;
 		case msg_attitude.MAVLINK_MSG_ID_ATTITUDE:
-			Attitude attitude = new Attitude(new msg_attitude(mavpacket));
+			new Attitude(new msg_attitude(mavpacket));
 			break;
 		case msg_global_position_int.MAVLINK_MSG_ID_GLOBAL_POSITION_INT:
-			Position position = new Position(new msg_global_position_int(mavpacket));
+			new Position(new msg_global_position_int(mavpacket));
 			break;
 		case msg_vfr_hud.MAVLINK_MSG_ID_VFR_HUD:
-			Velocity velocity = new Velocity(new msg_vfr_hud(mavpacket));
+			new Velocity(new msg_vfr_hud(mavpacket));
 			msg_vfr_hud hud = new msg_vfr_hud(mavpacket);
 			//System.out.println("connected...");
 			//System.out.println("Altitude: " + hud.alt + "m\tGroundspeed: " + hud.groundspeed + "m/s\tHeading: " + hud.heading);
 			break;
 		case msg_command_ack.MAVLINK_MSG_ID_COMMAND_ACK:
-			CommandAck commandAck = new CommandAck(new msg_command_ack(mavpacket));
+			new CommandAck(new msg_command_ack(mavpacket));
 			//System.out.println(new msg_command_ack(mavpacket).toString());
 			break;
 		case msg_home_position.MAVLINK_MSG_ID_HOME_POSITION:
@@ -105,15 +105,17 @@ public class AutopilotReceiver extends Thread {
 			new CommandAck(new msg_mission_request(mavpacket));
 			break;
 		case msg_mission_item.MAVLINK_MSG_ID_MISSION_ITEM:
-			msg_mission_item item = new msg_mission_item(mavpacket);
+			new MissionItem(new msg_mission_item(mavpacket));
+			//msg_mission_item item = new msg_mission_item(mavpacket);
 			//System.out.println(item);
 			break;
 		case msg_mission_count.MAVLINK_MSG_ID_MISSION_COUNT:
-			msg_mission_count count = new msg_mission_count(mavpacket);
+			new CommandAck(new msg_mission_count(mavpacket));
+			//msg_mission_count count = new msg_mission_count(mavpacket);
 			//System.out.println(count);
 			break;
 		case msg_mission_current.MAVLINK_MSG_ID_MISSION_CURRENT:
-			MissionState missionState = new MissionState(new msg_mission_current(mavpacket));
+			new MissionState(new msg_mission_current(mavpacket));
 			break;
 		default:
 			//System.out.println("got: "+mavpacket.msgid);

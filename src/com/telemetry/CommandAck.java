@@ -35,7 +35,7 @@ public class CommandAck implements TelemetryMessage{
 	public CommandAck(msg_mission_count count){
 		timestamp=System.currentTimeMillis();
 		command = msg_mission_count.MAVLINK_MSG_ID_MISSION_COUNT;
-		result = count.count;
+		result = count.count * -1;
 		messageMemory.add(this);
 	}
 	

@@ -22,6 +22,7 @@ import com.MAVLink.common.msg_mission_clear_all;
 import com.MAVLink.common.msg_mission_count;
 import com.MAVLink.common.msg_mission_item;
 import com.MAVLink.common.msg_mission_request;
+import com.MAVLink.common.msg_mission_request_list;
 import com.MAVLink.common.msg_mission_set_current;
 import com.MAVLink.common.msg_set_mode;
 import com.MAVLink.enums.MAV_CMD;
@@ -367,6 +368,83 @@ public class AutopilotTransmitter extends Thread {
 			//System.out.println("mission item " + (i+1) + " sent");
 		}
 		return MAV_RESULT.MAV_RESULT_ACCEPTED;
+	}
+	
+	public ArrayList<CustomMissionItem> getMission() throws UnknownHostException, SocketException{
+		ArrayList<CustomMissionItem> failed = new ArrayList<>();
+		failed.add(new CustomMissionItem(-4, 0, 0, 0));
+		
+		ArrayList<CustomMissionItem> mission = new ArrayList<>();
+		
+		//send request_list
+		int missionCount = getMissionCount();
+		if(missionCount > 0){
+			return failed;
+		}
+		missionCount /= -1;
+		
+		//send request_mission_n
+		CustomMissionItem item;
+		for(int i = 1; i < missionCount; i++){
+			item = getMissionItem(i);
+			if(item.type == -4){
+				return failed;
+			}
+			mission.add(item);
+		}
+		return mission;
+	}
+	
+	public CustomMissionItem getMissionItem(int sequence) throws UnknownHostException, SocketException{
+		CustomMissionItem failed = new CustomMissionItem(-4, 0, 0, 0);
+		msg_mission_request request = new msg_mission_request();
+		request.seq = sequence;
+		int attempts = 50;
+		int maxTime = 300;
+		for(int i = 0; i < attempts; i++){
+			int arraySize = MissionItem.getMessageMemory().size();
+			long sendTime = System.currentTimeMillis();
+			send(request.pack());
+			while(System.currentTimeMillis() - sendTime < maxTime){
+				waitMillis(20);
+				if(MissionItem.getMessageMemory().size() > arraySize){
+					if(MissionItem.getMessageMemory().get(arraySize).getCommand() == msg_mission_item.MAVLINK_MSG_ID_MISSION_ITEM){
+						if(MissionItem.getMessageMemory().get(arraySize).getResult() == sequence){
+							return MissionItem.getMessageMemory().get(arraySize).getMissionItem();
+						}
+					}
+					if(MissionItem.getMessageMemory().size() > arraySize){
+						arraySize += 1;
+					}
+				}
+			}
+		}
+		return failed;
+	}
+	
+	public int getMissionCount() throws UnknownHostException, SocketException{
+		msg_mission_request_list list = new msg_mission_request_list();
+		int attempts = 3;
+		int maxTime = 500;
+		for(int i = 0; i < attempts; i++){
+			int arraySize = CommandAck.getMessageMemory().size();
+			long sendTime = System.currentTimeMillis();
+			send(list.pack());
+			while(System.currentTimeMillis() - sendTime < maxTime){
+				waitMillis(20);
+				if(CommandAck.getMessageMemory().size() > arraySize){
+					if(CommandAck.getMessageMemory().get(arraySize).getCommand() == msg_mission_count.MAVLINK_MSG_ID_MISSION_COUNT){
+						if(CommandAck.getMessageMemory().get(arraySize).getResult() < 0){
+							return CommandAck.getMessageMemory().get(arraySize).getResult();
+						}
+					}
+					if(CommandAck.getMessageMemory().size() > arraySize){
+						arraySize += 1;
+					}
+				}
+			}
+		}
+		return MAV_RESULT.MAV_RESULT_FAILED;
 	}
 	
 	public void waitMillis(long t){
