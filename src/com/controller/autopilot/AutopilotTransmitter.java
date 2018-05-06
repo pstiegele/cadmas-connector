@@ -57,7 +57,12 @@ public class AutopilotTransmitter extends Thread {
 		System.out.println("start");
 		waitMillis(2000);
 		
-		
+		try {
+			System.out.println("Sent Mission, result: " + sendMission(randomMissionGenerator(25, 10, 50, 100, 150), true));
+		} catch (UnknownHostException | SocketException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public int setMode(int mode) throws UnknownHostException, SocketException{
