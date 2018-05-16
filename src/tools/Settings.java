@@ -4,7 +4,7 @@ public class Settings {
 	
 	private static Settings instance;
 	
-	int serialPort = 0;
+	int serialPort = 2;
 	int loiterRadius = 50;
 	int abortAltitude = 10;
 	int takeOffPitch = 10;

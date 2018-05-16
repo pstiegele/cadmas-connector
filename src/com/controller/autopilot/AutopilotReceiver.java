@@ -39,6 +39,10 @@ public class AutopilotReceiver extends Thread {
 
 	boolean udpInsteadOfSerial = false;
 	private SerialPort port;
+	private int previousSequence = 0;
+	int sequenceLogSize = 5;
+	int[] sequenceLog = new int[sequenceLogSize];
+	int arrayIndex = 0;
 //	private long start=System.currentTimeMillis();
 //	private double counter = 0;
 	public AutopilotReceiver(SerialPort port) {
@@ -63,6 +67,8 @@ public class AutopilotReceiver extends Thread {
 	
 	private void handlePacket(MAVLinkPacket mavpacket) {
 		//System.out.println("mavpacket id: "+mavpacket.msgid);
+		//System.out.println("Packet sequence: " + mavpacket.seq);
+		calcRSSI(mavpacket);
 		
 		switch (mavpacket.msgid) {
 		case msg_statustext.MAVLINK_MSG_ID_STATUSTEXT:
@@ -70,7 +76,7 @@ public class AutopilotReceiver extends Thread {
 			//System.out.println(new String(new msg_statustext(mavpacket).text));
 			break;
 		case msg_heartbeat.MAVLINK_MSG_ID_HEARTBEAT:
-			new Heartbeat(new msg_heartbeat(mavpacket));
+			new Heartbeat(new msg_heartbeat(mavpacket), sequenceLog);
 			break;
 		case msg_battery_status.MAVLINK_MSG_ID_BATTERY_STATUS:
 			new Battery(new msg_battery_status(mavpacket));
@@ -83,7 +89,6 @@ public class AutopilotReceiver extends Thread {
 			break;
 		case msg_vfr_hud.MAVLINK_MSG_ID_VFR_HUD:
 			new Velocity(new msg_vfr_hud(mavpacket));
-			msg_vfr_hud hud = new msg_vfr_hud(mavpacket);
 			//System.out.println("connected...");
 			//System.out.println("Altitude: " + hud.alt + "m\tGroundspeed: " + hud.groundspeed + "m/s\tHeading: " + hud.heading);
 			break;
@@ -122,6 +127,18 @@ public class AutopilotReceiver extends Thread {
 			break;
 		}
 
+	}
+	
+	private void calcRSSI(MAVLinkPacket mavpacket) {
+		sequenceLog[arrayIndex] = Math.min(Math.abs(mavpacket.seq - previousSequence), mavpacket.seq + 255 - previousSequence) - 1;
+		previousSequence = mavpacket.seq;
+		
+		if(arrayIndex < sequenceLogSize - 1) {
+			arrayIndex++;
+		}
+		else {
+			arrayIndex = 0;
+		}
 	}
 
 	/**
