@@ -1,6 +1,5 @@
 package com.controller.autopilot;
 
-import com.MAVLink.common.msg_home_position;
 import com.MAVLink.common.msg_mission_item;
 import com.MAVLink.enums.MAV_CMD;
 import com.MAVLink.enums.MAV_RESULT;
@@ -21,7 +20,7 @@ public class CustomMissionItem {
 	}
 	
 	public CustomMissionItem(msg_mission_item item) {
-		int type = MAV_RESULT.MAV_RESULT_FAILED;
+		type = MAV_RESULT.MAV_RESULT_FAILED;
 		switch(item.command){
 		case MAV_CMD.MAV_CMD_NAV_LAND:
 			type = -3;

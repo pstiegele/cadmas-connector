@@ -4,9 +4,10 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.SocketException;
+
 import com.MAVLink.MAVLinkPacket;
 import com.MAVLink.Parser;
-import com.MAVLink.common.msg_altitude;
 import com.MAVLink.common.msg_attitude;
 import com.MAVLink.common.msg_battery_status;
 import com.MAVLink.common.msg_command_ack;
@@ -18,11 +19,9 @@ import com.MAVLink.common.msg_mission_count;
 import com.MAVLink.common.msg_mission_current;
 import com.MAVLink.common.msg_mission_item;
 import com.MAVLink.common.msg_mission_request;
-import com.MAVLink.common.msg_position_target_global_int;
 import com.MAVLink.common.msg_statustext;
 import com.MAVLink.common.msg_vfr_hud;
 import com.fazecast.jSerialComm.SerialPort;
-import com.telemetry.Altitude;
 import com.telemetry.Attitude;
 import com.telemetry.Battery;
 import com.telemetry.CommandAck;
@@ -52,7 +51,12 @@ public class AutopilotReceiver extends Thread {
 		//udpInsteadOfSerial = true;
 		
 		if(udpInsteadOfSerial){
-			readUDP();
+			try {
+				readUDP();
+			} catch (SocketException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		else{
 			while (true) {
@@ -83,10 +87,6 @@ public class AutopilotReceiver extends Thread {
 			break;
 		case msg_global_position_int.MAVLINK_MSG_ID_GLOBAL_POSITION_INT:
 			new Position(new msg_global_position_int(mavpacket));
-			break;
-		case msg_altitude.MAVLINK_MSG_ID_ALTITUDE:
-			//System.out.println("altitude");
-			new Altitude(new msg_altitude(mavpacket));
 			break;
 		case msg_vfr_hud.MAVLINK_MSG_ID_VFR_HUD:
 			new Velocity(new msg_vfr_hud(mavpacket));
@@ -177,11 +177,11 @@ public class AutopilotReceiver extends Thread {
 
 	}
 	
-	public void readUDP() {  
+	public void readUDP() throws SocketException {
 		Parser parser = new Parser();
 		int port = 14551;
+		DatagramSocket dSocket = new DatagramSocket(port);
 	      try {
-		        DatagramSocket dSocket = new DatagramSocket(port);
 		        byte[] buffer = new byte[2048];
 	
 		        System.out.printf("Listening on udp:%s:%d%n", InetAddress.getLocalHost().getHostAddress(), port);     
@@ -221,6 +221,7 @@ public class AutopilotReceiver extends Thread {
 	      catch (IOException e) {
 	              System.out.println(e);
 	      }
+	      dSocket.close();
 	}
 
 	private static int unsignedToBytes(byte a) {

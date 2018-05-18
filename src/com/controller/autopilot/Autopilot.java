@@ -33,8 +33,8 @@ public class Autopilot extends Thread {
 
 	public void connect() {
 		port = init();
-		AutopilotTransmitter transmitter = new AutopilotTransmitter(port);
-		AutopilotReceiver receiver = new AutopilotReceiver(port);
+		new AutopilotTransmitter(port);
+		new AutopilotReceiver(port);
 		//MissionGetter missionreceiver = new MissionGetter(port);
 	}
 

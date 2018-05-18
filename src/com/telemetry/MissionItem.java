@@ -2,12 +2,8 @@ package com.telemetry;
 
 import org.json.JSONObject;
 
-import com.MAVLink.common.msg_command_ack;
 import com.MAVLink.common.msg_home_position;
-import com.MAVLink.common.msg_mission_ack;
 import com.MAVLink.common.msg_mission_item;
-import com.MAVLink.common.msg_mission_request;
-import com.MAVLink.common.msg_statustext;
 import com.MAVLink.enums.MAV_CMD;
 import com.MAVLink.enums.MAV_RESULT;
 import com.controller.autopilot.CustomMissionItem;

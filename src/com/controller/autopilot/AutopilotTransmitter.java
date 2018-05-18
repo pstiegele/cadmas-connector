@@ -26,13 +26,9 @@ import com.MAVLink.enums.MAV_FRAME;
 import com.MAVLink.enums.MAV_MODE_FLAG;
 import com.MAVLink.enums.MAV_RESULT;
 import com.fazecast.jSerialComm.SerialPort;
-import com.telemetry.Altitude;
 import com.telemetry.CommandAck;
 import com.telemetry.MissionItem;
 import com.telemetry.MissionState;
-import com.telemetry.Position;
-import com.telemetry.Velocity;
-
 import tools.Settings;
 
 public class AutopilotTransmitter extends Thread {
@@ -221,7 +217,6 @@ public class AutopilotTransmitter extends Thread {
 				if(MissionItem.getMessageMemory().size() > arraySize){
 					if(MissionItem.getMessageMemory().get(arraySize).getCommand() == msg_home_position.MAVLINK_MSG_ID_HOME_POSITION){
 						if(MissionItem.getMessageMemory().get(arraySize).getMissionItem().latitude == hp.latitude && MissionItem.getMessageMemory().get(arraySize).getMissionItem().longitude == hp.longitude && MissionItem.getMessageMemory().get(arraySize).getMissionItem().altitude == hp.altitude){
-							Settings.getInstance().sethomeAltitude(MissionItem.getMessageMemory().get(arraySize).getMissionItem().altitude);
 							return MAV_RESULT.MAV_RESULT_ACCEPTED;
 						}
 						else if(i == 2){

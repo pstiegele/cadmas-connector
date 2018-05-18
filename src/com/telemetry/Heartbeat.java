@@ -5,8 +5,6 @@ import org.json.JSONObject;
 
 import com.MAVLink.common.msg_heartbeat;
 
-import jdk.nashorn.internal.parser.JSONParser;
-import jdk.nashorn.internal.runtime.JSONFunctions;
 import tools.MessageMemory;
 
 public class Heartbeat implements TelemetryMessage{

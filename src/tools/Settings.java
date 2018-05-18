@@ -8,7 +8,6 @@ public class Settings {
 	int loiterRadius = 50;
 	int abortAltitude = 10;
 	int takeOffPitch = 10;
-	float homeAltitude = -100;
 	
 	private Settings(){
 		
@@ -41,11 +40,6 @@ public class Settings {
 		return true;
 	}
 	
-	public boolean sethomeAltitude(float altitude){
-		homeAltitude = altitude;
-		return true;
-	}
-	
 	public int getSerialPort(){
 		return serialPort;
 	}
@@ -60,9 +54,5 @@ public class Settings {
 	
 	public int getTakeOffPitch(){
 		return takeOffPitch;
-	}
-
-	public float getHomeAltitude() {
-		return homeAltitude;
 	}
 }
