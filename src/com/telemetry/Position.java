@@ -8,7 +8,7 @@ import tools.MessageMemory;
 
 public class Position implements TelemetryMessage{
 	
-	float latitude, longitude, altitude;
+	float latitude, longitude, altitudeAbsolute, altitudeRelative;
 	long timestamp;
 
 	private static MessageMemory<Position> messageMemory = new MessageMemory<>();
@@ -16,13 +16,14 @@ public class Position implements TelemetryMessage{
 		timestamp=System.currentTimeMillis();
 		latitude = message.lat;
 		longitude = message.lon;
-		altitude = message.alt;
+		altitudeAbsolute = (float)message.alt/1000;
+		altitudeRelative = (float)message.relative_alt/1000;
 		messageMemory.add(this);
 	}
 	@Override
 	public JSONObject getJSON() {
 		JSONObject res = new JSONObject();
-		res.put("timestamp", timestamp).put("latitude", latitude).put("longitude", longitude).put("altitude",altitude);
+		res.put("timestamp", timestamp).put("latitude", latitude).put("longitude", longitude).put("altitudeAbsolute",altitudeAbsolute).put("altitudeRelative",altitudeRelative);
 		return res;
 	}
 
@@ -37,6 +38,14 @@ public class Position implements TelemetryMessage{
 	@Override
 	public long getTimestamp() {
 		return timestamp;
+	}
+	
+	public float getAltitudeAbsolute() {
+		return altitudeAbsolute;
+	}
+	
+	public float getAltitudeRelative() {
+		return altitudeRelative;
 	}
 
 }

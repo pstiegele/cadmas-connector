@@ -1,3 +1,4 @@
+
 package com.telemetry;
 
 import org.json.JSONObject;
@@ -5,9 +6,10 @@ import org.json.JSONObject;
 import com.MAVLink.common.msg_vfr_hud;
 
 import tools.MessageMemory;
+import tools.Settings;
 
 public class Velocity implements TelemetryMessage{
-	float groundspeed, airspeed, climbrate, altitude;
+	float groundspeed, airspeed, climbrate, altitude; //altitude = relative to homePoint; only use after manually setting homepoint; DO NOT USE when value is -100
 	long timestamp;
 	
 	private static MessageMemory<Velocity> messageMemory = new MessageMemory<>();
@@ -16,7 +18,12 @@ public class Velocity implements TelemetryMessage{
 		groundspeed = message.groundspeed;
 		airspeed = message.airspeed;
 		climbrate = message.climb;
-		altitude = message.alt;
+		if(Settings.getInstance().getHomeAltitude() == -100) {
+			altitude = -100;
+		}
+		else {
+			altitude = message.alt - Settings.getInstance().getHomeAltitude();
+		}
 		messageMemory.add(this);
 	}
 
@@ -39,6 +46,10 @@ public class Velocity implements TelemetryMessage{
 	@Override
 	public long getTimestamp() {
 		return timestamp;
+	}
+	
+	public float getAltitude() {
+		return altitude;
 	}
 
 }
