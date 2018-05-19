@@ -2,6 +2,7 @@ package com.controller.autopilot;
 
 import com.MAVLink.common.msg_mission_item;
 import com.MAVLink.enums.MAV_CMD;
+import com.MAVLink.enums.MAV_FRAME;
 import com.MAVLink.enums.MAV_RESULT;
 
 import tools.Settings;
@@ -47,6 +48,7 @@ public class CustomMissionItem {
 	
 	public msg_mission_item toMavlinkItem() {
 		msg_mission_item item = new msg_mission_item();
+		item.frame = MAV_FRAME.MAV_FRAME_GLOBAL_RELATIVE_ALT;
 		item.x = latitude;
 		item.y = longitude;
 		item.z = altitude;
@@ -101,6 +103,7 @@ public class CustomMissionItem {
 
 	@Override
 	public boolean equals(Object obj) {
+		double tolerance = 4e-6; // =0.000004
 		if (this == obj)
 			return true;
 		if (obj == null)
@@ -110,10 +113,9 @@ public class CustomMissionItem {
 		CustomMissionItem other = (CustomMissionItem) obj;
 		if (altitude != other.altitude)
 			return false;
-		//TODO: smaller value than 1e-5. possibly 2e-6
-		if (Math.abs(latitude - other.latitude) > 1e-5)
+		if (Math.abs(latitude - other.latitude) > tolerance)
 			return false;
-		if (Math.abs(longitude - other.longitude) > 1e-5)
+		if (Math.abs(longitude - other.longitude) > tolerance)
 			return false;
 		if (type != other.type)
 			return false;

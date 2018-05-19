@@ -54,26 +54,7 @@ public class AutopilotTransmitter extends Thread {
 	}
 	
 	public int setMode(int mode) throws UnknownHostException, SocketException{
-//		MANUAL        = 0
-//	    CIRCLE        = 1
-//	    STABILIZE     = 2
-//	    TRAINING      = 3
-//	    ACRO          = 4
-//	    FLY_BY_WIRE_A = 5
-//	    FLY_BY_WIRE_B = 6
-//	    CRUISE        = 7
-//	    AUTOTUNE      = 8
-//	    AUTO          = 10
-//	    RTL           = 11
-//	    LOITER        = 12
-//	    AVOID_ADSB    = 14
-//	    GUIDED        = 15
-//	    INITIALISING  = 16
-//	    QSTABILIZE    = 17
-//	    QHOVER        = 18
-//	    QLOITER       = 19
-//	    QLAND         = 20
-//	    QRTL          = 21
+		//use com.controller.autopilot.FlightModes
 		msg_set_mode changeMode = new msg_set_mode();
 		changeMode.base_mode = MAV_MODE_FLAG.MAV_MODE_FLAG_CUSTOM_MODE_ENABLED;
 		changeMode.custom_mode = mode;
