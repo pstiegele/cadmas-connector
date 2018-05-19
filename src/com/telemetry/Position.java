@@ -3,12 +3,14 @@ package com.telemetry;
 import org.json.JSONObject;
 
 import com.MAVLink.common.msg_global_position_int;
+import com.controller.autopilot.CustomMissionItem;
+import com.controller.autopilot.MissionItemTypes;
 
 import tools.MessageMemory;
 
 public class Position implements TelemetryMessage{
 	
-	float latitude, longitude, altitudeAbsolute, altitudeRelative;
+	float latitude, longitude, heading, altitudeAbsolute, altitudeRelative;
 	long timestamp;
 
 	private static MessageMemory<Position> messageMemory = new MessageMemory<>();
@@ -16,6 +18,7 @@ public class Position implements TelemetryMessage{
 		timestamp=System.currentTimeMillis();
 		latitude = message.lat;
 		longitude = message.lon;
+		heading = message.hdg;
 		altitudeAbsolute = (float)message.alt/1000;
 		altitudeRelative = (float)message.relative_alt/1000;
 		messageMemory.add(this);
@@ -23,7 +26,7 @@ public class Position implements TelemetryMessage{
 	@Override
 	public JSONObject getJSON() {
 		JSONObject res = new JSONObject();
-		res.put("timestamp", timestamp).put("latitude", latitude).put("longitude", longitude).put("altitudeAbsolute",altitudeAbsolute).put("altitudeRelative",altitudeRelative);
+		res.put("timestamp", timestamp).put("latitude", latitude).put("longitude", longitude).put("altitudeAbsolute",altitudeAbsolute).put("altitudeRelative",altitudeRelative).put("heading", heading);
 		return res;
 	}
 
@@ -46,6 +49,10 @@ public class Position implements TelemetryMessage{
 	
 	public float getAltitudeRelative() {
 		return altitudeRelative;
+	}
+	
+	public CustomMissionItem toCustomMissionItem() {
+		return new CustomMissionItem(MissionItemTypes.LOITER_5_MIN, latitude, longitude, (int) altitudeRelative);
 	}
 
 }

@@ -90,7 +90,6 @@ public class AutopilotReceiver extends Thread {
 			break;
 		case msg_vfr_hud.MAVLINK_MSG_ID_VFR_HUD:
 			new Velocity(new msg_vfr_hud(mavpacket));
-			//System.out.println("connected...");
 			//System.out.println("Altitude: " + hud.alt + "m\tGroundspeed: " + hud.groundspeed + "m/s\tHeading: " + hud.heading);
 			break;
 		case msg_command_ack.MAVLINK_MSG_ID_COMMAND_ACK:

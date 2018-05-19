@@ -263,6 +263,9 @@ public class AutopilotTransmitter extends Thread {
 	}
 	
 	public int sendMission(ArrayList<CustomMissionItem> mission, boolean restart) throws UnknownHostException, SocketException{
+		if(mission.get(0).type == MAV_RESULT.MAV_RESULT_FAILED) {
+			return MAV_RESULT.MAV_RESULT_FAILED;
+		}
 		int currentSequence = getSequence();
 		if(currentSequence == MAV_RESULT.MAV_RESULT_FAILED){
 			return MAV_RESULT.MAV_RESULT_FAILED;
@@ -272,22 +275,19 @@ public class AutopilotTransmitter extends Thread {
 		}
 		
 		int missionCount = mission.size();
-		MAVLinkPacket packet;
 		msg_mission_item item;
 		
 		//CLEAR PREVIOUS MISSION
 		waitMillis(50);
 		msg_mission_clear_all clear = new msg_mission_clear_all();
-		packet = clear.pack();
-		send(packet);
+		send(clear.pack());
 		//System.out.println("old mission cleared");
 		
 		//SEND MISSION COUNT
 		waitMillis(50);
 		msg_mission_count count = new msg_mission_count();
 		count.count = missionCount + 1;
-		packet = count.pack();
-		send(packet);
+		send(count.pack());
 		//System.out.println("mission count sent");
 		
 		//SEND EMPTY MISSION ITEM
@@ -295,8 +295,7 @@ public class AutopilotTransmitter extends Thread {
 		item = new msg_mission_item();
 		item.command = MAV_CMD.MAV_CMD_NAV_WAYPOINT;
 		item.seq = 0;
-		packet = item.pack();
-		send(packet);
+		send(item.pack());
 		//System.out.println("empty mission item sent");
 		
 		//SEND MISSION ITEMS
@@ -304,7 +303,7 @@ public class AutopilotTransmitter extends Thread {
 			waitMillis(20);
 			item = new msg_mission_item();
 			item.seq = i + 1;
-			item.frame = MAV_FRAME.MAV_FRAME_GLOBAL_RELATIVE_ALT;
+			item.frame = Settings.getInstance().getFrameOrientation();
 			item.x = mission.get(i).latitude;
 			item.y = mission.get(i).longitude;
 			item.z = mission.get(i).altitude;

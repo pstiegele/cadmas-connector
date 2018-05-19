@@ -2,7 +2,6 @@ package com.controller.autopilot;
 
 import com.MAVLink.common.msg_mission_item;
 import com.MAVLink.enums.MAV_CMD;
-import com.MAVLink.enums.MAV_FRAME;
 import com.MAVLink.enums.MAV_RESULT;
 
 import tools.Settings;
@@ -48,7 +47,7 @@ public class CustomMissionItem {
 	
 	public msg_mission_item toMavlinkItem() {
 		msg_mission_item item = new msg_mission_item();
-		item.frame = MAV_FRAME.MAV_FRAME_GLOBAL_RELATIVE_ALT;
+		item.frame = Settings.getInstance().getFrameOrientation();
 		item.x = latitude;
 		item.y = longitude;
 		item.z = altitude;
