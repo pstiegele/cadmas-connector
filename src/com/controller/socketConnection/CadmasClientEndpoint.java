@@ -9,6 +9,7 @@ import javax.websocket.CloseReason;
 import javax.websocket.ContainerProvider;
 import javax.websocket.Endpoint;
 import javax.websocket.EndpointConfig;
+import javax.websocket.MessageHandler;
 import javax.websocket.OnClose;
 import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
@@ -29,6 +30,7 @@ public class CadmasClientEndpoint extends Endpoint{
 				protocol.add(apikey);
 				ClientEndpointConfig cec = ClientEndpointConfig.Builder.create().preferredSubprotocols(protocol).build();
 				container.connectToServer(this, cec, endpointURI);
+				//container.connectToServer(this, endpointURI);
 				
 			} catch (Exception e) {
 				e.printStackTrace();

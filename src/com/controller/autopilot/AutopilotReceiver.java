@@ -31,7 +31,7 @@ import com.telemetry.Velocity;
 
 public class AutopilotReceiver extends Thread {
 
-	boolean udpInsteadOfSerial = false;
+	boolean udpInsteadOfSerial = true;
 	private SerialPort port;
 	private int previousSequence = 0;
 	int sequenceLogSize = 5;
