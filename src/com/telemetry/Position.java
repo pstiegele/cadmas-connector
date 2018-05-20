@@ -16,17 +16,18 @@ public class Position implements TelemetryMessage{
 	private static MessageMemory<Position> messageMemory = new MessageMemory<>();
 	public Position(msg_global_position_int message){
 		timestamp=System.currentTimeMillis();
-		latitude = message.lat;
-		longitude = message.lon;
+		latitude = (float) (message.lat/1e7);
+		longitude = (float) (message.lon/1e7);
 		heading = message.hdg;
 		altitudeAbsolute = (float)message.alt/1000;
 		altitudeRelative = (float)message.relative_alt/1000;
+		System.out.println(toCustomMissionItem().toString());
 		messageMemory.add(this);
 	}
 	@Override
 	public JSONObject getJSON() {
 		JSONObject res = new JSONObject();
-		res.put("timestamp", timestamp).put("latitude", latitude/10000000).put("longitude", longitude/10000000).put("altitudeAbsolute",altitudeAbsolute).put("altitudeRelative",altitudeRelative).put("heading", heading);
+		res.put("timestamp", timestamp).put("latitude", latitude).put("longitude", longitude).put("altitudeAbsolute",altitudeAbsolute).put("altitudeRelative",altitudeRelative).put("heading", heading);
 		return res;
 	}
 
