@@ -22,7 +22,7 @@ public class Position implements TelemetryMessage{
 	@Override
 	public JSONObject getJSON() {
 		JSONObject res = new JSONObject();
-		res.put("timestamp", timestamp).put("latitude", latitude).put("longitude", longitude).put("altitude",altitude);
+		res.put("timestamp", timestamp).put("latitude", latitude/10000000).put("longitude", longitude/10000000).put("altitude",altitude/1000);
 		return res;
 	}
 
