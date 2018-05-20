@@ -1,5 +1,7 @@
 package tools;
 
+import com.MAVLink.enums.MAV_FRAME;
+
 public class Settings {
 	
 	private static Settings instance;
@@ -8,6 +10,7 @@ public class Settings {
 	int loiterRadius = 50;
 	int abortAltitude = 10;
 	int takeOffPitch = 10;
+	short frameOrientation = MAV_FRAME.MAV_FRAME_GLOBAL_RELATIVE_ALT;
 	
 	private Settings(){
 		
@@ -40,6 +43,11 @@ public class Settings {
 		return true;
 	}
 	
+	public boolean setFrameOrientation(short frame) {
+		frameOrientation = frame;
+		return true;
+	}
+	
 	public int getSerialPort(){
 		return serialPort;
 	}
@@ -55,5 +63,8 @@ public class Settings {
 	public int getTakeOffPitch(){
 		return takeOffPitch;
 	}
-
+	
+	public short getFrameOrientation(){
+		return frameOrientation;
+	}
 }

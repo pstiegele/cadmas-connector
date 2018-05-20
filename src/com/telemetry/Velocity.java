@@ -1,3 +1,4 @@
+
 package com.telemetry;
 
 import org.json.JSONObject;
@@ -7,7 +8,7 @@ import com.MAVLink.common.msg_vfr_hud;
 import tools.MessageMemory;
 
 public class Velocity implements TelemetryMessage{
-	float groundspeed, airspeed, climbrate, altitude;
+	float groundspeed, airspeed, climbrate;
 	long timestamp;
 	
 	private static MessageMemory<Velocity> messageMemory = new MessageMemory<>();
@@ -16,14 +17,13 @@ public class Velocity implements TelemetryMessage{
 		groundspeed = message.groundspeed;
 		airspeed = message.airspeed;
 		climbrate = message.climb;
-		altitude = message.alt;
 		messageMemory.add(this);
 	}
 
 	@Override
 	public JSONObject getJSON() {
 		JSONObject res = new JSONObject();
-		res.put("timestamp", timestamp).put("groundspeed", groundspeed).put("airspeed", airspeed).put("climbrate", climbrate).put("altitude", altitude);
+		res.put("timestamp", timestamp).put("groundspeed", groundspeed).put("airspeed", airspeed).put("climbrate", climbrate);
 		return res;
 	}
 
@@ -40,5 +40,4 @@ public class Velocity implements TelemetryMessage{
 	public long getTimestamp() {
 		return timestamp;
 	}
-
 }

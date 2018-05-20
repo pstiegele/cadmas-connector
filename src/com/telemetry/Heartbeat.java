@@ -5,20 +5,21 @@ import org.json.JSONObject;
 
 import com.MAVLink.common.msg_heartbeat;
 
-import jdk.nashorn.internal.parser.JSONParser;
-import jdk.nashorn.internal.runtime.JSONFunctions;
 import tools.MessageMemory;
 
 public class Heartbeat implements TelemetryMessage{
-	int baseMode;
+	boolean isArmed;
 	long customMode;
 	long timestamp;
-	float messagesLost;
+	float messagesLost; // number of lost messages for every received message
 	
 	private static MessageMemory<Heartbeat> messageMemory = new MessageMemory<>();
 	public Heartbeat(msg_heartbeat message, int[] rssi) {
 		timestamp=System.currentTimeMillis();
-		baseMode = message.base_mode;
+		isArmed = false;
+		if(message.base_mode > 127) {
+			isArmed = true;
+		}
 		customMode = message.custom_mode;
 		messagesLost = 0;
 		for(int i = 0; i < rssi.length; i++) {
@@ -31,7 +32,7 @@ public class Heartbeat implements TelemetryMessage{
 	@Override
 	public JSONObject getJSON() {
 		JSONObject res = new JSONObject();
-		res.put("timestamp", timestamp).put("baseMode", baseMode).put("customMode", customMode).put("messagesLost", messagesLost);
+		res.put("timestamp", timestamp).put("isArmed", isArmed).put("customMode", customMode).put("messagesLost", messagesLost);
 		return res;
 	}
 

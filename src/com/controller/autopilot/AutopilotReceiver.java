@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.SocketException;
+
 import com.MAVLink.MAVLinkPacket;
 import com.MAVLink.Parser;
 import com.MAVLink.common.msg_attitude;
@@ -49,7 +51,12 @@ public class AutopilotReceiver extends Thread {
 		//udpInsteadOfSerial = true;
 		
 		if(udpInsteadOfSerial){
-			readUDP();
+			try {
+				readUDP();
+			} catch (SocketException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		else{
 			while (true) {
@@ -83,7 +90,6 @@ public class AutopilotReceiver extends Thread {
 			break;
 		case msg_vfr_hud.MAVLINK_MSG_ID_VFR_HUD:
 			new Velocity(new msg_vfr_hud(mavpacket));
-			//System.out.println("connected...");
 			//System.out.println("Altitude: " + hud.alt + "m\tGroundspeed: " + hud.groundspeed + "m/s\tHeading: " + hud.heading);
 			break;
 		case msg_command_ack.MAVLINK_MSG_ID_COMMAND_ACK:
@@ -170,11 +176,11 @@ public class AutopilotReceiver extends Thread {
 
 	}
 	
-	public void readUDP() {  
+	public void readUDP() throws SocketException {
 		Parser parser = new Parser();
 		int port = 14551;
+		DatagramSocket dSocket = new DatagramSocket(port);
 	      try {
-		        DatagramSocket dSocket = new DatagramSocket(port);
 		        byte[] buffer = new byte[2048];
 	
 		        System.out.printf("Listening on udp:%s:%d%n", InetAddress.getLocalHost().getHostAddress(), port);     
@@ -214,6 +220,7 @@ public class AutopilotReceiver extends Thread {
 	      catch (IOException e) {
 	              System.out.println(e);
 	      }
+	      dSocket.close();
 	}
 
 	private static int unsignedToBytes(byte a) {

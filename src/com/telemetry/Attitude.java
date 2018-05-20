@@ -8,7 +8,7 @@ import tools.MessageMemory;
 
 public class Attitude implements TelemetryMessage{
 	
-	float pitch, roll, heading;
+	float pitch, roll, yaw;
 	long timestamp;
 	
 	private static MessageMemory<Attitude> messageMemory = new MessageMemory<>();
@@ -16,14 +16,14 @@ public class Attitude implements TelemetryMessage{
 		timestamp=System.currentTimeMillis();
 		pitch = message.pitch;
 		roll = message.roll;
-		heading = message.yaw;
+		yaw = message.yaw;
 		messageMemory.add(this);
 	}
 	
 	@Override
 	public JSONObject getJSON() {
 		JSONObject res = new JSONObject();
-		res.put("pitch", pitch).put("roll", roll).put("heading", heading);
+		res.put("pitch", pitch).put("roll", roll).put("heading", yaw);
 		return res;
 	}
 
