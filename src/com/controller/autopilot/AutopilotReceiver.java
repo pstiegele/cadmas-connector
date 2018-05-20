@@ -33,9 +33,9 @@ import com.telemetry.Velocity;
 
 public class AutopilotReceiver extends Thread {
 
-	boolean udpInsteadOfSerial = true;
+	boolean udpInsteadOfSerial = false;
 	private SerialPort port;
-	private int previousSequence = 0;
+	private int previousSequence;
 	int sequenceLogSize = 5;
 	int[] sequenceLog = new int[sequenceLogSize];
 	int arrayIndex = 0;
@@ -49,6 +49,9 @@ public class AutopilotReceiver extends Thread {
 	@Override
 	public void run() {
 		//udpInsteadOfSerial = true;
+		previousSequence = 0;
+		waitMillis(2000);
+		System.out.println("receiverStart");
 		
 		if(udpInsteadOfSerial){
 			try {
@@ -99,7 +102,6 @@ public class AutopilotReceiver extends Thread {
 		case msg_home_position.MAVLINK_MSG_ID_HOME_POSITION:
 			new MissionItem(new msg_home_position(mavpacket));
 			//msg_home_position hp = new msg_home_position(mavpacket);
-			//System.out.println(hp);
 			break;
 		case msg_mission_ack.MAVLINK_MSG_ID_MISSION_ACK:
 			//System.out.println(new msg_mission_ack(mavpacket).toString());
@@ -154,6 +156,9 @@ public class AutopilotReceiver extends Thread {
 					//Thread.sleep(20);
 				}
 				int bytesToRead = port.bytesAvailable();
+				while(bytesToRead < 0) {
+					waitMillis(50);
+				}
 				byte[] readBuffer = new byte[bytesToRead];
 				port.readBytes(readBuffer, bytesToRead);
 				int readarr[] = new int[bytesToRead];
@@ -226,5 +231,14 @@ public class AutopilotReceiver extends Thread {
 	private static int unsignedToBytes(byte a) {
 		int b = a & 0xFF;
 		return b;
+	}
+	
+	public void waitMillis(long t){
+		try {
+			Thread.sleep(t);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 	}
 }

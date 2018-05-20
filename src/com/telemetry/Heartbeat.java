@@ -53,6 +53,10 @@ public class Heartbeat implements TelemetryMessage{
 	public float getRSSI() {
 		return messagesLost;
 	}
+	
+	public boolean getArmedState() {
+		return isArmed;
+	}
 
 
 }

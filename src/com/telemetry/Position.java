@@ -21,7 +21,6 @@ public class Position implements TelemetryMessage{
 		heading = message.hdg;
 		altitudeAbsolute = (float)message.alt/1000;
 		altitudeRelative = (float)message.relative_alt/1000;
-		System.out.println(toCustomMissionItem().toString());
 		messageMemory.add(this);
 	}
 	@Override

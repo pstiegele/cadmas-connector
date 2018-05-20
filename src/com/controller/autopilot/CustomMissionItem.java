@@ -7,7 +7,7 @@ import com.MAVLink.enums.MAV_RESULT;
 import tools.Settings;
 
 public class CustomMissionItem {
-	int type = 0; // 0=Waypoint -1=RTL -2=TakeOff -3=Land n=Loiter for n secs ...
+	int type = 0; // Use MissionItemTypes enum
 	float latitude = 0;
 	float longitude = 0;
 	int altitude = 0;
@@ -23,16 +23,16 @@ public class CustomMissionItem {
 		type = MAV_RESULT.MAV_RESULT_FAILED;
 		switch(item.command){
 		case MAV_CMD.MAV_CMD_NAV_LAND:
-			type = -3;
+			type = MissionItemTypes.LAND;
 			break;
 		case MAV_CMD.MAV_CMD_NAV_TAKEOFF:
-			type = -2;
+			type = MissionItemTypes.TAKEOFF;
 			break;
 		case MAV_CMD.MAV_CMD_NAV_WAYPOINT:
-			type = 0;
+			type = MissionItemTypes.WAYPOINT;
 			break;
 		case MAV_CMD.MAV_CMD_NAV_RETURN_TO_LAUNCH:
-			type = -1;
+			type = MissionItemTypes.RTL;
 			break;
 		case MAV_CMD.MAV_CMD_NAV_LOITER_TIME:
 			type = (int)item.param1;
@@ -52,17 +52,17 @@ public class CustomMissionItem {
 		item.y = longitude;
 		item.z = altitude;
 		switch(type){
-		case -3:
+		case MissionItemTypes.LAND:
 			item.command = MAV_CMD.MAV_CMD_NAV_LAND;
 			item.param1 = Settings.getInstance().getAbortAltitude(); //abort altitude in meters
-		case -2:
+		case MissionItemTypes.TAKEOFF:
 			item.command = MAV_CMD.MAV_CMD_NAV_TAKEOFF;
 			item.param1 = Settings.getInstance().getTakeOffPitch(); //pitch angle in degrees
 			break;
-		case -1:
+		case MissionItemTypes.RTL:
 			item.command = MAV_CMD.MAV_CMD_NAV_RETURN_TO_LAUNCH;
 			break;
-		case 0:
+		case MissionItemTypes.WAYPOINT:
 			item.command = MAV_CMD.MAV_CMD_NAV_WAYPOINT;
 			break;
 		default:
@@ -81,16 +81,16 @@ public class CustomMissionItem {
 		case MAV_RESULT.MAV_RESULT_FAILED:	//-4
 			typeString = "invalid";
 			break;
-		case -3:
+		case MissionItemTypes.LAND:
 			typeString = "Land";
 			break;
-		case -2:
+		case MissionItemTypes.TAKEOFF:
 			typeString = "Take Off";
 			break;
-		case -1:
+		case MissionItemTypes.RTL:
 			typeString = "RTL";
 			break;
-		case 0:
+		case MissionItemTypes.WAYPOINT:
 			typeString = "Waypoint";
 			break;
 		default:
