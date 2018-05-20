@@ -26,7 +26,7 @@ public class Position implements TelemetryMessage{
 	@Override
 	public JSONObject getJSON() {
 		JSONObject res = new JSONObject();
-		res.put("timestamp", timestamp).put("latitude", latitude).put("longitude", longitude).put("altitudeAbsolute",altitudeAbsolute).put("altitudeRelative",altitudeRelative).put("heading", heading);
+		res.put("timestamp", timestamp).put("latitude", latitude/10000000).put("longitude", longitude/10000000).put("altitudeAbsolute",altitudeAbsolute).put("altitudeRelative",altitudeRelative).put("heading", heading);
 		return res;
 	}
 
