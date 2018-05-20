@@ -12,6 +12,11 @@ public class Battery implements TelemetryMessage{
 	long timestamp;
 	
 	private static MessageMemory<Battery> messageMemory = new MessageMemory<>();
+	public Battery() {
+		voltage = current = percentage = 0;
+		timestamp = 0;
+		messageMemory.add(this);
+	}
 	public Battery(msg_battery_status message){
 		timestamp=System.currentTimeMillis();
 		int avgVoltage = 0;

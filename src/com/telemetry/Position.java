@@ -14,6 +14,10 @@ public class Position implements TelemetryMessage{
 	long timestamp;
 
 	private static MessageMemory<Position> messageMemory = new MessageMemory<>();
+	public Position() {
+		latitude = longitude = heading = altitudeAbsolute = altitudeRelative = timestamp = 0;
+		messageMemory.add(this);
+	}
 	public Position(msg_global_position_int message){
 		timestamp=System.currentTimeMillis();
 		latitude = (float) (message.lat/1e7);

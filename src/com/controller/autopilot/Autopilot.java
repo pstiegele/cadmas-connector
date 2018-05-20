@@ -2,6 +2,14 @@ package com.controller.autopilot;
 
 import com.MAVLink.MAVLinkPacket;
 import com.fazecast.jSerialComm.SerialPort;
+import com.telemetry.Attitude;
+import com.telemetry.Battery;
+import com.telemetry.CommandAck;
+import com.telemetry.Heartbeat;
+import com.telemetry.MissionItem;
+import com.telemetry.MissionState;
+import com.telemetry.Position;
+import com.telemetry.Velocity;
 
 import tools.Settings;
 
@@ -33,6 +41,7 @@ public class Autopilot extends Thread {
 
 	public void connect() {
 		port = init();
+		initTelemetryObjects();
 		new AutopilotTransmitter(port);
 		new AutopilotReceiver(port);
 		//MissionGetter missionreceiver = new MissionGetter(port);
@@ -54,6 +63,17 @@ public class Autopilot extends Thread {
 		port.openPort();
 		System.out.println("\n" + port.getDescriptivePortName() + " (Baudrate: " + port.getBaudRate() + ") is now open.");
 		return port;
+	}
+	
+	private void initTelemetryObjects() {
+		new Attitude();
+		new Battery();
+		new Heartbeat();
+		new MissionState();
+		new Position();
+		new Velocity();
+		new MissionItem();
+		new CommandAck();
 	}
 
 	

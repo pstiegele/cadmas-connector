@@ -18,6 +18,11 @@ public class MissionItem implements TelemetryMessage{
 	long timestamp;
 	
 	private static MessageMemory<MissionItem> messageMemory = new MessageMemory<>();
+	public MissionItem() {
+		timestamp = command = result = 0;
+		item = new CustomMissionItem(MissionItemTypes.INVALID, 0, 0, 0);
+		messageMemory.add(this);
+	}
 	public MissionItem(msg_mission_item missionItem) {
 		timestamp=System.currentTimeMillis();
 		command = msg_mission_item.MAVLINK_MSG_ID_MISSION_ITEM;

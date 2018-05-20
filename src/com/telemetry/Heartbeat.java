@@ -4,6 +4,7 @@ package com.telemetry;
 import org.json.JSONObject;
 
 import com.MAVLink.common.msg_heartbeat;
+import com.controller.autopilot.FlightModes;
 
 import tools.MessageMemory;
 
@@ -14,6 +15,13 @@ public class Heartbeat implements TelemetryMessage{
 	float messagesLost; // number of lost messages for every received message
 	
 	private static MessageMemory<Heartbeat> messageMemory = new MessageMemory<>();
+	public Heartbeat() {
+		isArmed = false;
+		customMode = FlightModes.MANUAL;
+		timestamp = 0;
+		messagesLost = 0;
+		messageMemory.add(this);
+	}
 	public Heartbeat(msg_heartbeat message, int[] rssi) {
 		timestamp=System.currentTimeMillis();
 		isArmed = false;
