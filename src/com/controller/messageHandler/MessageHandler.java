@@ -18,10 +18,16 @@ import javafx.collections.ListChangeListener;
 public class MessageHandler extends Thread {
 
 	private static MessageHandler messageHandler;
+	static long lastAttitudeTimestamp, lastBatteryTimestamp, lastHeartbeatTimestamp, lastMissionItemTimestamp,
+			lastMissionStateTimestamp, lastPositionTimestamp, lastVelocityTimestamp;
+
+	static int refreshRateAttitude, refreshRateBattery, refreshRateHeartbeat, refreshRateMissionItem,
+			refreshRateMissionState, refreshRatePosition, refreshRateVelocity;
 
 	public MessageHandler() {
 		messageHandler = this;
 		this.setName("MessageHandler");
+		refreshRateAttitude = refreshRateBattery = refreshRateHeartbeat = refreshRateMissionItem = refreshRateMissionState = refreshRatePosition = refreshRateVelocity = 500;
 		start();
 	}
 
@@ -65,6 +71,7 @@ public class MessageHandler extends Thread {
 		// Arm
 		Arm.getMessageMemory().addListener((ListChangeListener<? super Arm>) (c -> {
 			new Thread(new Runnable() {
+
 				@Override
 				public void run() {
 					Arm.getMessageMemory().getNewestElement().execute();
@@ -91,60 +98,92 @@ public class MessageHandler extends Thread {
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
-					SocketConnection.getSocketConnection().send(Attitude.getMessageMemory().getNewestElement());
+					if (Attitude.getMessageMemory().getNewestElement().getTimestamp()
+							- lastAttitudeTimestamp > refreshRateAttitude) {
+						lastAttitudeTimestamp = Attitude.getMessageMemory().getNewestElement().getTimestamp();
+						SocketConnection.getSocketConnection().send(Attitude.getMessageMemory().getNewestElement());
+					}
 				}
 			}).start();
-			
+
 		}));
 		// Heartbeat
 		Heartbeat.getMessageMemory().addListener((ListChangeListener<? super Heartbeat>) (c -> {
 			new Thread(new Runnable() {
+
 				@Override
 				public void run() {
-					SocketConnection.getSocketConnection().send(Heartbeat.getMessageMemory().getNewestElement());
+					if (Heartbeat.getMessageMemory().getNewestElement().getTimestamp()
+							- lastHeartbeatTimestamp > refreshRateHeartbeat) {
+						lastHeartbeatTimestamp = Heartbeat.getMessageMemory().getNewestElement().getTimestamp();
+						SocketConnection.getSocketConnection().send(Heartbeat.getMessageMemory().getNewestElement());
+					}
+
 				}
 			}).start();
-			
+
 		}));
 		// Battery
 		Battery.getMessageMemory().addListener((ListChangeListener<? super Battery>) (c -> {
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
-					SocketConnection.getSocketConnection().send(Battery.getMessageMemory().getNewestElement());
+					if (Battery.getMessageMemory().getNewestElement().getTimestamp()
+							- lastBatteryTimestamp > refreshRateBattery) {
+						lastBatteryTimestamp = Battery.getMessageMemory().getNewestElement().getTimestamp();
+						SocketConnection.getSocketConnection().send(Battery.getMessageMemory().getNewestElement());
+					}
+
 				}
 			}).start();
 
 		}));
 		// MissionState
-		MissionState.getMessageMemory().addListener((ListChangeListener<? super MissionState>) (c -> {
+		MissionState.getMessageMemory().addListener((ListChangeListener<? super MissionState>) (c ->
+
+		{
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
-					SocketConnection.getSocketConnection().send(MissionState.getMessageMemory().getNewestElement());
+					if (MissionState.getMessageMemory().getNewestElement().getTimestamp()
+							- lastMissionStateTimestamp > refreshRateMissionState) {
+						lastMissionStateTimestamp = MissionState.getMessageMemory().getNewestElement().getTimestamp();
+						SocketConnection.getSocketConnection().send(MissionState.getMessageMemory().getNewestElement());
+					}
+
 				}
 			}).start();
-			
+
 		}));
 		// Position
 		Position.getMessageMemory().addListener((ListChangeListener<? super Position>) (c -> {
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
-					SocketConnection.getSocketConnection().send(Position.getMessageMemory().getNewestElement());
+					if (Position.getMessageMemory().getNewestElement().getTimestamp()
+							- lastPositionTimestamp > refreshRatePosition) {
+						lastPositionTimestamp = Position.getMessageMemory().getNewestElement().getTimestamp();
+						SocketConnection.getSocketConnection().send(Position.getMessageMemory().getNewestElement());
+					}
+
 				}
 			}).start();
-			
+
 		}));
 		// Velocity
 		Velocity.getMessageMemory().addListener((ListChangeListener<? super Velocity>) (c -> {
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
-					SocketConnection.getSocketConnection().send(Velocity.getMessageMemory().getNewestElement());
+					if (Velocity.getMessageMemory().getNewestElement().getTimestamp()
+							- lastVelocityTimestamp > refreshRateVelocity) {
+						lastVelocityTimestamp = Velocity.getMessageMemory().getNewestElement().getTimestamp();
+						SocketConnection.getSocketConnection().send(Velocity.getMessageMemory().getNewestElement());
+					}
+
 				}
 			}).start();
-			
+
 		}));
 	}
 
