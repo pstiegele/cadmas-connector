@@ -12,6 +12,10 @@ public class Attitude implements TelemetryMessage{
 	long timestamp;
 	
 	private static MessageMemory<Attitude> messageMemory = new MessageMemory<>();
+	public Attitude() {
+		pitch = roll = yaw = timestamp = 0;
+		messageMemory.add(this);
+	}
 	public Attitude(msg_attitude message) {
 		timestamp=System.currentTimeMillis();
 		pitch = message.pitch;

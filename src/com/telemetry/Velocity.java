@@ -12,6 +12,10 @@ public class Velocity implements TelemetryMessage{
 	long timestamp;
 	
 	private static MessageMemory<Velocity> messageMemory = new MessageMemory<>();
+	public Velocity() {
+		groundspeed = airspeed = climbrate = timestamp = 0;
+		messageMemory.add(this);
+	}
 	public Velocity(msg_vfr_hud message) {
 		timestamp=System.currentTimeMillis();
 		groundspeed = message.groundspeed;

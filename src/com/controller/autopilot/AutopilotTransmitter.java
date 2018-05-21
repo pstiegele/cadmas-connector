@@ -22,11 +22,11 @@ import com.MAVLink.common.msg_mission_request_list;
 import com.MAVLink.common.msg_mission_set_current;
 import com.MAVLink.common.msg_set_mode;
 import com.MAVLink.enums.MAV_CMD;
-import com.MAVLink.enums.MAV_FRAME;
 import com.MAVLink.enums.MAV_MODE_FLAG;
 import com.MAVLink.enums.MAV_RESULT;
 import com.fazecast.jSerialComm.SerialPort;
 import com.telemetry.CommandAck;
+import com.telemetry.Heartbeat;
 import com.telemetry.MissionItem;
 import com.telemetry.MissionState;
 import tools.Settings;
@@ -41,6 +41,7 @@ public class AutopilotTransmitter extends Thread {
 		
 		this.port = port;
 		start();
+		
 	}
 
 	@Override
@@ -48,7 +49,7 @@ public class AutopilotTransmitter extends Thread {
 		waitMillis(5000);
 
 		//INSERT COMMANDS HERE
-		System.out.println("start");
+		System.out.println("transmitterStart");
 		waitMillis(2000);
 		
 	}
@@ -181,6 +182,9 @@ public class AutopilotTransmitter extends Thread {
 	}
 	
 	public int setHomePosition(CustomMissionItem hp) throws UnknownHostException, SocketException{
+		if(!Heartbeat.getMessageMemory().getNewestElement().getArmedState()) {
+			return MAV_RESULT.MAV_RESULT_DENIED;
+		}
 		msg_command_long setHome = new msg_command_long();
 		setHome.command = MAV_CMD.MAV_CMD_DO_SET_HOME;
 		setHome.param1 = 0;
@@ -308,17 +312,17 @@ public class AutopilotTransmitter extends Thread {
 			item.y = mission.get(i).longitude;
 			item.z = mission.get(i).altitude;
 			switch(mission.get(i).type){
-			case -3:
+			case MissionItemTypes.LAND:
 				item.command = MAV_CMD.MAV_CMD_NAV_LAND;
 				item.param1 = Settings.getInstance().getAbortAltitude(); //abort altitude in meters
-			case -2:
+			case MissionItemTypes.TAKEOFF:
 				item.command = MAV_CMD.MAV_CMD_NAV_TAKEOFF;
 				item.param1 = Settings.getInstance().getTakeOffPitch(); //pitch angle in degrees
 				break;
-			case -1:
+			case MissionItemTypes.RTL:
 				item.command = MAV_CMD.MAV_CMD_NAV_RETURN_TO_LAUNCH;
 				break;
-			case 0:
+			case MissionItemTypes.WAYPOINT:
 				item.command = MAV_CMD.MAV_CMD_NAV_WAYPOINT;
 				break;
 			default:
@@ -464,9 +468,8 @@ public class AutopilotTransmitter extends Thread {
 	}
 	
 	public void waitMillis(long t){
-		long millis = t;
 		try {
-			Thread.sleep(millis);
+			Thread.sleep(t);
 		} catch (InterruptedException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();

@@ -18,6 +18,10 @@ public class CommandAck implements TelemetryMessage{
 	long timestamp;
 	
 	private static MessageMemory<CommandAck> messageMemory = new MessageMemory<>();
+	public CommandAck() {
+		timestamp = command = result = 0;
+		messageMemory.add(this);
+	}
 	public CommandAck(msg_command_ack message) {
 		timestamp=System.currentTimeMillis();
 		command = message.command;

@@ -11,6 +11,11 @@ public class MissionState implements TelemetryMessage{
 	long timestamp;
 	
 	private static MessageMemory<MissionState> messageMemory = new MessageMemory<>();
+	public MissionState() {
+		currentSequence = 0;
+		timestamp = 0;
+		messageMemory.add(this);
+	}
 	public MissionState(msg_mission_current message) {
 		timestamp=System.currentTimeMillis();
 		currentSequence = message.seq;
