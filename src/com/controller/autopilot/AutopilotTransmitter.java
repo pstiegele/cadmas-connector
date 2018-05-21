@@ -33,7 +33,7 @@ import tools.Settings;
 
 public class AutopilotTransmitter extends Thread {
 	
-	boolean udpInsteadOfSerial = false;
+	boolean udpInsteadOfSerial = Settings.getInstance().getUseUDP();
 	private SerialPort port;
 	
 	AutopilotTransmitter(SerialPort port) {

@@ -12,6 +12,11 @@ public class Settings {
 	int takeOffPitch = 10;
 	short frameOrientation = MAV_FRAME.MAV_FRAME_GLOBAL_RELATIVE_ALT;
 	
+	boolean startAutopilot = true;
+	boolean startMessageHandler = true;
+	boolean startSocketConnection = true;
+	boolean useUDP = true;
+	
 	private Settings(){
 		
 	}
@@ -66,5 +71,37 @@ public class Settings {
 	
 	public short getFrameOrientation(){
 		return frameOrientation;
+	}
+
+	public boolean getStartAutopilot() {
+		return startAutopilot;
+	}
+
+	public void setStartAutopilot(boolean startAutopilot) {
+		this.startAutopilot = startAutopilot;
+	}
+
+	public boolean getStartMessageHandler() {
+		return startMessageHandler;
+	}
+
+	public void setStartMessageHandler(boolean startMessageHandler) {
+		this.startMessageHandler = startMessageHandler;
+	}
+
+	public boolean getStartSocketConnection() {
+		return startSocketConnection;
+	}
+
+	public void setStartSocketConnection(boolean startSocketConnection) {
+		this.startSocketConnection = startSocketConnection;
+	}
+
+	public boolean getUseUDP() {
+		return useUDP;
+	}
+
+	public void setUseUDP(boolean useUDP) {
+		this.useUDP = useUDP;
 	}
 }
