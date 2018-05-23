@@ -20,25 +20,25 @@ public class CustomMissionItem {
 	}
 	
 	public CustomMissionItem(msg_mission_item item) {
-		type = MissionItemTypes.INVALID;
+		type = MissionItemType.INVALID;
 		switch(item.command){
 		case MAV_CMD.MAV_CMD_NAV_LAND:
-			type = MissionItemTypes.LAND;
+			type = MissionItemType.LAND;
 			break;
 		case MAV_CMD.MAV_CMD_NAV_TAKEOFF:
-			type = MissionItemTypes.TAKEOFF;
+			type = MissionItemType.TAKEOFF;
 			break;
 		case MAV_CMD.MAV_CMD_NAV_WAYPOINT:
-			type = MissionItemTypes.WAYPOINT;
+			type = MissionItemType.WAYPOINT;
 			break;
 		case MAV_CMD.MAV_CMD_NAV_RETURN_TO_LAUNCH:
-			type = MissionItemTypes.RTL;
+			type = MissionItemType.RTL;
 			break;
 		case MAV_CMD.MAV_CMD_NAV_LOITER_TIME:
 			type = (int)item.param1;
 			break;
 		default:
-			type = MissionItemTypes.INVALID;
+			type = MissionItemType.INVALID;
 			break;
 		}
 		latitude = item.x;
@@ -53,20 +53,20 @@ public class CustomMissionItem {
 		item.y = longitude;
 		item.z = altitude;
 		switch(type){
-		case MissionItemTypes.INVALID:
+		case MissionItemType.INVALID:
 			return null;
-		case MissionItemTypes.LAND:
+		case MissionItemType.LAND:
 			item.command = MAV_CMD.MAV_CMD_NAV_LAND;
 			item.param1 = Settings.getInstance().getAbortAltitude(); //abort altitude in meters
 			break;
-		case MissionItemTypes.TAKEOFF:
+		case MissionItemType.TAKEOFF:
 			item.command = MAV_CMD.MAV_CMD_NAV_TAKEOFF;
 			item.param1 = Settings.getInstance().getTakeOffPitch(); //pitch angle in degrees
 			break;
-		case MissionItemTypes.RTL:
+		case MissionItemType.RTL:
 			item.command = MAV_CMD.MAV_CMD_NAV_RETURN_TO_LAUNCH;
 			break;
-		case MissionItemTypes.WAYPOINT:
+		case MissionItemType.WAYPOINT:
 			item.command = MAV_CMD.MAV_CMD_NAV_WAYPOINT;
 			break;
 		default:
@@ -82,19 +82,19 @@ public class CustomMissionItem {
 	public String toString() {
 		String typeString;
 		switch(type){
-		case MissionItemTypes.INVALID:	//-4
+		case MissionItemType.INVALID:	//-4
 			typeString = "invalid";
 			break;
-		case MissionItemTypes.LAND:
+		case MissionItemType.LAND:
 			typeString = "Land";
 			break;
-		case MissionItemTypes.TAKEOFF:
+		case MissionItemType.TAKEOFF:
 			typeString = "Take Off";
 			break;
-		case MissionItemTypes.RTL:
+		case MissionItemType.RTL:
 			typeString = "RTL";
 			break;
-		case MissionItemTypes.WAYPOINT:
+		case MissionItemType.WAYPOINT:
 			typeString = "Waypoint";
 			break;
 		default:

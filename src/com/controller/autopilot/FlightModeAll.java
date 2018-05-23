@@ -1,6 +1,6 @@
 package com.controller.autopilot;
 
-public class FlightModesAll {
+public class FlightModeAll {
 	public static final int MANUAL = 0;
 	public static final int CIRCLE = 1;
 	public static final int STABILIZE = 2;

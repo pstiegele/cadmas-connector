@@ -4,7 +4,7 @@ import org.json.JSONObject;
 
 import com.MAVLink.common.msg_global_position_int;
 import com.controller.autopilot.CustomMissionItem;
-import com.controller.autopilot.MissionItemTypes;
+import com.controller.autopilot.MissionItemType;
 
 import tools.MessageMemory;
 
@@ -56,7 +56,7 @@ public class Position implements TelemetryMessage{
 	}
 	
 	public CustomMissionItem toCustomMissionItem() {
-		return new CustomMissionItem(MissionItemTypes.LOITER_5_MIN, latitude, longitude, (int) altitudeRelative);
+		return new CustomMissionItem(MissionItemType.LOITER_5_MIN, latitude, longitude, (int) altitudeRelative);
 	}
 
 }

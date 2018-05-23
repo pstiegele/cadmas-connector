@@ -208,7 +208,7 @@ public class AutopilotTransmitter extends Thread {
 	}
 	
 	public CustomMissionItem getHomePosition() throws UnknownHostException, SocketException{
-		CustomMissionItem failed = new CustomMissionItem(MissionItemTypes.INVALID, 0, 0, 0);
+		CustomMissionItem failed = new CustomMissionItem(MissionItemType.INVALID, 0, 0, 0);
 		msg_command_long getHome = new msg_command_long();
 		getHome.command = MAV_CMD.MAV_CMD_GET_HOME_POSITION;
 		int attempts = 3;
@@ -255,7 +255,7 @@ public class AutopilotTransmitter extends Thread {
 	}
 	
 	public int sendMission(ArrayList<CustomMissionItem> mission, boolean restart) throws UnknownHostException, SocketException{
-		if(mission.get(0).type == MissionItemTypes.INVALID) {
+		if(mission.get(0).type == MissionItemType.INVALID) {
 			return MAV_RESULT.MAV_RESULT_FAILED;
 		}
 		int currentSequence = getSequence();
@@ -300,20 +300,20 @@ public class AutopilotTransmitter extends Thread {
 			item.y = mission.get(i).longitude;
 			item.z = mission.get(i).altitude;
 			switch(mission.get(i).type){
-			case MissionItemTypes.INVALID:
+			case MissionItemType.INVALID:
 				return MAV_RESULT.MAV_RESULT_FAILED;
-			case MissionItemTypes.LAND:
+			case MissionItemType.LAND:
 				item.command = MAV_CMD.MAV_CMD_NAV_LAND;
 				item.param1 = Settings.getInstance().getAbortAltitude(); //abort altitude in meters
 				break;
-			case MissionItemTypes.TAKEOFF:
+			case MissionItemType.TAKEOFF:
 				item.command = MAV_CMD.MAV_CMD_NAV_TAKEOFF;
 				item.param1 = Settings.getInstance().getTakeOffPitch(); //pitch angle in degrees
 				break;
-			case MissionItemTypes.RTL:
+			case MissionItemType.RTL:
 				item.command = MAV_CMD.MAV_CMD_NAV_RETURN_TO_LAUNCH;
 				break;
-			case MissionItemTypes.WAYPOINT:
+			case MissionItemType.WAYPOINT:
 				item.command = MAV_CMD.MAV_CMD_NAV_WAYPOINT;
 				break;
 			default:
@@ -328,7 +328,7 @@ public class AutopilotTransmitter extends Thread {
 		
 		ArrayList<CustomMissionItem> verification = getMission();
 		
-		if(verification.get(0).type == MissionItemTypes.INVALID){
+		if(verification.get(0).type == MissionItemType.INVALID){
 			return MAV_RESULT.MAV_RESULT_FAILED;
 		}
 		
@@ -381,7 +381,7 @@ public class AutopilotTransmitter extends Thread {
 	
 	public ArrayList<CustomMissionItem> getMission() throws UnknownHostException, SocketException{
 		ArrayList<CustomMissionItem> failed = new ArrayList<>();
-		failed.add(new CustomMissionItem(MissionItemTypes.INVALID, 0, 0, 0));
+		failed.add(new CustomMissionItem(MissionItemType.INVALID, 0, 0, 0));
 		
 		ArrayList<CustomMissionItem> mission = new ArrayList<>();
 		
@@ -396,7 +396,7 @@ public class AutopilotTransmitter extends Thread {
 		CustomMissionItem item;
 		for(int i = 1; i < missionCount; i++){
 			item = getMissionItem(i);
-			if(item.type == MissionItemTypes.INVALID){
+			if(item.type == MissionItemType.INVALID){
 				return failed;
 			}
 			mission.add(item);
@@ -405,7 +405,7 @@ public class AutopilotTransmitter extends Thread {
 	}
 	
 	public CustomMissionItem getMissionItem(int sequence) throws UnknownHostException, SocketException{
-		CustomMissionItem failed = new CustomMissionItem(MissionItemTypes.INVALID, 0, 0, 0);
+		CustomMissionItem failed = new CustomMissionItem(MissionItemType.INVALID, 0, 0, 0);
 		msg_mission_request request = new msg_mission_request();
 		request.seq = sequence;
 		int attempts = 50;

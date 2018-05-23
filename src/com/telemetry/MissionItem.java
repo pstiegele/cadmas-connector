@@ -7,7 +7,7 @@ import com.MAVLink.common.msg_mission_item;
 import com.MAVLink.enums.MAV_CMD;
 import com.MAVLink.enums.MAV_RESULT;
 import com.controller.autopilot.CustomMissionItem;
-import com.controller.autopilot.MissionItemTypes;
+import com.controller.autopilot.MissionItemType;
 
 import tools.MessageMemory;
 
@@ -20,26 +20,26 @@ public class MissionItem implements TelemetryMessage{
 	private static MessageMemory<MissionItem> messageMemory = new MessageMemory<>();
 	public MissionItem() {
 		timestamp = command = result = 0;
-		item = new CustomMissionItem(MissionItemTypes.INVALID, 0, 0, 0);
+		item = new CustomMissionItem(MissionItemType.INVALID, 0, 0, 0);
 		messageMemory.add(this);
 	}
 	public MissionItem(msg_mission_item missionItem) {
 		timestamp=System.currentTimeMillis();
 		command = msg_mission_item.MAVLINK_MSG_ID_MISSION_ITEM;
 		result = missionItem.seq;
-		int type = MissionItemTypes.WAYPOINT;
+		int type = MissionItemType.WAYPOINT;
 		switch(missionItem.command){
 		case MAV_CMD.MAV_CMD_NAV_LAND:
-			type = MissionItemTypes.LAND;
+			type = MissionItemType.LAND;
 			break;
 		case MAV_CMD.MAV_CMD_NAV_TAKEOFF:
-			type = MissionItemTypes.TAKEOFF;
+			type = MissionItemType.TAKEOFF;
 			break;
 		case MAV_CMD.MAV_CMD_NAV_WAYPOINT:
-			type = MissionItemTypes.WAYPOINT;
+			type = MissionItemType.WAYPOINT;
 			break;
 		case MAV_CMD.MAV_CMD_NAV_RETURN_TO_LAUNCH:
-			type = MissionItemTypes.RTL;
+			type = MissionItemType.RTL;
 			break;
 		case MAV_CMD.MAV_CMD_NAV_LOITER_TIME:
 			type = (int)missionItem.param1;
