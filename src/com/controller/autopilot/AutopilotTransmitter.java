@@ -72,13 +72,11 @@ public class AutopilotTransmitter extends Thread {
 						if(CommandAck.getMessageMemory().get(arraySize).getResult() == MAV_RESULT.MAV_RESULT_ACCEPTED){
 							return MAV_RESULT.MAV_RESULT_ACCEPTED;
 						}
-						else if(i == 2){
+						else if(i == attempts - 1){
 							return CommandAck.getMessageMemory().get(arraySize).getResult();
 						}
 					}
-					if(CommandAck.getMessageMemory().size() > arraySize){
-						arraySize += 1;
-					}
+					arraySize += 1;
 				}
 			}
 		}
@@ -106,13 +104,11 @@ public class AutopilotTransmitter extends Thread {
 						if(CommandAck.getMessageMemory().get(arraySize).getResult() == MAV_RESULT.MAV_RESULT_ACCEPTED){
 							return MAV_RESULT.MAV_RESULT_ACCEPTED;
 						}
-						else if(i == 2){
+						else if(i == attempts - 1){
 							return CommandAck.getMessageMemory().get(arraySize).getResult();
 						}
 					}
-					if(CommandAck.getMessageMemory().size() > arraySize){
-						arraySize += 1;
-					}
+					arraySize += 1;
 				}
 			}
 		}
@@ -137,13 +133,11 @@ public class AutopilotTransmitter extends Thread {
 						if(CommandAck.getMessageMemory().get(arraySize).getResult() == MAV_RESULT.MAV_RESULT_ACCEPTED){
 							return MAV_RESULT.MAV_RESULT_ACCEPTED;
 						}
-						else if(i == 2){
+						else if(i == attempts - 1){
 							return CommandAck.getMessageMemory().get(arraySize).getResult();
 						}
 					}
-					if(CommandAck.getMessageMemory().size() > arraySize){
-						arraySize += 1;
-					}
+					arraySize += 1;
 				}
 			}
 		}
@@ -168,13 +162,11 @@ public class AutopilotTransmitter extends Thread {
 						if(CommandAck.getMessageMemory().get(arraySize).getResult() == MAV_RESULT.MAV_RESULT_ACCEPTED){
 							return MAV_RESULT.MAV_RESULT_ACCEPTED;
 						}
-						else if(i == 2){
+						else if(i == attempts - 1){
 							return CommandAck.getMessageMemory().get(arraySize).getResult();
 						}
 					}
-					if(CommandAck.getMessageMemory().size() > arraySize){
-						arraySize += 1;
-					}
+					arraySize += 1;
 				}
 			}
 		}
@@ -204,13 +196,11 @@ public class AutopilotTransmitter extends Thread {
 						if(MissionItem.getMessageMemory().get(arraySize).getMissionItem().latitude == hp.latitude && MissionItem.getMessageMemory().get(arraySize).getMissionItem().longitude == hp.longitude && MissionItem.getMessageMemory().get(arraySize).getMissionItem().altitude == hp.altitude){
 							return MAV_RESULT.MAV_RESULT_ACCEPTED;
 						}
-						else if(i == 2){
+						else if(i == attempts - 1){
 							return MissionItem.getMessageMemory().get(arraySize).getResult();
 						}
 					}
-					if(MissionItem.getMessageMemory().size() > arraySize){
-						arraySize += 1;
-					}
+					arraySize += 1;
 				}
 			}
 		}
@@ -234,13 +224,11 @@ public class AutopilotTransmitter extends Thread {
 						if(MissionItem.getMessageMemory().get(arraySize).getResult() == MAV_RESULT.MAV_RESULT_ACCEPTED){
 							return MissionItem.getMessageMemory().get(arraySize).getMissionItem();
 						}
-						else if(i == 2){
+						else if(i == attempts - 1){
 							return failed;
 						}
 					}
-					if(MissionItem.getMessageMemory().size() > arraySize){
-						arraySize += 1;
-					}
+					arraySize += 1;
 				}
 			}
 		}
@@ -370,9 +358,7 @@ public class AutopilotTransmitter extends Thread {
 					if(MissionState.getMessageMemory().get(arraySize).getCurrentSequence() == sequence){
 						return MAV_RESULT.MAV_RESULT_ACCEPTED;
 					}
-					if(MissionState.getMessageMemory().size() > arraySize){
-						arraySize += 1;
-					}
+					arraySize += 1;
 				}
 			}
 		}
@@ -433,9 +419,7 @@ public class AutopilotTransmitter extends Thread {
 							return MissionItem.getMessageMemory().get(arraySize).getMissionItem();
 						}
 					}
-					if(MissionItem.getMessageMemory().size() > arraySize){
-						arraySize += 1;
-					}
+					arraySize += 1;
 				}
 			}
 		}
@@ -458,9 +442,7 @@ public class AutopilotTransmitter extends Thread {
 							return CommandAck.getMessageMemory().get(arraySize).getResult();
 						}
 					}
-					if(CommandAck.getMessageMemory().size() > arraySize){
-						arraySize += 1;
-					}
+					arraySize += 1;
 				}
 			}
 		}
