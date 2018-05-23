@@ -20,7 +20,7 @@ public class CustomMissionItem {
 	}
 	
 	public CustomMissionItem(msg_mission_item item) {
-		type = MAV_RESULT.MAV_RESULT_FAILED;
+		type = MissionItemTypes.INVALID;
 		switch(item.command){
 		case MAV_CMD.MAV_CMD_NAV_LAND:
 			type = MissionItemTypes.LAND;
@@ -38,6 +38,7 @@ public class CustomMissionItem {
 			type = (int)item.param1;
 			break;
 		default:
+			type = MissionItemTypes.INVALID;
 			break;
 		}
 		latitude = item.x;
@@ -52,9 +53,12 @@ public class CustomMissionItem {
 		item.y = longitude;
 		item.z = altitude;
 		switch(type){
+		case MissionItemTypes.INVALID:
+			return null;
 		case MissionItemTypes.LAND:
 			item.command = MAV_CMD.MAV_CMD_NAV_LAND;
 			item.param1 = Settings.getInstance().getAbortAltitude(); //abort altitude in meters
+			break;
 		case MissionItemTypes.TAKEOFF:
 			item.command = MAV_CMD.MAV_CMD_NAV_TAKEOFF;
 			item.param1 = Settings.getInstance().getTakeOffPitch(); //pitch angle in degrees
@@ -78,7 +82,7 @@ public class CustomMissionItem {
 	public String toString() {
 		String typeString;
 		switch(type){
-		case MAV_RESULT.MAV_RESULT_FAILED:	//-4
+		case MissionItemTypes.INVALID:	//-4
 			typeString = "invalid";
 			break;
 		case MissionItemTypes.LAND:
