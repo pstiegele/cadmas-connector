@@ -27,7 +27,7 @@ public class CadmasClientEndpoint extends Endpoint{
 			try {
 				WebSocketContainer container = ContainerProvider.getWebSocketContainer();
 				ArrayList<String> protocol = new ArrayList<>();
-				protocol.add(apikey);
+				protocol.add("myapikey");
 				ClientEndpointConfig cec = ClientEndpointConfig.Builder.create().preferredSubprotocols(protocol).build();
 				container.connectToServer(this, cec, endpointURI);
 				//container.connectToServer(this, endpointURI);

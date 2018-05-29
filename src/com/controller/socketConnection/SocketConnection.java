@@ -1,22 +1,22 @@
 package com.controller.socketConnection;
 
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 
+import javax.websocket.MessageHandler;
 import javax.websocket.SendHandler;
 import javax.websocket.SendResult;
 
 import org.json.JSONObject;
 
-import com.MAVLink.common.msg_adsb_vehicle;
 import com.MAVLink.common.msg_attitude;
 import com.MAVLink.common.msg_global_position_int;
-import com.MAVLink.common.msg_set_position_target_global_int;
 import com.MAVLink.common.msg_vfr_hud;
-import javax.websocket.MessageHandler;
-import com.controller.socketConnection.CadmasClientEndpoint.SocketMessageHandler;
+import com.controller.autopilot.Autopilot;
 import com.telecommand.Arm;
 import com.telecommand.Mission;
 import com.telemetry.Attitude;
@@ -51,7 +51,12 @@ public class SocketConnection extends Thread {
 	public void run() {
 		CountDownLatch latch = new CountDownLatch(1);
 		try {
-			connect();
+			try {
+				connect();
+			} catch (MalformedURLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			while (!clientEndPoint.userSession.isOpen())
 				;
 			System.out.println("is Open");
@@ -102,13 +107,17 @@ public class SocketConnection extends Thread {
 		return msg.toString();
 	}
 
-	public void connect() throws URISyntaxException {
+	public void connect() throws URISyntaxException, MalformedURLException {
 		String uri = System.getenv().get("CADMAS_URI");
 		String apikey = System.getenv().get("CADMAS_APIKEY");
 		if (uri == null) {
-			uri = "ws://localhost/connector?apikey=" + apikey;
-			// uri = "wss://cadmasapp.raapvdzcqu.eu-west-1.elasticbeanstalk.com/connector";
+			//uri = "ws://localhost/connector?apikey=" + apikey;
+			uri = "ws://192.168.2.174/connector?apikey=" + apikey;
+			//uri = "wss://cadmas.net:8081/connector?apikey="+apikey;
 		}
+		//URI myuri = new URI("wss", null, "cadmasapp.raapvdzcqu.eu-west-1.elasticbeanstalk.com", 8081, "/client", "token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJwcyIsImV4cCI6MTUyNzQ1MjQ5ODQ1OSwidXNlcklEIjoxLCJpYXQiOjE1MjQ4NjA0OTh9.9M9_aKxT9e1aIbMwRtUMbonFx8z-jPvOIrHQpV0PDhk", null);
+		//URI myuri = new URI("wss", null, "cadmas.net", 8081, "/auth", null, null);
+		//System.out.println(myuri.toString());
 		clientEndPoint = new CadmasClientEndpoint(new URI(uri), apikey);
 		clientEndPoint.userSession.addMessageHandler(new MessageHandler.Whole<String>() {
 			@Override
@@ -121,6 +130,10 @@ public class SocketConnection extends Thread {
 						break;
 					case "startMission":
 						System.out.println("startMission received");
+						break;
+					case "setMode":
+						System.out.println("setMode received: "+jsonMessage);
+						Autopilot.getAutopilot().getAutopilotTransmitter().setMode(Integer.parseInt(jsonMessage.getString("mode")));
 						break;
 					case "mission":
 						System.out.println("mission received");

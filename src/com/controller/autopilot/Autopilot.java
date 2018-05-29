@@ -17,6 +17,8 @@ public class Autopilot extends Thread {
 
 	private SerialPort port;
 	private static Autopilot autopilot;
+	AutopilotTransmitter transmitter;
+	AutopilotReceiver receiver;
 
 	public Autopilot() {
 		Autopilot.autopilot = this;
@@ -42,8 +44,8 @@ public class Autopilot extends Thread {
 		if (!Settings.getInstance().getUseUDP())
 			port = init();
 		initTelemetryObjects();
-		new AutopilotTransmitter(port);
-		new AutopilotReceiver(port);
+		transmitter = new AutopilotTransmitter(port);
+		receiver = new AutopilotReceiver(port);
 		// MissionGetter missionreceiver = new MissionGetter(port);
 	}
 
@@ -65,6 +67,15 @@ public class Autopilot extends Thread {
 				.println("\n" + port.getDescriptivePortName() + " (Baudrate: " + port.getBaudRate() + ") is now open.");
 		return port;
 	}
+	
+	public AutopilotTransmitter getAutopilotTransmitter() {
+		return transmitter;
+	}
+	
+	public AutopilotReceiver getAutopilotReceiver() {
+		return receiver;
+	}
+	
 
 	private void initTelemetryObjects() {
 		new Attitude();
