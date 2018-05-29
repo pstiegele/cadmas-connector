@@ -2,9 +2,9 @@ package com.controller.autopilot;
 
 import com.MAVLink.common.msg_mission_item;
 import com.MAVLink.enums.MAV_CMD;
-import com.MAVLink.enums.MAV_FRAME;
 import com.MAVLink.enums.MAV_RESULT;
 
+import tools.Settings;
 
 public class CustomMissionItem {
 	int type = 0; // Use MissionItemTypes enum
@@ -48,7 +48,7 @@ public class CustomMissionItem {
 	
 	public msg_mission_item toMavlinkItem() {
 		msg_mission_item item = new msg_mission_item();
-		item.frame = MAV_FRAME.MAV_FRAME_GLOBAL_RELATIVE_ALT;
+		item.frame = Settings.getInstance().getFrameOrientation();
 		item.x = latitude;
 		item.y = longitude;
 		item.z = altitude;
@@ -57,11 +57,11 @@ public class CustomMissionItem {
 			return null;
 		case MissionItemType.LAND:
 			item.command = MAV_CMD.MAV_CMD_NAV_LAND;
-			item.param1 = 10; //abort altitude in meters
+			item.param1 = Settings.getInstance().getAbortAltitude(); //abort altitude in meters
 			break;
 		case MissionItemType.TAKEOFF:
 			item.command = MAV_CMD.MAV_CMD_NAV_TAKEOFF;
-			item.param1 = 10; //pitch angle in degrees
+			item.param1 = Settings.getInstance().getTakeOffPitch(); //pitch angle in degrees
 			break;
 		case MissionItemType.RTL:
 			item.command = MAV_CMD.MAV_CMD_NAV_RETURN_TO_LAUNCH;
@@ -72,7 +72,7 @@ public class CustomMissionItem {
 		default:
 			item.command = MAV_CMD.MAV_CMD_NAV_LOITER_TIME;
 			item.param1 = type; //loiter time in seconds
-			item.param3 = 50; //loiter radius in meters
+			item.param3 = Settings.getInstance().getLoiterRadius(); //loiter radius in meters
 			break;
 		}
 		return item;

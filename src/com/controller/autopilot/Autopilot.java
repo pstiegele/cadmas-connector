@@ -11,6 +11,7 @@ import com.telemetry.MissionState;
 import com.telemetry.Position;
 import com.telemetry.Velocity;
 
+import tools.Settings;
 
 public class Autopilot extends Thread {
 
@@ -40,7 +41,7 @@ public class Autopilot extends Thread {
 	}
 
 	public void connect() {
-	//	if (!Settings.getInstance().getUseUDP())
+		if (!Settings.getInstance().getUseUDP())
 			port = init();
 		initTelemetryObjects();
 		transmitter = new AutopilotTransmitter(port);
@@ -59,7 +60,7 @@ public class Autopilot extends Thread {
 		for (SerialPort serialPort : ports) {
 			System.out.println(serialPort.getDescriptivePortName() + " | Baudrate: " + serialPort.getBaudRate());
 		}
-		SerialPort port = ports[0]; // raspi = 0; surfacePro4 = 2
+		SerialPort port = ports[Settings.getInstance().getSerialPort()]; // raspi = 0; surfacePro4 = 2
 		port.setBaudRate(115200); // raspi = 115200; surfacePro4 = 9600;
 		port.openPort();
 		System.out
