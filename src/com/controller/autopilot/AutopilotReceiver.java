@@ -31,11 +31,10 @@ import com.telemetry.MissionState;
 import com.telemetry.Position;
 import com.telemetry.Velocity;
 
-import tools.Settings;
 
 public class AutopilotReceiver extends Thread {
 
-	boolean udpInsteadOfSerial = Settings.getInstance().getUseUDP();
+	boolean udpInsteadOfSerial = false;
 	private SerialPort port;
 	private int previousSequence;
 	int sequenceLogSize = 5;

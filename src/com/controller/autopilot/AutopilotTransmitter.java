@@ -22,6 +22,7 @@ import com.MAVLink.common.msg_mission_request_list;
 import com.MAVLink.common.msg_mission_set_current;
 import com.MAVLink.common.msg_set_mode;
 import com.MAVLink.enums.MAV_CMD;
+import com.MAVLink.enums.MAV_FRAME;
 import com.MAVLink.enums.MAV_MODE_FLAG;
 import com.MAVLink.enums.MAV_RESULT;
 import com.fazecast.jSerialComm.SerialPort;
@@ -29,11 +30,10 @@ import com.telemetry.CommandAck;
 import com.telemetry.Heartbeat;
 import com.telemetry.MissionItem;
 import com.telemetry.MissionState;
-import tools.Settings;
 
 public class AutopilotTransmitter extends Thread {
 	
-	boolean udpInsteadOfSerial = Settings.getInstance().getUseUDP();
+	boolean udpInsteadOfSerial = false;
 	private SerialPort port;
 	
 	AutopilotTransmitter(SerialPort port) {
@@ -295,7 +295,7 @@ public class AutopilotTransmitter extends Thread {
 			waitMillis(20);
 			item = new msg_mission_item();
 			item.seq = i + 1;
-			item.frame = Settings.getInstance().getFrameOrientation();
+			item.frame = MAV_FRAME.MAV_FRAME_GLOBAL_RELATIVE_ALT;
 			item.x = mission.get(i).latitude;
 			item.y = mission.get(i).longitude;
 			item.z = mission.get(i).altitude;
@@ -304,11 +304,11 @@ public class AutopilotTransmitter extends Thread {
 				return MAV_RESULT.MAV_RESULT_FAILED;
 			case MissionItemType.LAND:
 				item.command = MAV_CMD.MAV_CMD_NAV_LAND;
-				item.param1 = Settings.getInstance().getAbortAltitude(); //abort altitude in meters
+				item.param1 = 10; //abort altitude in meters
 				break;
 			case MissionItemType.TAKEOFF:
 				item.command = MAV_CMD.MAV_CMD_NAV_TAKEOFF;
-				item.param1 = Settings.getInstance().getTakeOffPitch(); //pitch angle in degrees
+				item.param1 = 10; //pitch angle in degrees
 				break;
 			case MissionItemType.RTL:
 				item.command = MAV_CMD.MAV_CMD_NAV_RETURN_TO_LAUNCH;
@@ -319,7 +319,7 @@ public class AutopilotTransmitter extends Thread {
 			default:
 				item.command = MAV_CMD.MAV_CMD_NAV_LOITER_TIME;
 				item.param1 = mission.get(i).type; //loiter time in seconds
-				item.param3 = Settings.getInstance().getLoiterRadius(); //loiter radius in meters
+				item.param3 = 50; //loiter radius in meters
 				break;
 			}
 			send(item.pack());
