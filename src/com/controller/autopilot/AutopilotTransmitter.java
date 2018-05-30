@@ -67,6 +67,7 @@ public class AutopilotTransmitter extends Thread {
 			e.printStackTrace();
 		}
 		
+		waitMillis(5000);
 		try {
 			System.out.println("expect 0, set home: " + setHomePosition(new CustomMissionItem(0, 50, 10, 100)));
 		} catch (UnknownHostException | SocketException e) {
