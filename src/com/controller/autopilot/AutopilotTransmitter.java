@@ -53,7 +53,90 @@ public class AutopilotTransmitter extends Thread {
 		waitMillis(2000);
 		
 		try {
-			System.out.println("command result: " + setMode(FlightMode.MANUAL));
+			System.out.println("expect 4; set home, not armed: " + setHomePosition(new CustomMissionItem(0, 50, 10, 100)));
+		} catch (UnknownHostException | SocketException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		waitMillis(5000);
+		try {
+			System.out.println("expect 0; arm: " + arm());
+		} catch (UnknownHostException | SocketException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		try {
+			System.out.println("expect 0, set home: " + setHomePosition(new CustomMissionItem(0, 50, 10, 100)));
+		} catch (UnknownHostException | SocketException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		waitMillis(5000);
+		try {
+			System.out.println("expect 0; set stabilize: " + setMode(FlightMode.STABILIZE));
+		} catch (UnknownHostException | SocketException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		waitMillis(5000);
+		try {
+			System.out.println("expect 0; set fbwa: " + setMode(FlightMode.FLY_BY_WIRE_THROTTLE_MANUAL));
+		} catch (UnknownHostException | SocketException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		waitMillis(5000);
+		try {
+			System.out.println("expect 0; send mission: " + sendMission(randomMissionGenerator(10, 50, 10, 100, 200), true));
+		} catch (UnknownHostException | SocketException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		waitMillis(5000);
+		try {
+			System.out.println("expect 0; set manual: " + setMode(FlightMode.MANUAL));
+		} catch (UnknownHostException | SocketException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		waitMillis(5000);
+		try {
+			System.out.println("expect 4; arm, already armed: " + arm());
+		} catch (UnknownHostException | SocketException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		waitMillis(5000);
+		try {
+			System.out.println("expect 0; disarm: " + disarm());
+		} catch (UnknownHostException | SocketException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		waitMillis(5000);
+		try {
+			System.out.println("expect CMI[50, 10, 100]; get home " + getHomePosition().toString());
+		} catch (UnknownHostException | SocketException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		waitMillis(5000);
+		try {
+			ArrayList<CustomMissionItem> mission = getMission();
+			System.out.println("get mission");
+			for (int i = 0; i < mission.size(); i++) {
+				System.out.println(mission.get(i).toString());
+			}
 		} catch (UnknownHostException | SocketException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
