@@ -1,7 +1,5 @@
 package com.controller.autopilot;
 
-import com.MAVLink.enums.MAV_RESULT;
-
 public class MissionItemType {
 	public static final int INVALID = -4;
 	public static final int LAND = -3;
