@@ -13,8 +13,8 @@ public class Settings {
 	short frameOrientation = MAV_FRAME.MAV_FRAME_GLOBAL_RELATIVE_ALT;
 	
 	boolean startAutopilot = true;
-	boolean startMessageHandler = true;
-	boolean startSocketConnection = true;
+	boolean startMessageHandler = false;
+	boolean startSocketConnection = false;
 	boolean useUDP = false;
 	
 	private Settings(){
