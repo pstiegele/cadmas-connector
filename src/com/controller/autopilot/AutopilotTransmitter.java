@@ -490,12 +490,12 @@ public class AutopilotTransmitter extends Thread {
 	}
 	
 	public void sendUDP(MAVLinkPacket packet) throws UnknownHostException, SocketException{
-		int port = 14550;
+		int port = 14551;
 		InetAddress ipAdress;
 		//ipAdress = InetAddress.getByName("127.0.0.1");
 		//ipAdress = InetAddress.getByName("10.0.2.2");
 		ipAdress = InetAddress.getByName("192.168.178.58");
-		DatagramSocket dSocket = new DatagramSocket(port);
+		DatagramSocket dSocket = new DatagramSocket();
 		DatagramPacket sendPacket = new DatagramPacket(packet.encodePacket(), packet.encodePacket().length, ipAdress, port);
 		try {
 			dSocket.send(sendPacket);

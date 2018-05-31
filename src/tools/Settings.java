@@ -15,9 +15,9 @@ public class Settings {
 	boolean startAutopilot = true;
 	boolean startMessageHandler = true;
 	boolean startSocketConnection = true;
-	boolean useUDP = false;
+	boolean useUDP = true;
 	
-	String socketURI = "wss://cadmas.net:8081/connector";
+	String socketURI = "ws://localhost/connector";
 	String socketAPIKey = "myapikey";
 	
 	private Settings(){

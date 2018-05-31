@@ -126,13 +126,14 @@ public class SocketConnection extends Thread {
 	}
 
 	public void send(TelemetryMessage msg) {
-		System.out.println("send msg: " + msg.getJSON());
 		boolean sending = true;
 		if (sending && clientEndPoint != null && clientEndPoint.session.isOpen()) {
 			synchronized (SocketConnection.class) {
 
 				try {
-					clientEndPoint.session.getRemote().sendString(createMessage(msg));
+					String res = createMessage(msg);
+					System.out.println("send msg: "+res);
+					clientEndPoint.session.getRemote().sendString(res);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
