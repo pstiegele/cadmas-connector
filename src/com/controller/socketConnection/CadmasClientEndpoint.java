@@ -8,6 +8,7 @@ import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import org.json.JSONObject;
 
 import com.controller.autopilot.Autopilot;
+import com.controller.autopilot.FlightMode;
 import com.telecommand.Arm;
 import com.telecommand.Mission;
 
@@ -48,7 +49,7 @@ public class CadmasClientEndpoint {
 			case "setMode":
 				System.out.println("setMode received: " + jsonMessage);
 				Autopilot.getAutopilot().getAutopilotTransmitter()
-						.setMode(Integer.parseInt(jsonMessage.getString("mode")));
+						.setMode(FlightMode.getFlightModeByName(jsonMessage.getString("mode")));
 				break;
 			case "mission":
 				System.out.println("mission received");
