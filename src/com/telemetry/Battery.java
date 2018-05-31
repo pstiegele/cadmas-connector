@@ -49,5 +49,13 @@ public class Battery implements TelemetryMessage{
 	public long getTimestamp() {
 		return timestamp;
 	}
+	
+	public float getVoltage() {
+		return voltage;
+	}
+	
+	public float getCurrent() {
+		return current;
+	}
 
 }

@@ -20,8 +20,10 @@ import com.MAVLink.common.msg_mission_current;
 import com.MAVLink.common.msg_mission_item;
 import com.MAVLink.common.msg_mission_request;
 import com.MAVLink.common.msg_statustext;
+import com.MAVLink.common.msg_sys_status;
 import com.MAVLink.common.msg_vfr_hud;
 import com.fazecast.jSerialComm.SerialPort;
+import com.sun.org.apache.bcel.internal.generic.NEW;
 import com.telemetry.Attitude;
 import com.telemetry.Battery;
 import com.telemetry.CommandAck;
@@ -29,6 +31,7 @@ import com.telemetry.Heartbeat;
 import com.telemetry.MissionItem;
 import com.telemetry.MissionState;
 import com.telemetry.Position;
+import com.telemetry.SystemStatus;
 import com.telemetry.Velocity;
 
 import tools.Settings;
@@ -77,6 +80,9 @@ public class AutopilotReceiver extends Thread {
 		calcRSSI(mavpacket);
 		
 		switch (mavpacket.msgid) {
+		case msg_sys_status.MAVLINK_MSG_ID_SYS_STATUS:
+			new SystemStatus(new msg_sys_status(mavpacket));
+			break;
 		case msg_statustext.MAVLINK_MSG_ID_STATUSTEXT:
 			new CommandAck(new msg_statustext(mavpacket));
 			//System.out.println(new String(new msg_statustext(mavpacket).text));

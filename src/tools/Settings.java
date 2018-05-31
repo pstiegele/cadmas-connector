@@ -7,14 +7,15 @@ public class Settings {
 	private static Settings instance;
 	
 	int serialPort = 0; // raspi = 0; surfacePro4 = 2
+	int baudRate = 9600; // raspi = 115200; surfacePro4 = 9600;
 	int loiterRadius = 50;
 	int abortAltitude = 10;
 	int takeOffPitch = 10;
 	short frameOrientation = MAV_FRAME.MAV_FRAME_GLOBAL_RELATIVE_ALT;
 	
 	boolean startAutopilot = true;
-	boolean startMessageHandler = true;
-	boolean startSocketConnection = true;
+	boolean startMessageHandler = false;
+	boolean startSocketConnection = false;
 	boolean useUDP = false;
 	
 	String socketURI = "wss://cadmas.net:8081/connector";
@@ -58,6 +59,15 @@ public class Settings {
 	
 	public int getSerialPort(){
 		return serialPort;
+	}
+	
+	public boolean setBaudRate(int baudRate){
+		this.baudRate = baudRate;
+		return true;
+	}
+	
+	public int getBaudRate() {
+		return baudRate;
 	}
 	
 	public int getLoiterRadius(){
