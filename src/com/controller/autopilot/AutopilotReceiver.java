@@ -23,7 +23,6 @@ import com.MAVLink.common.msg_statustext;
 import com.MAVLink.common.msg_sys_status;
 import com.MAVLink.common.msg_vfr_hud;
 import com.fazecast.jSerialComm.SerialPort;
-import com.sun.org.apache.bcel.internal.generic.NEW;
 import com.telemetry.Attitude;
 import com.telemetry.Battery;
 import com.telemetry.CommandAck;
@@ -198,7 +197,6 @@ public class AutopilotReceiver extends Thread {
 	
 		        System.out.printf("Listening on udp:%s:%d%n", InetAddress.getLocalHost().getHostAddress(), port);     
 		        DatagramPacket receivePacket = new DatagramPacket(buffer, buffer.length);
-	
 		        while(true) {
 		              dSocket.receive(receivePacket);
 		              byte[] receiveArray = new byte[receivePacket.getLength()];
@@ -218,6 +216,7 @@ public class AutopilotReceiver extends Thread {
 								}
 								//System.out.println("received message id: " + mavpacket.msgid + "\t size: " + mavpacket.len);
 								//System.out.println(receivePacket.getAddress() + " port: " + receivePacket.getPort());
+								Settings.getInstance().setUdpOutgoingPort(receivePacket.getPort());
 								handlePacket(mavpacket);
 							}
 						}

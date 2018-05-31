@@ -17,6 +17,8 @@ public class Settings {
 	boolean startMessageHandler = true;
 	boolean startSocketConnection = true;
 	boolean useUDP = true;
+	String udpIPAdress = "localhost";
+	int udpOutgoingPort = 63091;
 	
 	String socketURI = "ws://localhost/connector";
 	String socketAPIKey = "myapikey";
@@ -130,5 +132,21 @@ public class Settings {
 	}
 	public void setSocketAPIKey(String socketAPIKey) {
 		this.socketAPIKey = socketAPIKey;
+	}
+
+	public int getUdpOutgoingPort() {
+		return udpOutgoingPort;
+	}
+
+	public void setUdpOutgoingPort(int udpOutgoingPort) {
+		this.udpOutgoingPort = udpOutgoingPort;
+	}
+
+	public String getUdpIPAdress() {
+		return udpIPAdress;
+	}
+
+	public void setUdpIPAdress(String udpIPAdress) {
+		this.udpIPAdress = udpIPAdress;
 	}
 }
