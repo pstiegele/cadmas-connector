@@ -15,7 +15,10 @@ public class Settings {
 	boolean startAutopilot = true;
 	boolean startMessageHandler = true;
 	boolean startSocketConnection = true;
-	boolean useUDP = false;
+	boolean useUDP = true;
+	
+	String socketURI = "ws://localhost/connector";
+	String socketAPIKey = "myapikey";
 	
 	private Settings(){
 		
@@ -103,5 +106,19 @@ public class Settings {
 
 	public void setUseUDP(boolean useUDP) {
 		this.useUDP = useUDP;
+	}
+
+	public String getSocketURI() {
+		return socketURI+"?apikey="+this.getSocketAPIKey();
+	}
+	public String getSocketAPIKey() {
+		return socketAPIKey;
+	}
+	
+	public void setSocketURI(String socketURI) {
+		this.socketURI = socketURI;
+	}
+	public void setSocketAPIKey(String socketAPIKey) {
+		this.socketAPIKey = socketAPIKey;
 	}
 }
