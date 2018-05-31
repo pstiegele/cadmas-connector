@@ -25,10 +25,13 @@ import com.MAVLink.enums.MAV_CMD;
 import com.MAVLink.enums.MAV_MODE_FLAG;
 import com.MAVLink.enums.MAV_RESULT;
 import com.fazecast.jSerialComm.SerialPort;
+import com.telemetry.Battery;
 import com.telemetry.CommandAck;
 import com.telemetry.Heartbeat;
 import com.telemetry.MissionItem;
 import com.telemetry.MissionState;
+import com.telemetry.SystemStatus;
+
 import tools.Settings;
 
 public class AutopilotTransmitter extends Thread {
@@ -51,7 +54,7 @@ public class AutopilotTransmitter extends Thread {
 		//INSERT COMMANDS HERE
 		System.out.println("transmitterStart");
 		waitMillis(2000);
-		
+	
 		
 	}
 	

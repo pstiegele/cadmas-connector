@@ -9,6 +9,7 @@ import com.telemetry.Heartbeat;
 import com.telemetry.MissionItem;
 import com.telemetry.MissionState;
 import com.telemetry.Position;
+import com.telemetry.SystemStatus;
 import com.telemetry.Velocity;
 
 import tools.Settings;
@@ -61,7 +62,7 @@ public class Autopilot extends Thread {
 			System.out.println(serialPort.getDescriptivePortName() + " | Baudrate: " + serialPort.getBaudRate());
 		}
 		SerialPort port = ports[Settings.getInstance().getSerialPort()]; // raspi = 0; surfacePro4 = 2
-		port.setBaudRate(115200); // raspi = 115200; surfacePro4 = 9600;
+		port.setBaudRate(Settings.getInstance().getBaudRate()); // raspi = 115200; surfacePro4 = 9600;
 		port.openPort();
 		System.out
 				.println("\n" + port.getDescriptivePortName() + " (Baudrate: " + port.getBaudRate() + ") is now open.");
@@ -86,6 +87,7 @@ public class Autopilot extends Thread {
 		new Velocity();
 		new MissionItem();
 		new CommandAck();
+		new SystemStatus();
 	}
 
 }
