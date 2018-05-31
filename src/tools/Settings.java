@@ -6,7 +6,7 @@ public class Settings {
 	
 	private static Settings instance;
 	
-	int serialPort = 1; // raspi = 0; surfacePro4 = 2
+	int serialPort = 0; // raspi = 0; surfacePro4 = 2
 	int baudRate = 115200; // raspi = 115200; surfacePro4 = 9600;
 	int loiterRadius = 50;
 	int abortAltitude = 10;
