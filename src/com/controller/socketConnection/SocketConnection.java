@@ -1,24 +1,21 @@
 package com.controller.socketConnection;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 
-import javax.websocket.MessageHandler;
-import javax.websocket.SendHandler;
-import javax.websocket.SendResult;
-
+import org.eclipse.jetty.util.ssl.SslContextFactory;
+import org.eclipse.jetty.websocket.client.ClientUpgradeRequest;
+import org.eclipse.jetty.websocket.client.WebSocketClient;
 import org.json.JSONObject;
 
 import com.MAVLink.common.msg_attitude;
 import com.MAVLink.common.msg_global_position_int;
 import com.MAVLink.common.msg_vfr_hud;
-import com.controller.autopilot.Autopilot;
-import com.telecommand.Arm;
-import com.telecommand.Mission;
 import com.telemetry.Attitude;
 import com.telemetry.Position;
 import com.telemetry.TelemetryMessage;
@@ -29,7 +26,6 @@ import tools.Settings;
 public class SocketConnection extends Thread {
 
 	private CadmasClientEndpoint clientEndPoint = null;
-	private String apikey = "";
 	private int msgID = 0;
 
 	private static SocketConnection socketConnection;
@@ -37,8 +33,6 @@ public class SocketConnection extends Thread {
 	public SocketConnection() {
 		socketConnection = this;
 		this.setName("SocketConnection");
-		apikey = System.getenv().get("CADMAS_APIKEY");
-
 		start();
 	}
 
@@ -59,7 +53,7 @@ public class SocketConnection extends Thread {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			while (!clientEndPoint.userSession.isOpen())
+			while (clientEndPoint == null && !clientEndPoint.session.isOpen())
 				;
 			System.out.println("is Open");
 			// while(true) {
@@ -110,73 +104,41 @@ public class SocketConnection extends Thread {
 	}
 
 	public void connect() throws URISyntaxException, MalformedURLException {
-		// String uri = System.getenv().get("CADMAS_URI");
-		// String apikey = System.getenv().get("CADMAS_APIKEY");
-		// if (uri == null) {
-		// //uri = "ws://localhost/connector?apikey=" + apikey;
-		// uri = "ws://192.168.2.174/connector?apikey=" + apikey;
-		// //uri = "wss://cadmas.net:8081/connector?apikey="+apikey;
-		// }
-		// URI myuri = new URI("wss", null,
-		// "cadmasapp.raapvdzcqu.eu-west-1.elasticbeanstalk.com", 8081, "/client",
-		// "token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJwcyIsImV4cCI6MTUyNzQ1MjQ5ODQ1OSwidXNlcklEIjoxLCJpYXQiOjE1MjQ4NjA0OTh9.9M9_aKxT9e1aIbMwRtUMbonFx8z-jPvOIrHQpV0PDhk",
-		// null);
-		// URI myuri = new URI("wss", null, "cadmas.net", 8081, "/auth", null, null);
-		// System.out.println(myuri.toString());
-		String uri = Settings.getInstance().getSocketURI();
-		String apikey = Settings.getInstance().getSocketAPIKey();
-		clientEndPoint = new CadmasClientEndpoint(new URI(uri), apikey);
-		clientEndPoint.userSession.addMessageHandler(new MessageHandler.Whole<String>() {
-			@Override
-			public void onMessage(String message) {
-				try {
-					JSONObject jsonMessage = new JSONObject(message);
-					switch (jsonMessage.getString("method")) {
-					case "arm":
-						new Arm(jsonMessage.getJSONObject("payload"));
-						break;
-					case "startMission":
-						System.out.println("startMission received");
-						break;
-					case "setMode":
-						System.out.println("setMode received: " + jsonMessage);
-						Autopilot.getAutopilot().getAutopilotTransmitter()
-								.setMode(Integer.parseInt(jsonMessage.getString("mode")));
-						break;
-					case "mission":
-						System.out.println("mission received");
-						new Mission(jsonMessage.getJSONObject("payload"));
-						break;
-					default:
-						System.out.println(
-								"message with unresolvable method received: " + jsonMessage.getString("method"));
-						break;
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
+
+		SslContextFactory sec = new SslContextFactory();
+		WebSocketClient client = new WebSocketClient(sec);
+		clientEndPoint = new CadmasClientEndpoint();
+		try {
+			client.start();
+
+			URI echoUri = new URI(Settings.getInstance().getSocketURI());
+			ClientUpgradeRequest request = new ClientUpgradeRequest();
+			ArrayList<String> protocol = new ArrayList<String>();
+			protocol.add(Settings.getInstance().getSocketAPIKey());
+			request.setSubProtocols(protocol);
+			client.connect(clientEndPoint, echoUri, request);
+			System.out.printf("Connecting to : %s%n", echoUri);
+
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
 
 	}
 
 	public void send(TelemetryMessage msg) {
 		System.out.println("send msg: " + msg.getJSON());
 		boolean sending = true;
-		if (sending) {
+		if (sending && clientEndPoint != null && clientEndPoint.session.isOpen()) {
+			synchronized (SocketConnection.class) {
 
-			clientEndPoint.userSession.getAsyncRemote().sendText(createMessage(msg), new SendHandler() {
-
-				@Override
-				public void onResult(SendResult result) {
-					if (!result.isOK()) {
-						System.out.println("error sending socket message. Exception: ");
-						System.err.println(result.getException());
-					}
-
+				try {
+					clientEndPoint.session.getRemote().sendString(createMessage(msg));
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
-			});
 
+			}
 		}
 	}
 
@@ -188,10 +150,5 @@ public class SocketConnection extends Thread {
 		return msgID++;
 	}
 
-	// public void requestMission() {
-	// JSONObject req = new JSONObject().put("apikey", apikey).put("method",
-	// "getMission");
-	// clientEndPoint.sendMessage(req.toString());
-	// }
 
 }

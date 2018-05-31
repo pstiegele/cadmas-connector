@@ -17,7 +17,7 @@ public class Settings {
 	boolean startSocketConnection = true;
 	boolean useUDP = true;
 	
-	String socketURI = "ws://localhost/connector";
+	String socketURI = "wss://cadmas.net:8081/connector";
 	String socketAPIKey = "myapikey";
 	
 	private Settings(){
