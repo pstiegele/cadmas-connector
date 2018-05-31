@@ -2,8 +2,6 @@ package com.controller.autopilot;
 
 import com.MAVLink.common.msg_mission_item;
 import com.MAVLink.enums.MAV_CMD;
-import com.MAVLink.enums.MAV_RESULT;
-
 import tools.Settings;
 
 public class CustomMissionItem {
