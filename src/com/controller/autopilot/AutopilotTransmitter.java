@@ -55,6 +55,7 @@ public class AutopilotTransmitter extends Thread {
 		System.out.println("transmitterStart");
 		waitMillis(2000);
 	
+		
 	}
 	
 	public int setMode(int mode) throws UnknownHostException, SocketException{
