@@ -9,7 +9,6 @@ import java.net.SocketException;
 import com.MAVLink.MAVLinkPacket;
 import com.MAVLink.Parser;
 import com.MAVLink.common.msg_attitude;
-import com.MAVLink.common.msg_battery_status;
 import com.MAVLink.common.msg_command_ack;
 import com.MAVLink.common.msg_global_position_int;
 import com.MAVLink.common.msg_heartbeat;
@@ -30,7 +29,6 @@ import com.telemetry.Heartbeat;
 import com.telemetry.MissionItem;
 import com.telemetry.MissionState;
 import com.telemetry.Position;
-import com.telemetry.SystemStatus;
 import com.telemetry.Velocity;
 
 import tools.Settings;
@@ -80,7 +78,7 @@ public class AutopilotReceiver extends Thread {
 		
 		switch (mavpacket.msgid) {
 		case msg_sys_status.MAVLINK_MSG_ID_SYS_STATUS:
-			new SystemStatus(new msg_sys_status(mavpacket));
+			new Battery(new msg_sys_status(mavpacket));
 			break;
 		case msg_statustext.MAVLINK_MSG_ID_STATUSTEXT:
 			new CommandAck(new msg_statustext(mavpacket));
@@ -88,9 +86,6 @@ public class AutopilotReceiver extends Thread {
 			break;
 		case msg_heartbeat.MAVLINK_MSG_ID_HEARTBEAT:
 			new Heartbeat(new msg_heartbeat(mavpacket), sequenceLog);
-			break;
-		case msg_battery_status.MAVLINK_MSG_ID_BATTERY_STATUS:
-			new Battery(new msg_battery_status(mavpacket));
 			break;
 		case msg_attitude.MAVLINK_MSG_ID_ATTITUDE:
 			new Attitude(new msg_attitude(mavpacket));

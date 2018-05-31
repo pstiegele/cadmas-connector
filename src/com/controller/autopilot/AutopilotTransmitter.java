@@ -10,8 +10,6 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.concurrent.atomic.AtomicReference;
-
 import com.MAVLink.MAVLinkPacket;
 import com.MAVLink.common.msg_command_long;
 import com.MAVLink.common.msg_home_position;
@@ -26,13 +24,10 @@ import com.MAVLink.enums.MAV_CMD;
 import com.MAVLink.enums.MAV_MODE_FLAG;
 import com.MAVLink.enums.MAV_RESULT;
 import com.fazecast.jSerialComm.SerialPort;
-import com.telemetry.Battery;
 import com.telemetry.CommandAck;
 import com.telemetry.Heartbeat;
 import com.telemetry.MissionItem;
 import com.telemetry.MissionState;
-import com.telemetry.SystemStatus;
-
 import tools.Settings;
 
 public class AutopilotTransmitter extends Thread {

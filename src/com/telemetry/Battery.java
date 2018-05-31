@@ -3,6 +3,7 @@ package com.telemetry;
 import org.json.JSONObject;
 
 import com.MAVLink.common.msg_battery_status;
+import com.MAVLink.common.msg_sys_status;
 
 import tools.MessageMemory;
 
@@ -26,6 +27,14 @@ public class Battery implements TelemetryMessage{
 		voltage = avgVoltage/message.voltages.length;
 		current = message.current_battery;
 		percentage = message.battery_remaining; //TODO byte to integer conversion
+		messageMemory.add(this);
+	}
+	
+	public Battery(msg_sys_status message) {
+		timestamp=System.currentTimeMillis();
+		voltage = (float) message.voltage_battery/1000;
+		current = (float) message.current_battery/100;
+		percentage = message.battery_remaining;
 		messageMemory.add(this);
 	}
 

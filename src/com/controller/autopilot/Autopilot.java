@@ -9,7 +9,6 @@ import com.telemetry.Heartbeat;
 import com.telemetry.MissionItem;
 import com.telemetry.MissionState;
 import com.telemetry.Position;
-import com.telemetry.SystemStatus;
 import com.telemetry.Velocity;
 
 import tools.Settings;
@@ -87,7 +86,6 @@ public class Autopilot extends Thread {
 		new Velocity();
 		new MissionItem();
 		new CommandAck();
-		new SystemStatus();
 	}
 
 }
