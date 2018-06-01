@@ -20,7 +20,7 @@ public class Settings {
 	String udpIPAdress = "localhost";
 	int udpOutgoingPort = 63091;
 	
-	String socketURI = "ws://localhost/connector";
+	String socketURI = "wss://cadmas.net:8081/connector"; //wss://cadmas.net:8081/connector
 	String socketAPIKey = "myapikey";
 	
 	private Settings(){
