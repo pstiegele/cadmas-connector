@@ -1,5 +1,8 @@
 package com.controller.autopilot;
 
+import java.net.SocketException;
+import java.net.UnknownHostException;
+
 import com.MAVLink.MAVLinkPacket;
 import com.fazecast.jSerialComm.SerialPort;
 import com.telemetry.Attitude;
@@ -46,7 +49,17 @@ public class Autopilot extends Thread {
 		initTelemetryObjects();
 		transmitter = new AutopilotTransmitter(port);
 		receiver = new AutopilotReceiver(port);
-		// MissionGetter missionreceiver = new MissionGetter(port);
+		//runTest(transmitter);
+	}
+	
+	public void runTest(AutopilotTransmitter transmitter) {
+		Test test = new Test(transmitter);
+		try {
+			System.out.println("test result: " + test.runTest());
+		} catch (UnknownHostException | SocketException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public boolean send(MAVLinkPacket mavLinkPacket) {

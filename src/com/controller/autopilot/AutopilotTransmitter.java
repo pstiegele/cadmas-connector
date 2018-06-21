@@ -1,8 +1,5 @@
 package com.controller.autopilot;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -516,45 +513,6 @@ public class AutopilotTransmitter extends Thread {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
-
-	public ArrayList<CustomMissionItem> randomMissionGenerator(int size, float baseLat, float baseLong, int minAlt,
-			int maxAlt) {
-		float variance = 0.1f; // in degrees
-		CustomMissionItem item;
-		ArrayList<CustomMissionItem> mission = new ArrayList<>();
-		for (int i = 0; i < size; i++) {
-			item = new CustomMissionItem(0, baseLat - variance / 2 + (float) (Math.random() * variance),
-					baseLong - variance / 2 + (float) (Math.random() * variance),
-					minAlt + (int) (Math.random() * (maxAlt - minAlt)));
-			mission.add(item);
-		}
-		System.out.println("mission with " + size + " items generated");
-		return mission;
-	}
-
-	public ArrayList<CustomMissionItem> generateFromCSV() {
-		CustomMissionItem item;
-		ArrayList<CustomMissionItem> mission = new ArrayList<>();
-		File file = new File("resources/mission1.txt");
-		try {
-			BufferedReader FileReader = new BufferedReader(new FileReader(file));
-
-			String line = "";
-
-			while (null != (line = FileReader.readLine())) {
-				String[] split = line.split(";");
-				item = new CustomMissionItem(Integer.parseInt(split[1]), Float.parseFloat(split[2]),
-						Float.parseFloat(split[3]), Integer.parseInt(split[4]));
-				mission.add(item);
-			}
-			FileReader.close();
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		System.out.println("waypoint file read");
-		return mission;
 	}
 
 }
