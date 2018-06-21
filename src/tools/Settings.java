@@ -7,7 +7,7 @@ public class Settings {
 	private static Settings instance;
 	
 	int serialPort = 0; // raspi = 3; yoga: 0
-	int baudRate = 9600; // raspi = 115200; yoga = 9600;
+	int baudRate = 115200; // raspi = 115200; yoga = 9600;
 	int loiterRadius = 50;
 	int abortAltitude = 10;
 	int takeOffPitch = 10;
