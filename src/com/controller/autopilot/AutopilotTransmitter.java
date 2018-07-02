@@ -47,6 +47,7 @@ public class AutopilotTransmitter extends Thread {
 		// INSERT COMMANDS HERE
 		System.out.println("transmitterStart");
 		waitMillis(2000);
+		
 	}
 
 	public int setMode(int mode) throws UnknownHostException, SocketException {
@@ -261,6 +262,9 @@ public class AutopilotTransmitter extends Thread {
 
 	public int sendMission(ArrayList<CustomMissionItem> mission, boolean restart)
 			throws UnknownHostException, SocketException {
+		if(mission.size() == 0 || mission == null) {
+			return MAV_RESULT.MAV_RESULT_FAILED;
+		}
 		if (mission.get(0).type == MissionItemType.INVALID) {
 			return MAV_RESULT.MAV_RESULT_FAILED;
 		}
@@ -268,6 +272,7 @@ public class AutopilotTransmitter extends Thread {
 		if (currentSequence == MAV_RESULT.MAV_RESULT_FAILED) {
 			return MAV_RESULT.MAV_RESULT_FAILED;
 		}
+		currentSequence *= -1;
 		if (restart || currentSequence >= mission.size()) {
 			currentSequence = 0;
 		}
@@ -335,6 +340,7 @@ public class AutopilotTransmitter extends Thread {
 		ArrayList<CustomMissionItem> verification = getMission();
 
 		if (verification.get(0).type == MissionItemType.INVALID) {
+			System.out.println("failed to get verification mission");
 			return MAV_RESULT.MAV_RESULT_FAILED;
 		}
 

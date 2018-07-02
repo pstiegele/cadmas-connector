@@ -29,10 +29,11 @@ public class Test {
 		return mission;
 	}
 
-	public ArrayList<CustomMissionItem> generateFromCSV() {
+	public ArrayList<CustomMissionItem> generateFromCSV(String filename) {
 		CustomMissionItem item;
 		ArrayList<CustomMissionItem> mission = new ArrayList<>();
-		File file = new File("resources/mission1.txt");
+		String filepath = "resources/" + filename + ".txt";
+		File file = new File(filepath);
 		try {
 			BufferedReader FileReader = new BufferedReader(new FileReader(file));
 
@@ -53,7 +54,123 @@ public class Test {
 		return mission;
 	}
 	
-	public int runTest() throws UnknownHostException, SocketException {
+	public int runTestFlight() throws UnknownHostException, SocketException {
+		waitMillis(10000);
+		int result = 0;
+		long timestamp = 0;
+		
+		//Counter starten
+		System.out.println("counter started.");
+		long startTime = System.currentTimeMillis();
+		waitMillis(1000);
+		timestamp = 10;
+		while(System.currentTimeMillis()-startTime < timestamp*1000) {
+			waitMillis(10);
+		}
+		
+		//setMode manual
+		System.out.println("setMode manual: " + transmitter.setMode(FlightMode.MANUAL));
+		waitMillis(1000);
+		timestamp = 20;
+		while(System.currentTimeMillis()-startTime < timestamp*1000) {
+			waitMillis(10);
+		}
+		
+		//preflight calibration
+		System.out.println("preflight calibration: " + transmitter.calibrate());
+		waitMillis(1000);
+		timestamp = 40;
+		while(System.currentTimeMillis()-startTime < timestamp*1000) {
+			waitMillis(10);
+		}
+		
+		//sendMission1
+		System.out.println("sendMission 1: " + transmitter.sendMission(generateFromCSV("mission1"), true));
+		waitMillis(1000);
+		timestamp = 70;
+		while(System.currentTimeMillis()-startTime < timestamp*1000) {
+			waitMillis(10);
+		}
+		
+		//arm
+		System.out.println("arm: " + transmitter.arm());
+		waitMillis(1000);
+		timestamp = 80;
+		while(System.currentTimeMillis()-startTime < timestamp*1000) {
+			waitMillis(10);
+		}
+		
+		//setHome1
+		System.out.println("setHome 1: " + transmitter.setHomePosition(generateFromCSV("home1").get(0)));
+		waitMillis(1000);
+		timestamp = 90;
+		while(System.currentTimeMillis()-startTime < timestamp*1000) {
+			waitMillis(10);
+		}
+		
+		//setMode auto
+		System.out.println("setMode auto: " + transmitter.setMode(FlightMode.AUTO));
+		waitMillis(1000);
+		timestamp = 150;
+		while(System.currentTimeMillis()-startTime < timestamp*1000) {
+			waitMillis(10);
+		}
+		
+		//sendMission2
+		System.out.println("sendMission 2: " + transmitter.sendMission(generateFromCSV("mission2"), true));
+		waitMillis(1000);
+		timestamp = 180;
+		while(System.currentTimeMillis()-startTime < timestamp*1000) {
+			waitMillis(10);
+		}
+		
+		//setMode rtl
+		System.out.println("setMode rtl: " + transmitter.setMode(FlightMode.RTL));
+		waitMillis(1000);
+		timestamp = 240;
+		while(System.currentTimeMillis()-startTime < timestamp*1000) {
+			waitMillis(10);
+		}
+		
+		//sendMission3
+		System.out.println("sendMission 3: " + transmitter.sendMission(generateFromCSV("mission3"), true));
+		waitMillis(1000);
+		timestamp = 270;
+		while(System.currentTimeMillis()-startTime < timestamp*1000) {
+			waitMillis(10);
+		}
+		
+		//setMode auto
+		System.out.println("setMode auto: " + transmitter.setMode(FlightMode.AUTO));
+		waitMillis(1000);
+		timestamp = 300;
+		while(System.currentTimeMillis()-startTime < timestamp*1000) {
+			waitMillis(10);
+		}
+		
+		//setHome2
+		System.out.println("setHome 2: " + transmitter.setHomePosition(generateFromCSV("home2").get(0)));
+		waitMillis(1000);
+		timestamp = 310;
+		while(System.currentTimeMillis()-startTime < timestamp*1000) {
+			waitMillis(10);
+		}
+		
+		//setMode rtl
+		System.out.println("setMode rtl: " + transmitter.setMode(FlightMode.RTL));
+		waitMillis(1000);
+		timestamp = 340;
+		while(System.currentTimeMillis()-startTime < timestamp*1000) {
+			waitMillis(10);
+		}
+		
+		//setMode auto
+		System.out.println("setMode auto: " + transmitter.setMode(FlightMode.AUTO));
+		
+		return result;
+	}
+	
+	public int runGroundTest() throws UnknownHostException, SocketException {
 		waitMillis(10000);
 		int result = 0;
 		

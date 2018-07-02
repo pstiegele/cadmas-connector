@@ -55,7 +55,7 @@ public class Autopilot extends Thread {
 	public void runTest(AutopilotTransmitter transmitter) {
 		Test test = new Test(transmitter);
 		try {
-			System.out.println("test result: " + test.runTest());
+			System.out.println("test result: " + test.runTestFlight());
 		} catch (UnknownHostException | SocketException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
