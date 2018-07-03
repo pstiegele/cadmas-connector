@@ -389,7 +389,7 @@ public class AutopilotTransmitter extends Thread {
 				return MAV_RESULT.MAV_RESULT_FAILED;
 			}
 		}
-		return MissionState.getMessageMemory().getNewestElement().getCurrentSequence();
+		return -1*MissionState.getMessageMemory().getNewestElement().getCurrentSequence();
 	}
 
 	public ArrayList<CustomMissionItem> getMission() throws UnknownHostException, SocketException {
