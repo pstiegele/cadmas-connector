@@ -117,7 +117,7 @@ public class Test {
 		}
 		
 		//sendMission2
-		System.out.println("sendMission 2: " + transmitter.sendMission(generateFromCSV("mission2"), true));
+		System.out.println("sendMission 2: " + transmitter.sendMission(generateFromCSV("mission4"), false));
 		waitMillis(1000);
 		timestamp = 180;
 		while(System.currentTimeMillis()-startTime < timestamp*1000) {
