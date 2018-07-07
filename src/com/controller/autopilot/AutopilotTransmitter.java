@@ -113,7 +113,6 @@ public class AutopilotTransmitter extends Thread {
 	}
 
 	public int arm() throws UnknownHostException, SocketException {
-
 		msg_command_long arm = new msg_command_long();
 		arm.command = MAV_CMD.MAV_CMD_COMPONENT_ARM_DISARM;
 		arm.param1 = 1;

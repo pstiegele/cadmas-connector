@@ -7,11 +7,13 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.controller.autopilot.Autopilot;
 import com.controller.autopilot.CustomMissionItem;
 import com.controller.autopilot.FlightMode;
+import com.controller.autopilot.MissionItemType;
 
 @WebSocket
 public class CadmasClientEndpoint {
@@ -36,7 +38,7 @@ public class CadmasClientEndpoint {
 
 	@OnWebSocketMessage
 	public void onMessage(String msg) {
-		//System.out.printf("Got msg: %s%n", msg);
+		// System.out.printf("Got msg: %s%n", msg);
 		try {
 			JSONObject jsonMessage = new JSONObject(msg);
 			switch (jsonMessage.getString("method")) {
@@ -50,8 +52,8 @@ public class CadmasClientEndpoint {
 				break;
 			case "setMode":
 				System.out.println("setMode received: " + jsonMessage);
-				Autopilot.getAutopilot().getAutopilotTransmitter()
-						.setMode(FlightMode.getFlightModeByName(jsonMessage.getString("mode")));
+				Autopilot.getAutopilot().getAutopilotTransmitter().setMode(
+						FlightMode.getFlightModeByName(jsonMessage.getJSONObject("payload").getString("mode")));
 				break;
 			case "disarm":
 				System.out.println("disarm received: " + jsonMessage);
@@ -59,16 +61,16 @@ public class CadmasClientEndpoint {
 				break;
 			case "setHomePosition":
 				System.out.println("setHomePosition received: " + jsonMessage);
-				CustomMissionItem cmi = new CustomMissionItem(jsonMessage.getInt("type"),
-						jsonMessage.getFloat("latitude"), jsonMessage.getFloat("longitude"),
-						jsonMessage.getInt("height"));
+				CustomMissionItem cmi = new CustomMissionItem(0, jsonMessage.getFloat("latitude"),
+						jsonMessage.getFloat("longitude"), jsonMessage.getInt("altitude"));
 				Autopilot.getAutopilot().getAutopilotTransmitter().setHomePosition(cmi);
 				break;
 			case "setMission":
 				System.out.println("setMission received: " + jsonMessage);
-				ArrayList<CustomMissionItem> mission = parseMission(jsonMessage);
+				ArrayList<CustomMissionItem> mission = parseMission(
+						jsonMessage.getJSONObject("payload").getJSONArray("waypoints"));
 				Autopilot.getAutopilot().getAutopilotTransmitter().sendMission(mission,
-						jsonMessage.getBoolean("restart"));
+						jsonMessage.getJSONObject("payload").getBoolean("restart"));
 				break;
 			case "attitudeACK":
 			case "batteryACK":
@@ -76,7 +78,7 @@ public class CadmasClientEndpoint {
 			case "missionStateACK":
 			case "positionACK":
 			case "velocityACK":
-				System.out.println("ack received: " + jsonMessage);
+				// System.out.println("ack received: " + jsonMessage);
 				break;
 			default:
 				System.out.println("message with unresolvable method received: " + jsonMessage.getString("method"));
@@ -87,8 +89,17 @@ public class CadmasClientEndpoint {
 		}
 	}
 
-	private ArrayList<CustomMissionItem> parseMission(JSONObject jsonMessage) {
-		// TODO Auto-generated method stub
-		return null;
+	private ArrayList<CustomMissionItem> parseMission(JSONArray waypoints) {
+		ArrayList<CustomMissionItem> waypointList = new ArrayList<>();
+
+		for (int i = 0; i < waypoints.length(); i++) {
+			JSONObject element = (JSONObject) waypoints.get(i);
+			int type = MissionItemType.getMissionItemTypeByName(element.getString("type"));
+			float latitude = element.getFloat("latitude");
+			float longitude = element.getFloat("longitude");
+			int altitude = element.getInt("altitude");
+			waypointList.add(new CustomMissionItem(type, latitude, longitude, altitude));
+		}
+		return waypointList;
 	}
 }

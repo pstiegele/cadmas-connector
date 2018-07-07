@@ -16,11 +16,12 @@ public class Settings {
 	boolean startAutopilot = true;
 	boolean startMessageHandler = true;
 	boolean startSocketConnection = true;
-	boolean useUDP = false;
+	boolean useUDP = true;
 	String udpIPAdress = "localhost";
 	int udpOutgoingPort = 63091;
 	
-	String socketURI = "wss://cadmas.net:8081/connector"; //wss://cadmas.net:8081/connector
+	String socketURI = "ws://localhost/connector"; //wss://cadmas.net:8081/connector
+	//String socketURI = "wss://cadmas.net:8081/connector"; //wss://cadmas.net:8081/connector
 	String socketAPIKey = "myapikey";
 	
 	private Settings(){
