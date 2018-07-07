@@ -41,8 +41,6 @@ public class AutopilotReceiver extends Thread {
 	int sequenceLogSize = 5;
 	int[] sequenceLog = new int[sequenceLogSize];
 	int arrayIndex = 0;
-//	private long start=System.currentTimeMillis();
-//	private double counter = 0;
 	public AutopilotReceiver(SerialPort port) {
 		this.port=port;
 		start();
@@ -50,7 +48,6 @@ public class AutopilotReceiver extends Thread {
 
 	@Override
 	public void run() {
-		//udpInsteadOfSerial = true;
 		previousSequence = 0;
 		waitMillis(2000);
 		System.out.println("receiverStart");
@@ -71,9 +68,8 @@ public class AutopilotReceiver extends Thread {
 		}
 	}
 	
+	//creates different telemetry objects based on message id of mavlink packets
 	private void handlePacket(MAVLinkPacket mavpacket) {
-		//System.out.println("mavpacket id: "+mavpacket.msgid);
-		//System.out.println("Packet sequence: " + mavpacket.seq);
 		calcRSSI(mavpacket);
 		
 		switch (mavpacket.msgid) {
@@ -82,7 +78,6 @@ public class AutopilotReceiver extends Thread {
 			break;
 		case msg_statustext.MAVLINK_MSG_ID_STATUSTEXT:
 			new CommandAck(new msg_statustext(mavpacket));
-			//System.out.println(new String(new msg_statustext(mavpacket).text));
 			break;
 		case msg_heartbeat.MAVLINK_MSG_ID_HEARTBEAT:
 			new Heartbeat(new msg_heartbeat(mavpacket), sequenceLog);
@@ -95,44 +90,35 @@ public class AutopilotReceiver extends Thread {
 			break;
 		case msg_vfr_hud.MAVLINK_MSG_ID_VFR_HUD:
 			new Velocity(new msg_vfr_hud(mavpacket));
-			//System.out.println("Altitude: " + hud.alt + "m\tGroundspeed: " + hud.groundspeed + "m/s\tHeading: " + hud.heading);
 			break;
 		case msg_command_ack.MAVLINK_MSG_ID_COMMAND_ACK:
 			new CommandAck(new msg_command_ack(mavpacket));
-			//System.out.println(new msg_command_ack(mavpacket).toString());
 			break;
 		case msg_home_position.MAVLINK_MSG_ID_HOME_POSITION:
 			new MissionItem(new msg_home_position(mavpacket));
-			//msg_home_position hp = new msg_home_position(mavpacket);
 			break;
 		case msg_mission_ack.MAVLINK_MSG_ID_MISSION_ACK:
-			//System.out.println(new msg_mission_ack(mavpacket).toString());
 			new CommandAck(new msg_mission_ack(mavpacket));
 			break;
 		case msg_mission_request.MAVLINK_MSG_ID_MISSION_REQUEST:
-			//System.out.println(new msg_mission_request(mavpacket).toString());
 			new CommandAck(new msg_mission_request(mavpacket));
 			break;
 		case msg_mission_item.MAVLINK_MSG_ID_MISSION_ITEM:
 			new MissionItem(new msg_mission_item(mavpacket));
-			//msg_mission_item item = new msg_mission_item(mavpacket);
-			//System.out.println(item);
 			break;
 		case msg_mission_count.MAVLINK_MSG_ID_MISSION_COUNT:
 			new CommandAck(new msg_mission_count(mavpacket));
-			//msg_mission_count count = new msg_mission_count(mavpacket);
-			//System.out.println(count);
 			break;
 		case msg_mission_current.MAVLINK_MSG_ID_MISSION_CURRENT:
 			new MissionState(new msg_mission_current(mavpacket));
 			break;
 		default:
-			//System.out.println("got: "+mavpacket.msgid);
 			break;
 		}
 
 	}
 	
+	//calculates connection quality based on messages lost
 	private void calcRSSI(MAVLinkPacket mavpacket) {
 		sequenceLog[arrayIndex] = Math.min(Math.abs(mavpacket.seq - previousSequence), mavpacket.seq + 255 - previousSequence) - 1;
 		previousSequence = mavpacket.seq;
@@ -145,17 +131,12 @@ public class AutopilotReceiver extends Thread {
 		}
 	}
 
-	/**
-	 * @param port
-	 *            The SerialPort
-	 * @return return MAVLinkPacket
-	 */
+	//returns a mavlink packet when it was received over serial connection
 	private MAVLinkPacket getPacket(SerialPort port) {
 		Parser parser = new Parser();
 		try {
 			while (true) {
 				while (port.bytesAvailable() == 0){
-					//Thread.sleep(20);
 				}
 				int bytesToRead = port.bytesAvailable();
 				while(bytesToRead < 0) {
@@ -183,6 +164,7 @@ public class AutopilotReceiver extends Thread {
 
 	}
 	
+	//continuously reads incoming mavlink packets over UDP connection and passes packets to handlePacket() method
 	public void readUDP() throws SocketException {
 		Parser parser = new Parser();
 		int port = 14551;
@@ -206,22 +188,10 @@ public class AutopilotReceiver extends Thread {
 						for (int i = 0; i < readarr.length; i++) {
 							mavpacket = parser.mavlink_parse_char(readarr[i]);
 							if (mavpacket != null) {
-								if(mavpacket.msgid == msg_mission_ack.MAVLINK_MSG_ID_MISSION_ACK){
-									System.out.println("received on port: " + port);
-								}
-								//System.out.println("received message id: " + mavpacket.msgid + "\t size: " + mavpacket.len);
-								//System.out.println(receivePacket.getAddress() + " port: " + receivePacket.getPort());
 								Settings.getInstance().setUdpOutgoingPort(receivePacket.getPort());
 								handlePacket(mavpacket);
 							}
 						}
-		              
-		              // now send acknowledgement packet back to sender     
-		              //InetAddress IPAddress = receivePacket.getAddress();
-		              //String sendString = "polo";
-		              //byte[] sendData = sendString.getBytes("UTF-8");
-		              //DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, receivePacket.getPort());
-		              //serverSocket.send(sendPacket);
 		        }
 	      } 
 	      catch (IOException e) {
@@ -230,11 +200,13 @@ public class AutopilotReceiver extends Thread {
 	      dSocket.close();
 	}
 
+	//converts unsigned bytes to signed bytes
 	private static int unsignedToBytes(byte a) {
 		int b = a & 0xFF;
 		return b;
 	}
 	
+	//waits for a specified amount of time in milliseconds
 	public void waitMillis(long t){
 		try {
 			Thread.sleep(t);

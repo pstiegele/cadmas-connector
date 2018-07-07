@@ -33,7 +33,6 @@ public class AutopilotTransmitter extends Thread {
 	private SerialPort port;
 
 	AutopilotTransmitter(SerialPort port) {
-		// udpInsteadOfSerial = true;
 
 		this.port = port;
 		start();
@@ -43,15 +42,12 @@ public class AutopilotTransmitter extends Thread {
 	@Override
 	public void run() {
 		waitMillis(5000);
-
-		// INSERT COMMANDS HERE
 		System.out.println("transmitterStart");
-		waitMillis(2000);
 		
 	}
 
+	//changes flight mode of UAV
 	public int setMode(int mode) throws UnknownHostException, SocketException {
-		// use com.controller.autopilot.FlightModes
 		msg_set_mode changeMode = new msg_set_mode();
 		changeMode.base_mode = MAV_MODE_FLAG.MAV_MODE_FLAG_CUSTOM_MODE_ENABLED;
 		changeMode.custom_mode = mode;
@@ -80,11 +76,9 @@ public class AutopilotTransmitter extends Thread {
 		return MAV_RESULT.MAV_RESULT_FAILED;
 	}
 
-	// PREFLIGHT CALIBRATION (airspeed + baro)
+	//performs a preflight calibration
 	public int calibrate() throws UnknownHostException, SocketException {
 		msg_command_long cali;
-
-		// ground pressure
 		cali = new msg_command_long();
 		cali.command = MAV_CMD.MAV_CMD_PREFLIGHT_CALIBRATION;
 		cali.param3 = 1;
@@ -113,8 +107,8 @@ public class AutopilotTransmitter extends Thread {
 		return MAV_RESULT.MAV_RESULT_FAILED;
 	}
 
+	//arms the motor of the UAV
 	public int arm() throws UnknownHostException, SocketException {
-
 		msg_command_long arm = new msg_command_long();
 		arm.command = MAV_CMD.MAV_CMD_COMPONENT_ARM_DISARM;
 		arm.param1 = 1;
@@ -143,8 +137,8 @@ public class AutopilotTransmitter extends Thread {
 		return MAV_RESULT.MAV_RESULT_FAILED;
 	}
 
+	//disarms the motor of the UAV
 	public int disarm() throws UnknownHostException, SocketException {
-
 		msg_command_long disarm = new msg_command_long();
 		disarm.command = MAV_CMD.MAV_CMD_COMPONENT_ARM_DISARM;
 		disarm.param1 = 0;
@@ -173,6 +167,7 @@ public class AutopilotTransmitter extends Thread {
 		return MAV_RESULT.MAV_RESULT_FAILED;
 	}
 
+	//sets a new home position by passing a CustomMissionItem
 	public int setHomePosition(CustomMissionItem hp) throws UnknownHostException, SocketException {
 		if (!Heartbeat.getMessageMemory().getNewestElement().getArmedState()) {
 			return MAV_RESULT.MAV_RESULT_DENIED;
@@ -211,6 +206,7 @@ public class AutopilotTransmitter extends Thread {
 		return MAV_RESULT.MAV_RESULT_FAILED;
 	}
 
+	//returns a CustomMissionItem with the coordinates and altitude of the current home position
 	public CustomMissionItem getHomePosition() throws UnknownHostException, SocketException {
 		CustomMissionItem failed = new CustomMissionItem(MissionItemType.INVALID, 0, 0, 0);
 		msg_command_long getHome = new msg_command_long();
@@ -240,26 +236,7 @@ public class AutopilotTransmitter extends Thread {
 		return failed;
 	}
 
-	public void udpTest(int port) throws UnknownHostException, SocketException {
-		msg_mission_clear_all clear = new msg_mission_clear_all();
-		MAVLinkPacket clearPacket = clear.pack();
-		int p = port;
-		// InetAddress ipAdress = InetAddress.getByName("127.0.0.1");
-		InetAddress ipAdress = InetAddress.getByName("192.168.178.40");
-		// InetAddress ipAdress = InetAddress.getByName("192.168.178.45");
-		DatagramSocket dSocket = new DatagramSocket(p);
-		DatagramPacket sendPacket = new DatagramPacket(clearPacket.encodePacket(), clearPacket.encodePacket().length,
-				ipAdress, p);
-		try {
-			dSocket.send(sendPacket);
-			dSocket.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		// System.out.println("clear sent");
-	}
-
+	//sends a new mission to the UAV; depending on restart value the mission will start at waypoint 0 or at the currently active sequence
 	public int sendMission(ArrayList<CustomMissionItem> mission, boolean restart)
 			throws UnknownHostException, SocketException {
 		if(mission.size() == 0 || mission == null) {
@@ -280,28 +257,21 @@ public class AutopilotTransmitter extends Thread {
 		int missionCount = mission.size();
 		msg_mission_item item;
 
-		// CLEAR PREVIOUS MISSION
 		waitMillis(50);
 		msg_mission_clear_all clear = new msg_mission_clear_all();
 		send(clear.pack());
-		// System.out.println("old mission cleared");
 
-		// SEND MISSION COUNT
 		waitMillis(50);
 		msg_mission_count count = new msg_mission_count();
 		count.count = missionCount + 1;
 		send(count.pack());
-		// System.out.println("mission count sent");
 
-		// SEND EMPTY MISSION ITEM
 		waitMillis(50);
 		item = new msg_mission_item();
 		item.command = MAV_CMD.MAV_CMD_NAV_WAYPOINT;
 		item.seq = 0;
 		send(item.pack());
-		// System.out.println("empty mission item sent");
 
-		// SEND MISSION ITEMS
 		for (int i = 0; i < missionCount; i++) {
 			waitMillis(20);
 			item = new msg_mission_item();
@@ -315,11 +285,11 @@ public class AutopilotTransmitter extends Thread {
 				return MAV_RESULT.MAV_RESULT_FAILED;
 			case MissionItemType.LAND:
 				item.command = MAV_CMD.MAV_CMD_NAV_LAND;
-				item.param1 = Settings.getInstance().getAbortAltitude(); // abort altitude in meters
+				item.param1 = Settings.getInstance().getAbortAltitude(); // landing abort altitude in meters
 				break;
 			case MissionItemType.TAKEOFF:
 				item.command = MAV_CMD.MAV_CMD_NAV_TAKEOFF;
-				item.param1 = Settings.getInstance().getTakeOffPitch(); // pitch angle in degrees
+				item.param1 = Settings.getInstance().getTakeOffPitch(); // take off pitch angle in degrees
 				break;
 			case MissionItemType.RTL:
 				item.command = MAV_CMD.MAV_CMD_NAV_RETURN_TO_LAUNCH;
@@ -334,31 +304,27 @@ public class AutopilotTransmitter extends Thread {
 				break;
 			}
 			send(item.pack());
-			// System.out.println("mission item " + (i+1) + " sent");
 		}
 
 		ArrayList<CustomMissionItem> verification = getMission();
-
+		
 		if (verification.get(0).type == MissionItemType.INVALID) {
-			System.out.println("failed to get verification mission");
 			return MAV_RESULT.MAV_RESULT_FAILED;
 		}
 
 		for (int i = 0; i < verification.size(); i++) {
 			if (!verification.get(i).equals(mission.get(i))) {
-				// System.out.println("fail at " + i + ": " + mission.get(i).toString() + " ###
-				// " + verification.get(i).toString());
 				return MAV_RESULT.MAV_RESULT_FAILED;
 			}
 		}
 
-		// SEND SEQUENCE
 		if (setSequence(currentSequence) != MAV_RESULT.MAV_RESULT_ACCEPTED) {
 			return MAV_RESULT.MAV_RESULT_FAILED;
 		}
 		return MAV_RESULT.MAV_RESULT_ACCEPTED;
 	}
 
+	//sets the sequence of the currently active waypoint
 	public int setSequence(int sequence) throws UnknownHostException, SocketException {
 		msg_mission_set_current current = new msg_mission_set_current();
 		current.seq = sequence;
@@ -381,6 +347,7 @@ public class AutopilotTransmitter extends Thread {
 		return MAV_RESULT.MAV_RESULT_FAILED;
 	}
 
+	//returns the currently active waypoint sequence
 	public int getSequence() {
 		int timeOut = 3000;
 		long start = System.currentTimeMillis();
@@ -392,20 +359,18 @@ public class AutopilotTransmitter extends Thread {
 		return -1*MissionState.getMessageMemory().getNewestElement().getCurrentSequence();
 	}
 
+	//returns the current mission as an ArrayList of CustomMissionItems
 	public ArrayList<CustomMissionItem> getMission() throws UnknownHostException, SocketException {
 		ArrayList<CustomMissionItem> failed = new ArrayList<>();
 		failed.add(new CustomMissionItem(MissionItemType.INVALID, 0, 0, 0));
-
 		ArrayList<CustomMissionItem> mission = new ArrayList<>();
-
-		// send request_list
+		
 		int missionCount = getMissionCount();
-		if (missionCount > 0) {
+		if (missionCount == MAV_RESULT.MAV_RESULT_FAILED) {
 			return failed;
 		}
 		missionCount /= -1;
 
-		// send request_mission_n
 		CustomMissionItem item;
 		for (int i = 1; i < missionCount; i++) {
 			item = getMissionItem(i);
@@ -417,6 +382,7 @@ public class AutopilotTransmitter extends Thread {
 		return mission;
 	}
 
+	//returns the waypoint at a specific sequence as a CustomMissionItem
 	public CustomMissionItem getMissionItem(int sequence) throws UnknownHostException, SocketException {
 		CustomMissionItem failed = new CustomMissionItem(MissionItemType.INVALID, 0, 0, 0);
 		msg_mission_request request = new msg_mission_request();
@@ -443,6 +409,7 @@ public class AutopilotTransmitter extends Thread {
 		return failed;
 	}
 
+	//returns the number of waypoints contained in the current mission
 	public int getMissionCount() throws UnknownHostException, SocketException {
 		msg_mission_request_list list = new msg_mission_request_list();
 		int attempts = 3;
@@ -467,6 +434,7 @@ public class AutopilotTransmitter extends Thread {
 		return MAV_RESULT.MAV_RESULT_FAILED;
 	}
 
+	//waits for a specified amount of time in milliseconds
 	public void waitMillis(long t) {
 		try {
 			Thread.sleep(t);
@@ -476,6 +444,7 @@ public class AutopilotTransmitter extends Thread {
 		}
 	}
 
+	//deletes currents mission from UAV
 	public void clearMission() throws IOException {
 		msg_mission_clear_all clear = new msg_mission_clear_all();
 		MAVLinkPacket packet = clear.pack();
@@ -483,8 +452,8 @@ public class AutopilotTransmitter extends Thread {
 		System.out.println("mission cleared");
 	}
 
+	//sends a mavlink packet over UDP or serial connection depending on settings
 	public void send(MAVLinkPacket packet) throws UnknownHostException, SocketException {
-		// System.out.println("sending message");
 		if (udpInsteadOfSerial) {
 			sendUDP(packet);
 		} else {
@@ -492,22 +461,20 @@ public class AutopilotTransmitter extends Thread {
 		}
 	}
 
+	//sends a mavlink packet over serial connection
 	public void sendSerial(MAVLinkPacket packet) {
 		try {
 			port.getOutputStream().write(packet.encodePacket());
-			// System.out.println("message sent, id: " + packet.msgid);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
+	//sends a mavlink packet over UDP connection
 	public void sendUDP(MAVLinkPacket packet) throws UnknownHostException, SocketException {
 		int port = Settings.getInstance().getUdpOutgoingPort();
-		InetAddress ipAdress;
-		// ipAdress = InetAddress.getByName("127.0.0.1");
-		// ipAdress = InetAddress.getByName("10.0.2.2");
-		ipAdress = InetAddress.getByName(Settings.getInstance().getUdpIPAdress());
+		InetAddress ipAdress = InetAddress.getByName(Settings.getInstance().getUdpIPAdress());
 		DatagramSocket dSocket = new DatagramSocket();
 		DatagramPacket sendPacket = new DatagramPacket(packet.encodePacket(), packet.encodePacket().length, ipAdress,
 				port);
