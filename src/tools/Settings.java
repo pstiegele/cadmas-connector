@@ -6,13 +6,17 @@ public class Settings {
 	
 	private static Settings instance;
 	
+	//setup values
 	int serialPort = 3; // raspi = 3; yoga: 0
 	int baudRate = 115200; // raspi = 115200; yoga = 9600;
+	
+	//autopilot values
 	int loiterRadius = 50;
 	int abortAltitude = 10;
 	int takeOffPitch = 10;
 	short frameOrientation = MAV_FRAME.MAV_FRAME_GLOBAL_RELATIVE_ALT;
 	
+	//debugging values
 	boolean startAutopilot = true;
 	boolean startMessageHandler = true;
 	boolean startSocketConnection = true;
@@ -20,6 +24,7 @@ public class Settings {
 	String udpIPAdress = "localhost";
 	int udpOutgoingPort = 63091;
 	
+	//socket settings
 	String socketURI = "wss://cadmas.net:8081/connector"; //wss://cadmas.net:8081/connector
 	String socketAPIKey = "myapikey";
 	
@@ -27,6 +32,7 @@ public class Settings {
 		
 	}
 	
+	//creates settings object as singleton
 	public static Settings getInstance(){
 		if(Settings.instance == null){
 			Settings.instance = new Settings();

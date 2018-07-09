@@ -169,6 +169,7 @@ public class AutopilotTransmitter extends Thread {
 
 	//sets a new home position by passing a CustomMissionItem
 	public int setHomePosition(CustomMissionItem hp) throws UnknownHostException, SocketException {
+		//check if UAV is armed, otherwise deny command
 		if (!Heartbeat.getMessageMemory().getNewestElement().getArmedState()) {
 			return MAV_RESULT.MAV_RESULT_DENIED;
 		}
@@ -236,7 +237,7 @@ public class AutopilotTransmitter extends Thread {
 		return failed;
 	}
 
-	//sends a new mission to the UAV; depending on restart value the mission will start at waypoint 0 or at the currently active sequence
+	//sends a new mission to the UAV; depending on restart value the mission will start at waypoint 0 or continue at the currently active waypoint
 	public int sendMission(ArrayList<CustomMissionItem> mission, boolean restart)
 			throws UnknownHostException, SocketException {
 		if(mission.size() == 0 || mission == null) {
@@ -246,9 +247,11 @@ public class AutopilotTransmitter extends Thread {
 			return MAV_RESULT.MAV_RESULT_FAILED;
 		}
 		int currentSequence = getSequence();
+		//sendMission fails, if getSequence failed
 		if (currentSequence == MAV_RESULT.MAV_RESULT_FAILED) {
 			return MAV_RESULT.MAV_RESULT_FAILED;
 		}
+		//getSequence returns negated sequence. multiplication by -1 is needed.
 		currentSequence *= -1;
 		if (restart || currentSequence >= mission.size()) {
 			currentSequence = 0;
@@ -257,15 +260,18 @@ public class AutopilotTransmitter extends Thread {
 		int missionCount = mission.size();
 		msg_mission_item item;
 
+		//clear old mission
 		waitMillis(50);
 		msg_mission_clear_all clear = new msg_mission_clear_all();
 		send(clear.pack());
 
+		//send mission size
 		waitMillis(50);
 		msg_mission_count count = new msg_mission_count();
 		count.count = missionCount + 1;
 		send(count.pack());
 
+		//send mission items one by one
 		waitMillis(50);
 		item = new msg_mission_item();
 		item.command = MAV_CMD.MAV_CMD_NAV_WAYPOINT;
@@ -306,6 +312,7 @@ public class AutopilotTransmitter extends Thread {
 			send(item.pack());
 		}
 
+		//get verification mission and compare it with the target mission
 		ArrayList<CustomMissionItem> verification = getMission();
 		
 		if (verification.get(0).type == MissionItemType.INVALID) {
@@ -318,13 +325,14 @@ public class AutopilotTransmitter extends Thread {
 			}
 		}
 
+		//sendMission fails, if setSequence failed
 		if (setSequence(currentSequence) != MAV_RESULT.MAV_RESULT_ACCEPTED) {
 			return MAV_RESULT.MAV_RESULT_FAILED;
 		}
 		return MAV_RESULT.MAV_RESULT_ACCEPTED;
 	}
 
-	//sets the sequence of the currently active waypoint
+	//sets the current waypoint sequence
 	public int setSequence(int sequence) throws UnknownHostException, SocketException {
 		msg_mission_set_current current = new msg_mission_set_current();
 		current.seq = sequence;
@@ -365,12 +373,15 @@ public class AutopilotTransmitter extends Thread {
 		failed.add(new CustomMissionItem(MissionItemType.INVALID, 0, 0, 0));
 		ArrayList<CustomMissionItem> mission = new ArrayList<>();
 		
+		//get mission size
 		int missionCount = getMissionCount();
 		if (missionCount == MAV_RESULT.MAV_RESULT_FAILED) {
 			return failed;
 		}
-		missionCount /= -1;
+		//getMissionCount returns negated mission size. multiplication by -1 is needed.
+		missionCount *= -1;
 
+		//get all mission items
 		CustomMissionItem item;
 		for (int i = 1; i < missionCount; i++) {
 			item = getMissionItem(i);
@@ -442,14 +453,6 @@ public class AutopilotTransmitter extends Thread {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-	}
-
-	//deletes currents mission from UAV
-	public void clearMission() throws IOException {
-		msg_mission_clear_all clear = new msg_mission_clear_all();
-		MAVLinkPacket packet = clear.pack();
-		send(packet);
-		System.out.println("mission cleared");
 	}
 
 	//sends a mavlink packet over UDP or serial connection depending on settings

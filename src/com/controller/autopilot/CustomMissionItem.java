@@ -5,7 +5,7 @@ import com.MAVLink.enums.MAV_CMD;
 import tools.Settings;
 
 public class CustomMissionItem {
-	int type = 0; // Use MissionItemTypes enum
+	int type = 0;
 	float latitude = 0;
 	float longitude = 0;
 	int altitude = 0;
@@ -17,6 +17,7 @@ public class CustomMissionItem {
 		this.altitude = height;
 	}
 	
+	//creates a CustomMissionItem from a Mavlink Mission Item
 	public CustomMissionItem(msg_mission_item item) {
 		type = MissionItemType.INVALID;
 		switch(item.command){
@@ -44,6 +45,7 @@ public class CustomMissionItem {
 		altitude = (int) item.z;
 	}
 	
+	//converts a CustomMissionItem to a Mavlink Mission Item
 	public msg_mission_item toMavlinkItem() {
 		msg_mission_item item = new msg_mission_item();
 		item.frame = Settings.getInstance().getFrameOrientation();
@@ -55,11 +57,11 @@ public class CustomMissionItem {
 			return null;
 		case MissionItemType.LAND:
 			item.command = MAV_CMD.MAV_CMD_NAV_LAND;
-			item.param1 = Settings.getInstance().getAbortAltitude(); //abort altitude in meters
+			item.param1 = Settings.getInstance().getAbortAltitude(); //landing abort altitude in meters
 			break;
 		case MissionItemType.TAKEOFF:
 			item.command = MAV_CMD.MAV_CMD_NAV_TAKEOFF;
-			item.param1 = Settings.getInstance().getTakeOffPitch(); //pitch angle in degrees
+			item.param1 = Settings.getInstance().getTakeOffPitch(); //take off pitch angle in degrees
 			break;
 		case MissionItemType.RTL:
 			item.command = MAV_CMD.MAV_CMD_NAV_RETURN_TO_LAUNCH;
@@ -75,7 +77,7 @@ public class CustomMissionItem {
 		}
 		return item;
 	}
-
+	
 	@Override
 	public String toString() {
 		String typeString;
@@ -102,6 +104,7 @@ public class CustomMissionItem {
 		return typeString + "\tLat: " + latitude + "\tLong: " + longitude + "\tAlt: " + altitude;
 	}
 
+	//two waypoints within 4e-6 degrees are considered equal
 	@Override
 	public boolean equals(Object obj) {
 		double tolerance = 4e-6; // =0.000004
