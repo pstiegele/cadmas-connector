@@ -97,5 +97,12 @@ public class Autopilot extends Thread {
 		new MissionItem();
 		new CommandAck();
 	}
+	
+	//debug
+	public boolean send(MAVLinkPacket mavLinkPacket) {
+			// MAVLinkMessage msg = cmd.getMAVLink();
+			// send telecommand to autopilot
+			return true;
+		}
 
 }
