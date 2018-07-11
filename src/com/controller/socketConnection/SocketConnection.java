@@ -132,7 +132,7 @@ public class SocketConnection extends Thread {
 
 				try {
 					String res = createMessage(msg);
-					System.out.println("send msg: "+res);
+					//System.out.println("send msg: "+res);
 					clientEndPoint.session.getRemote().sendString(res);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
