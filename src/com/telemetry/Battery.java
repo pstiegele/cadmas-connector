@@ -18,18 +18,22 @@ public class Battery implements TelemetryMessage{
 		timestamp = 0;
 		messageMemory.add(this);
 	}
+	//creates battery telemetry from mavlink battery status message
 	public Battery(msg_battery_status message){
 		timestamp=System.currentTimeMillis();
+		
+		//calculates total voltage
 		int avgVoltage = 0;
 		for (int i = 0; i < message.voltages.length; i++) {
 			avgVoltage += message.voltages[i];
 		}
 		voltage = avgVoltage/message.voltages.length;
 		current = message.current_battery;
-		percentage = message.battery_remaining; //TODO byte to integer conversion
+		percentage = message.battery_remaining;
 		messageMemory.add(this);
 	}
 	
+	//creates battery telemetry from mavlink system status message (more reliable during testing)
 	public Battery(msg_sys_status message) {
 		timestamp=System.currentTimeMillis();
 		voltage = (float) message.voltage_battery/1000;

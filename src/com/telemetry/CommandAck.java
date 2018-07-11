@@ -22,6 +22,7 @@ public class CommandAck implements TelemetryMessage{
 		timestamp = command = result = 0;
 		messageMemory.add(this);
 	}
+	//creates CommandAck from "normal" acknowledgement
 	public CommandAck(msg_command_ack message) {
 		timestamp=System.currentTimeMillis();
 		command = message.command;
@@ -29,6 +30,7 @@ public class CommandAck implements TelemetryMessage{
 		messageMemory.add(this);
 	}
 	
+	//creates CommandAck from "mission transmission complete" acknowledgement
 	public CommandAck(msg_mission_ack mission){
 		timestamp=System.currentTimeMillis();
 		command = msg_mission_ack.MAVLINK_MSG_ID_MISSION_ACK;
@@ -36,6 +38,7 @@ public class CommandAck implements TelemetryMessage{
 		messageMemory.add(this);
 	}
 	
+	//creates CommandAck from "mission size" acknowledgement
 	public CommandAck(msg_mission_count count){
 		timestamp=System.currentTimeMillis();
 		command = msg_mission_count.MAVLINK_MSG_ID_MISSION_COUNT;
@@ -43,6 +46,7 @@ public class CommandAck implements TelemetryMessage{
 		messageMemory.add(this);
 	}
 	
+	//creates CommandAck from "mission request" acknowledgement
 	public CommandAck(msg_mission_request request){
 		timestamp=System.currentTimeMillis();
 		command = msg_mission_request.MAVLINK_MSG_ID_MISSION_REQUEST;
@@ -50,6 +54,7 @@ public class CommandAck implements TelemetryMessage{
 		messageMemory.add(this);
 	}
 	
+	//creates CommandAck from "calibration complete" and "armed/disarmed" acknowledgement
 	public CommandAck(msg_statustext status) {
 		timestamp=System.currentTimeMillis();
 		switch(new String(new String(status.text).replaceAll("\0", "").getBytes())){

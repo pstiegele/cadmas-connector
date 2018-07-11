@@ -43,6 +43,7 @@ public class Autopilot extends Thread {
 		// port.closePort();
 	}
 
+	//initializes com port and telemetry objects. creates transmitter and receiver objects.
 	public void connect() {
 		if (!Settings.getInstance().getUseUDP())
 			port = init();
@@ -52,6 +53,7 @@ public class Autopilot extends Thread {
 		//runTest(transmitter);
 	}
 	
+	//creates test class and performs ground test or test flight
 	public void runTest(AutopilotTransmitter transmitter) {
 		Test test = new Test(transmitter);
 		try {
@@ -62,12 +64,7 @@ public class Autopilot extends Thread {
 		}
 	}
 
-	public boolean send(MAVLinkPacket mavLinkPacket) {
-		// MAVLinkMessage msg = cmd.getMAVLink();
-		// send telecommand to autopilot
-		return true;
-	}
-
+	//initializes com port by defining port number and baud rate
 	private SerialPort init() {
 		SerialPort[] ports = SerialPort.getCommPorts();
 		for (SerialPort serialPort : ports) {
@@ -89,7 +86,7 @@ public class Autopilot extends Thread {
 		return receiver;
 	}
 	
-
+	//creates dummy objects of every telemetry object to decrease chance of NullPointerExceptions
 	private void initTelemetryObjects() {
 		new Attitude();
 		new Battery();
@@ -100,5 +97,12 @@ public class Autopilot extends Thread {
 		new MissionItem();
 		new CommandAck();
 	}
+	
+	//debug
+	public boolean send(MAVLinkPacket mavLinkPacket) {
+			// MAVLinkMessage msg = cmd.getMAVLink();
+			// send telecommand to autopilot
+			return true;
+		}
 
 }

@@ -7,6 +7,8 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
+import com.MAVLink.enums.MAV_RESULT;
+
 public class Test {
 	AutopilotTransmitter transmitter;
 	
@@ -14,6 +16,7 @@ public class Test {
 		this.transmitter = transmitter;
 	}
 	
+	//returns a random mission of a specific size and location
 	public ArrayList<CustomMissionItem> randomMissionGenerator(int size, float baseLat, float baseLong, int minAlt,
 			int maxAlt) {
 		float variance = 0.1f; // in degrees
@@ -29,6 +32,7 @@ public class Test {
 		return mission;
 	}
 
+	//returns a mission from a csv file formatted like this: [waypoint_number];[type];[latitude];[longitude];[altitude] and no header line
 	public ArrayList<CustomMissionItem> generateFromCSV(String filename) {
 		CustomMissionItem item;
 		ArrayList<CustomMissionItem> mission = new ArrayList<>();
@@ -54,9 +58,9 @@ public class Test {
 		return mission;
 	}
 	
+	//performs a full automated test flight and executes most commands
 	public int runTestFlight() throws UnknownHostException, SocketException {
 		waitMillis(10000);
-		int result = 0;
 		long timestamp = 0;
 		
 		//Counter starten
@@ -167,9 +171,10 @@ public class Test {
 		//setMode auto
 		System.out.println("setMode auto: " + transmitter.setMode(FlightMode.AUTO));
 		
-		return result;
+		return MAV_RESULT.MAV_RESULT_ACCEPTED;
 	}
 	
+	//performs a full automated ground test of every command and returns a bitmask to identify every failed test number
 	public int runGroundTest() throws UnknownHostException, SocketException {
 		waitMillis(10000);
 		int result = 0;
@@ -259,6 +264,7 @@ public class Test {
 		return result;
 	}
 	
+	//waits for a specified amount of time in milliseconds
 	public void waitMillis(long t) {
 		try {
 			Thread.sleep(t);

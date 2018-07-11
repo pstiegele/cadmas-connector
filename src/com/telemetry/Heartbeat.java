@@ -29,6 +29,8 @@ public class Heartbeat implements TelemetryMessage{
 			isArmed = true;
 		}
 		customMode = message.custom_mode;
+		
+		//calculates messages lost
 		messagesLost = 0;
 		for(int i = 0; i < rssi.length; i++) {
 			messagesLost += rssi[i];
