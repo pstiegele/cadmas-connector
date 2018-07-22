@@ -32,7 +32,7 @@ public class CadmasClientEndpoint {
 
 	@OnWebSocketConnect
 	public void onConnect(Session session) {
-		System.out.printf("Got connect: %s%n", session);
+		System.out.printf("Got connect: %s%n", session.getRemoteAddress());
 		this.session = session;
 	}
 

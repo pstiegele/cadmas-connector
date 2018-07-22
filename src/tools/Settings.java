@@ -20,12 +20,15 @@ public class Settings {
 	boolean startAutopilot = true;
 	boolean startMessageHandler = true;
 	boolean startSocketConnection = true;
+	boolean startCameraTransmission = true;
+	int cameraIntervall = 1000;		//in ms
 	boolean useUDP = false;
 	String udpIPAdress = "localhost";
 	int udpOutgoingPort = 63091;
 	
 	//socket settings
-	String socketURI = "wss://cadmas.net:8081/connector"; //wss://cadmas.net:8081/connector
+	//String socketURI = "wss://cadmas.net:8081/connector"; //wss://cadmas.net:8081/connector
+	String socketURI = "ws://192.168.2.174/connector";
 	String socketAPIKey = "myapikey";
 	
 	private Settings(){
@@ -113,6 +116,13 @@ public class Settings {
 	public boolean getStartSocketConnection() {
 		return startSocketConnection;
 	}
+	public void setStartCameraTransmission(boolean startCameraTransmission) {
+		this.startCameraTransmission = startCameraTransmission;
+	}
+	
+	public boolean getStartCameraTransmission() {
+		return startCameraTransmission;
+	}
 
 	public void setStartSocketConnection(boolean startSocketConnection) {
 		this.startSocketConnection = startSocketConnection;
@@ -154,5 +164,13 @@ public class Settings {
 
 	public void setUdpIPAdress(String udpIPAdress) {
 		this.udpIPAdress = udpIPAdress;
+	}
+
+	public int getCameraIntervall() {
+		return cameraIntervall;
+	}
+
+	public void setCameraIntervall(int cameraIntervall) {
+		this.cameraIntervall = cameraIntervall;
 	}
 }

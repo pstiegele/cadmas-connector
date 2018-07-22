@@ -1,6 +1,7 @@
 package com.controller;
 
 import com.controller.autopilot.Autopilot;
+import com.controller.cameraTransmission.CameraTransmission;
 import com.controller.messageHandler.MessageHandler;
 import com.controller.socketConnection.SocketConnection;
 
@@ -16,6 +17,9 @@ public class Main {
 			Autopilot.getAutopilot();
 		if (Settings.getInstance().getStartSocketConnection())
 			SocketConnection.getSocketConnection();
+		if(Settings.getInstance().getStartCameraTransmission()) {
+			CameraTransmission.getCameraTransmission();
+		}
 
 	}
 

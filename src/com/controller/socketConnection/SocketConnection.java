@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
@@ -55,7 +56,7 @@ public class SocketConnection extends Thread {
 			}
 			while (clientEndPoint == null && !clientEndPoint.session.isOpen())
 				;
-			System.out.println("is Open");
+			//System.out.println("is Open");
 			// while(true) {
 			// test();
 			// Thread.sleep(500);
@@ -123,6 +124,10 @@ public class SocketConnection extends Thread {
 			// TODO: handle exception
 		}
 
+	}
+	
+	public void sendCameraImage(ByteBuffer img) {
+		clientEndPoint.session.getRemote().sendBytes(img, null);
 	}
 
 	public void send(TelemetryMessage msg) {
