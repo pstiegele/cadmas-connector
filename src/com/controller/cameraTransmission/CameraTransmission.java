@@ -50,7 +50,7 @@ public class CameraTransmission extends Thread {
 					byte[] imageInByte = baos.toByteArray();
 					baos.close();
 					new CameraImage(imageInByte);
-				} catch (IOException | InterruptedException e) {
+				} catch (IOException | IllegalArgumentException | InterruptedException e) {
 					e.printStackTrace();
 				}
 				try {

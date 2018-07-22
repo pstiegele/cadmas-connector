@@ -78,6 +78,7 @@ public class CadmasClientEndpoint {
 			case "missionStateACK":
 			case "positionACK":
 			case "velocityACK":
+			case "cameraImageACK":
 				// System.out.println("ack received: " + jsonMessage);
 				break;
 			default:
