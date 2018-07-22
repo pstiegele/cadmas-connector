@@ -10,6 +10,7 @@ import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 
 import org.eclipse.jetty.util.ssl.SslContextFactory;
+import org.eclipse.jetty.websocket.api.WriteCallback;
 import org.eclipse.jetty.websocket.client.ClientUpgradeRequest;
 import org.eclipse.jetty.websocket.client.WebSocketClient;
 import org.json.JSONObject;
@@ -124,10 +125,6 @@ public class SocketConnection extends Thread {
 			// TODO: handle exception
 		}
 
-	}
-	
-	public void sendCameraImage(ByteBuffer img) {
-		clientEndPoint.session.getRemote().sendBytes(img, null);
 	}
 
 	public void send(TelemetryMessage msg) {

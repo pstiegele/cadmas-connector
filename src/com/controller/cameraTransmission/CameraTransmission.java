@@ -3,13 +3,12 @@ package com.controller.cameraTransmission;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 
 import javax.imageio.ImageIO;
 
-import com.controller.socketConnection.SocketConnection;
 import com.hopding.jrpicam.RPiCamera;
 import com.hopding.jrpicam.exceptions.FailedToRunRaspistillException;
+import com.telemetry.CameraImage;
 
 import tools.Settings;
 
@@ -42,6 +41,7 @@ public class CameraTransmission extends Thread {
 			BufferedImage img = null;
 			while (true) {
 				try {
+					System.out.println("cam called");
 					cam.takeStill(String.valueOf(System.currentTimeMillis()));
 					img = cam.takeBufferedStill();
 					ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -49,7 +49,7 @@ public class CameraTransmission extends Thread {
 					baos.flush();
 					byte[] imageInByte = baos.toByteArray();
 					baos.close();
-					SocketConnection.getSocketConnection().sendCameraImage(ByteBuffer.wrap(imageInByte));
+					new CameraImage(imageInByte);
 				} catch (IOException | InterruptedException e) {
 					e.printStackTrace();
 				}
