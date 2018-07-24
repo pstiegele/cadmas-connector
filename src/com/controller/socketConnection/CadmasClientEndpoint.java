@@ -27,7 +27,14 @@ public class CadmasClientEndpoint {
 	public void onClose(int statusCode, String reason) {
 		System.out.printf("Connection closed: %d - %s%n", statusCode, reason);
 		this.session = null;
-		// this.closeLatch.countDown(); // trigger latch
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		//try to reconnect
+		SocketConnection.getSocketConnection().runLatch.countDown();
 	}
 
 	@OnWebSocketConnect

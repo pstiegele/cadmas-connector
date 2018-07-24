@@ -29,6 +29,7 @@ public class SocketConnection extends Thread {
 
 	private CadmasClientEndpoint clientEndPoint = null;
 	private int msgID = 0;
+	CountDownLatch runLatch = null;
 
 	private static SocketConnection socketConnection;
 
@@ -47,25 +48,29 @@ public class SocketConnection extends Thread {
 
 	@Override
 	public void run() {
-		CountDownLatch latch = new CountDownLatch(1);
-		try {
-			try {
-				connect();
-			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			while (clientEndPoint == null && !clientEndPoint.session.isOpen())
-				;
-			//System.out.println("is Open");
-			// while(true) {
-			// test();
-			// Thread.sleep(500);
-			// }
-			latch.await();
+		while (true) {
 
-		} catch (URISyntaxException | InterruptedException e) {
-			throw new RuntimeException(e);
+			runLatch = new CountDownLatch(1);
+			try {
+				try {
+					connect();
+				} catch (MalformedURLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				while (clientEndPoint == null && !clientEndPoint.session.isOpen())
+					;
+				// System.out.println("is Open");
+				// while(true) {
+				// test();
+				// Thread.sleep(500);
+				// }
+				runLatch.await();
+
+			} catch (URISyntaxException | InterruptedException e) {
+				throw new RuntimeException(e);
+			}
+
 		}
 	}
 
@@ -129,12 +134,12 @@ public class SocketConnection extends Thread {
 
 	public void send(TelemetryMessage msg) {
 		boolean sending = true;
-		if (sending && clientEndPoint != null && clientEndPoint.session.isOpen()) {
+		if (sending && clientEndPoint != null && clientEndPoint.session != null && clientEndPoint.session.isOpen()) {
 			synchronized (SocketConnection.class) {
 
 				try {
 					String res = createMessage(msg);
-					//System.out.println("send msg: "+res);
+					// System.out.println("send msg: "+res);
 					clientEndPoint.session.getRemote().sendString(res);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
@@ -152,6 +157,5 @@ public class SocketConnection extends Thread {
 		}
 		return msgID++;
 	}
-
 
 }

@@ -51,7 +51,7 @@ public class CameraTransmission extends Thread {
 					baos.close();
 					new CameraImage(imageInByte);
 				} catch (IOException | IllegalArgumentException | InterruptedException e) {
-					e.printStackTrace();
+					System.out.println("got no camera image");
 				}
 				try {
 					Thread.sleep(Settings.getInstance().getCameraIntervall());
