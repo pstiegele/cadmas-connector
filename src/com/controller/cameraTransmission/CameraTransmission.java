@@ -7,6 +7,8 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import com.hopding.jrpicam.RPiCamera;
+import com.hopding.jrpicam.enums.Exposure;
+import com.hopding.jrpicam.enums.MeteringMode;
 import com.hopding.jrpicam.exceptions.FailedToRunRaspistillException;
 import com.telemetry.CameraImage;
 
@@ -33,7 +35,7 @@ public class CameraTransmission extends Thread {
 	public void run() {
 		RPiCamera cam = null;
 		try {
-			cam = new RPiCamera();
+			cam = new RPiCamera().setTimeout(0).setFullPreviewOff().setHeight(200).setWidth(300).setQuality(90).turnOffThumbnail().turnOffPreview().setExposure(Exposure.SPORTS);
 		} catch (FailedToRunRaspistillException e) {
 			System.err.println("No Raspberry Pi camera found.");
 		}
