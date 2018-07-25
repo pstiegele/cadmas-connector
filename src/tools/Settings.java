@@ -27,8 +27,8 @@ public class Settings {
 	int udpOutgoingPort = 63091;
 	
 	//socket settings
-	//String socketURI = "wss://cadmas.net:8081/connector"; //wss://cadmas.net:8081/connector
-	String socketURI = "ws://192.168.2.174/connector";
+	String socketURI = "wss://cadmas.net:8081/connector"; //wss://cadmas.net:8081/connector
+	//String socketURI = "ws://192.168.2.174/connector";
 	String socketAPIKey = "myapikey";
 	
 	private Settings(){
