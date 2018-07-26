@@ -25,10 +25,11 @@ public class Settings {
 	boolean useUDP = false;
 	String udpIPAdress = "localhost";
 	int udpOutgoingPort = 63091;
+	boolean retryOpenArdupilotPort = false;
 	
 	//socket settings
 	String socketURI = "wss://cadmas.net:8081/connector"; //wss://cadmas.net:8081/connector
-	//String socketURI = "ws://192.168.2.174/connector";
+	//String socketURI = "ws://localhost/connector";
 	String socketAPIKey = "myapikey";
 	
 	private Settings(){
@@ -172,5 +173,11 @@ public class Settings {
 
 	public void setCameraIntervall(int cameraIntervall) {
 		this.cameraIntervall = cameraIntervall;
+	}
+	public boolean getRetryOpenArdupilotPort() {
+		return retryOpenArdupilotPort;
+	}
+	public void setRetryOpenArdupilotPort(boolean retryOpenArdupilotPort) {
+		this.retryOpenArdupilotPort = retryOpenArdupilotPort;
 	}
 }

@@ -33,7 +33,7 @@ public class CadmasClientEndpoint {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		//try to reconnect
+		// try to reconnect
 		SocketConnection.getSocketConnection().runLatch.countDown();
 	}
 
@@ -48,49 +48,51 @@ public class CadmasClientEndpoint {
 		// System.out.printf("Got msg: %s%n", msg);
 		try {
 			JSONObject jsonMessage = new JSONObject(msg);
-			switch (jsonMessage.getString("method")) {
-			case "calibrate":
-				System.out.println("calibrate received: " + jsonMessage);
-				Autopilot.getAutopilot().getAutopilotTransmitter().calibrate();
-				break;
-			case "arm":
-				System.out.println("arm received: " + jsonMessage);
-				Autopilot.getAutopilot().getAutopilotTransmitter().arm();
-				break;
-			case "setMode":
-				System.out.println("setMode received: " + jsonMessage);
-				Autopilot.getAutopilot().getAutopilotTransmitter().setMode(
-						FlightMode.getFlightModeByName(jsonMessage.getJSONObject("payload").getString("mode")));
-				break;
-			case "disarm":
-				System.out.println("disarm received: " + jsonMessage);
-				Autopilot.getAutopilot().getAutopilotTransmitter().disarm();
-				break;
-			case "setHomePosition":
-				System.out.println("setHomePosition received: " + jsonMessage);
-				CustomMissionItem cmi = new CustomMissionItem(0, jsonMessage.getFloat("latitude"),
-						jsonMessage.getFloat("longitude"), jsonMessage.getInt("altitude"));
-				Autopilot.getAutopilot().getAutopilotTransmitter().setHomePosition(cmi);
-				break;
-			case "setMission":
-				System.out.println("setMission received: " + jsonMessage);
-				ArrayList<CustomMissionItem> mission = parseMission(
-						jsonMessage.getJSONObject("payload").getJSONArray("waypoints"));
-				Autopilot.getAutopilot().getAutopilotTransmitter().sendMission(mission,
-						jsonMessage.getJSONObject("payload").getBoolean("restart"));
-				break;
-			case "attitudeACK":
-			case "batteryACK":
-			case "heartbeatACK":
-			case "missionStateACK":
-			case "positionACK":
-			case "velocityACK":
-			case "cameraImageACK":
-				// System.out.println("ack received: " + jsonMessage);
-				break;
-			default:
-				System.out.println("message with unresolvable method received: " + jsonMessage.getString("method"));
-				break;
+			synchronized (CadmasClientEndpoint.class) {
+				switch (jsonMessage.getString("method")) {
+				case "calibrate":
+					System.out.println("calibrate received: " + jsonMessage);
+					Autopilot.getAutopilot().getAutopilotTransmitter().calibrate();
+					break;
+				case "arm":
+					System.out.println("arm received: " + jsonMessage);
+					Autopilot.getAutopilot().getAutopilotTransmitter().arm();
+					break;
+				case "setMode":
+					System.out.println("setMode received: " + jsonMessage);
+					Autopilot.getAutopilot().getAutopilotTransmitter().setMode(
+							FlightMode.getFlightModeByName(jsonMessage.getJSONObject("payload").getString("mode")));
+					break;
+				case "disarm":
+					System.out.println("disarm received: " + jsonMessage);
+					Autopilot.getAutopilot().getAutopilotTransmitter().disarm();
+					break;
+				case "setHomePosition":
+					System.out.println("setHomePosition received: " + jsonMessage);
+					CustomMissionItem cmi = new CustomMissionItem(0, jsonMessage.getFloat("latitude"),
+							jsonMessage.getFloat("longitude"), jsonMessage.getInt("altitude"));
+					Autopilot.getAutopilot().getAutopilotTransmitter().setHomePosition(cmi);
+					break;
+				case "setMission":
+					System.out.println("setMission received: " + jsonMessage);
+					ArrayList<CustomMissionItem> mission = parseMission(
+							jsonMessage.getJSONObject("payload").getJSONArray("waypoints"));
+					Autopilot.getAutopilot().getAutopilotTransmitter().sendMission(mission,
+							jsonMessage.getJSONObject("payload").getBoolean("restart"));
+					break;
+				case "attitudeACK":
+				case "batteryACK":
+				case "heartbeatACK":
+				case "missionStateACK":
+				case "positionACK":
+				case "velocityACK":
+				case "cameraImageACK":
+					// System.out.println("ack received: " + jsonMessage);
+					break;
+				default:
+					System.out.println("message with unresolvable method received: " + jsonMessage.getString("method"));
+					break;
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

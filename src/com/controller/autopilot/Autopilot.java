@@ -43,17 +43,18 @@ public class Autopilot extends Thread {
 		// port.closePort();
 	}
 
-	//initializes com port and telemetry objects. creates transmitter and receiver objects.
+	// initializes com port and telemetry objects. creates transmitter and receiver
+	// objects.
 	public void connect() {
 		if (!Settings.getInstance().getUseUDP())
 			port = init();
 		initTelemetryObjects();
 		transmitter = new AutopilotTransmitter(port);
 		receiver = new AutopilotReceiver(port);
-		//runTest(transmitter);
+		// runTest(transmitter);
 	}
-	
-	//creates test class and performs ground test or test flight
+
+	// creates test class and performs ground test or test flight
 	public void runTest(AutopilotTransmitter transmitter) {
 		Test test = new Test(transmitter);
 		try {
@@ -64,29 +65,53 @@ public class Autopilot extends Thread {
 		}
 	}
 
-	//initializes com port by defining port number and baud rate
+	// initializes com port by defining port number and baud rate
 	private SerialPort init() {
 		SerialPort[] ports = SerialPort.getCommPorts();
 		for (SerialPort serialPort : ports) {
 			System.out.println(serialPort.getDescriptivePortName() + " | Baudrate: " + serialPort.getBaudRate());
 		}
-		SerialPort port = ports[Settings.getInstance().getSerialPort()]; // raspi = 0; surfacePro4 = 2
-		port.setBaudRate(Settings.getInstance().getBaudRate()); // raspi = 115200; surfacePro4 = 9600;
-		port.openPort();
+		SerialPort port = null;
+		boolean successful = false;
+		int tries = 0;
+		do {
+			try {
+				tries++;
+				port = ports[Settings.getInstance().getSerialPort()]; // raspi = 0; surfacePro4 = 2
+				port.setBaudRate(Settings.getInstance().getBaudRate()); // raspi = 115200; surfacePro4 = 9600;
+				port.openPort();
+				successful = true;
+			} catch (Exception e) {
+				if(tries>10) {
+					System.out.println("I'm giving up. No Ardupilot found. Goodbye!");
+					System.exit(-1);
+				}
+				System.out.println("Fatal error: cannot open port. Try again");
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+
+		} while (!successful&&Settings.getInstance().getRetryOpenArdupilotPort());
+
 		System.out
 				.println("\n" + port.getDescriptivePortName() + " (Baudrate: " + port.getBaudRate() + ") is now open.");
 		return port;
 	}
-	
+
 	public AutopilotTransmitter getAutopilotTransmitter() {
 		return transmitter;
 	}
-	
+
 	public AutopilotReceiver getAutopilotReceiver() {
 		return receiver;
 	}
-	
-	//creates dummy objects of every telemetry object to decrease chance of NullPointerExceptions
+
+	// creates dummy objects of every telemetry object to decrease chance of
+	// NullPointerExceptions
 	private void initTelemetryObjects() {
 		new Attitude();
 		new Battery();
@@ -97,12 +122,12 @@ public class Autopilot extends Thread {
 		new MissionItem();
 		new CommandAck();
 	}
-	
-	//debug
+
+	// debug
 	public boolean send(MAVLinkPacket mavLinkPacket) {
-			// MAVLinkMessage msg = cmd.getMAVLink();
-			// send telecommand to autopilot
-			return true;
-		}
+		// MAVLinkMessage msg = cmd.getMAVLink();
+		// send telecommand to autopilot
+		return true;
+	}
 
 }
