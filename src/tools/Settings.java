@@ -21,6 +21,7 @@ public class Settings {
 	boolean startMessageHandler = true;
 	boolean startSocketConnection = true;
 	boolean startCameraTransmission = true;
+	boolean emulateCamera = false;
 	int cameraIntervall = 1000;		//in ms
 	boolean useUDP = false;
 	String udpIPAdress = "localhost";
@@ -179,5 +180,13 @@ public class Settings {
 	}
 	public void setRetryOpenArdupilotPort(boolean retryOpenArdupilotPort) {
 		this.retryOpenArdupilotPort = retryOpenArdupilotPort;
+	}
+
+	public boolean getEmulateCamera() {
+		return emulateCamera;
+	}
+
+	public void setEmulateCamera(boolean emulateCamera) {
+		this.emulateCamera = emulateCamera;
 	}
 }
