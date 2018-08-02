@@ -13,6 +13,7 @@ public class Heartbeat implements TelemetryMessage{
 	long customMode;
 	long timestamp;
 	float messagesLost; // number of lost messages for every received message
+	float cpuTemp;
 	
 	private static MessageMemory<Heartbeat> messageMemory = new MessageMemory<>();
 	public Heartbeat() {
@@ -20,9 +21,10 @@ public class Heartbeat implements TelemetryMessage{
 		customMode = FlightMode.MANUAL;
 		timestamp = 0;
 		messagesLost = 0;
+		cpuTemp = 0;
 		messageMemory.add(this);
 	}
-	public Heartbeat(msg_heartbeat message, int[] rssi) {
+	public Heartbeat(msg_heartbeat message, int[] rssi, float temp) {
 		timestamp=System.currentTimeMillis();
 		isArmed = false;
 		if(message.base_mode > 127) {
@@ -36,13 +38,14 @@ public class Heartbeat implements TelemetryMessage{
 			messagesLost += rssi[i];
 		}
 		messagesLost = messagesLost/rssi.length;
+		cpuTemp = temp;
 		messageMemory.add(this);
 	}
 	
 	@Override
 	public JSONObject getJSON() {
 		JSONObject res = new JSONObject();
-		res.put("timestamp", timestamp).put("isArmed", isArmed).put("customMode", customMode).put("messagesLost", messagesLost);
+		res.put("timestamp", timestamp).put("isArmed", isArmed).put("customMode", customMode).put("messagesLost", messagesLost).put("cpuTemp", cpuTemp);
 		return res;
 	}
 

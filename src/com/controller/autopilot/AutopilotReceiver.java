@@ -1,5 +1,8 @@
 package com.controller.autopilot;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -80,7 +83,7 @@ public class AutopilotReceiver extends Thread {
 			new CommandAck(new msg_statustext(mavpacket));
 			break;
 		case msg_heartbeat.MAVLINK_MSG_ID_HEARTBEAT:
-			new Heartbeat(new msg_heartbeat(mavpacket), sequenceLog);
+			new Heartbeat(new msg_heartbeat(mavpacket), sequenceLog, getCpuTemp());
 			break;
 		case msg_attitude.MAVLINK_MSG_ID_ATTITUDE:
 			new Attitude(new msg_attitude(mavpacket));
@@ -130,6 +133,32 @@ public class AutopilotReceiver extends Thread {
 			arrayIndex = 0;
 		}
 	}
+	
+	//reads CPU temperature in celsius
+		private float getCpuTemp() {
+			float temp = 0;
+			String fileName = "/sys/class/thermal/thermal_zone0/temp";
+	        String line = null;
+
+	        try {
+	            FileReader fileReader = new FileReader(fileName);
+
+	            BufferedReader bufferedReader = new BufferedReader(fileReader);
+
+	            while((line = bufferedReader.readLine()) != null) {
+	                temp = (Integer.parseInt(line) / 1000);
+	            }
+
+	            bufferedReader.close();
+	        }
+	        catch(FileNotFoundException ex) {
+	            //System.out.println("Unable to open file '" + fileName + "'");
+	        }
+	        catch(IOException ex) {
+	            //System.out.println("Error reading file '" + fileName + "'");
+	        }
+			return temp;
+		}
 
 	//returns a mavlink packet when it was received over serial connection
 	private MAVLinkPacket getPacket(SerialPort port) {
