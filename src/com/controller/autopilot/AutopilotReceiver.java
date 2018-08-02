@@ -157,6 +157,7 @@ public class AutopilotReceiver extends Thread {
 	        catch(IOException ex) {
 	            //System.out.println("Error reading file '" + fileName + "'");
 	        }
+	        //System.out.println("CPU Temperature:" + temp);
 			return temp;
 		}
 
