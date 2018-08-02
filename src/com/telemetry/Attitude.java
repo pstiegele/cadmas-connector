@@ -27,7 +27,7 @@ public class Attitude implements TelemetryMessage{
 	@Override
 	public JSONObject getJSON() {
 		JSONObject res = new JSONObject();
-		res.put("pitch", pitch).put("roll", roll).put("heading", yaw);
+		res.put("pitch", pitch).put("roll", roll).put("heading", yaw).put("timestamp", timestamp);
 		return res;
 	}
 

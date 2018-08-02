@@ -23,7 +23,7 @@ public class CameraImage implements TelemetryMessage{
 	@Override
 	public JSONObject getJSON() {
 		JSONObject res = new JSONObject();
-		res.put("img", img);
+		res.put("img", img).put("timestamp", timestamp);
 		return res;
 	}
 
