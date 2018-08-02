@@ -1,4 +1,4 @@
+#!/bin/bash
 git pull
 ant
-cd dist
-java -jar Ardupilot Connector.jar
+java -jar "dist/Ardupilot Connector.jar"

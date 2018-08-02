@@ -8,6 +8,7 @@ import com.telecommand.Mission;
 import com.telecommand.StartMission;
 import com.telemetry.Attitude;
 import com.telemetry.Battery;
+import com.telemetry.CameraImage;
 import com.telemetry.Heartbeat;
 import com.telemetry.MissionState;
 import com.telemetry.Position;
@@ -184,6 +185,16 @@ public class MessageHandler extends Thread {
 				}
 			}).start();
 
+		}));
+		// CameraImage
+		CameraImage.getMessageMemory().addListener((ListChangeListener<? super CameraImage>) (c -> {
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+						SocketConnection.getSocketConnection().send(CameraImage.getMessageMemory().getNewestElement());
+				}
+			}).start();
+			
 		}));
 	}
 
