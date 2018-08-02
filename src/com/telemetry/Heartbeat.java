@@ -13,7 +13,7 @@ public class Heartbeat implements TelemetryMessage{
 	long customMode;
 	long timestamp;
 	float messagesLost; // number of lost messages for every received message
-	float cpuTemp; // cpu temperature in celsius
+	float cpuTemp;
 	
 	private static MessageMemory<Heartbeat> messageMemory = new MessageMemory<>();
 	public Heartbeat() {
