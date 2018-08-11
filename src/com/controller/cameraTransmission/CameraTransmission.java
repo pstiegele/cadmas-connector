@@ -50,7 +50,7 @@ public class CameraTransmission extends Thread {
 			RPiCamera cam = null;
 			try {
 				cam = new RPiCamera();
-				cam.setHeight(200).setWidth(300).setQuality(70).setExposure(Exposure.).setTimeout(1000)
+				cam.setHeight(200).setWidth(300).setQuality(70).setExposure(Exposure.SPORTS).setTimeout(2000)
 						.setDateTimeOn().setFullPreviewOff().turnOffPreview().turnOffThumbnail();
 			} catch (FailedToRunRaspistillException e) {
 				System.err.println("No Raspberry Pi camera found.");
