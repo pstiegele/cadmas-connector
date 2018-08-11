@@ -9,6 +9,7 @@ public class Settings {
 	//setup values
 	int serialPort = 3; // raspi = 3; yoga: 0
 	int baudRate = 115200; // raspi = 115200; yoga = 9600;
+	int telemetryRefreshRate = 1000;
 	
 	//autopilot values
 	int loiterRadius = 50;
@@ -22,6 +23,7 @@ public class Settings {
 	boolean startSocketConnection = true;
 	boolean startCameraTransmission = true;
 	boolean emulateCamera = false;
+	boolean emulateCpuTemp = false;
 	int cameraIntervall = 1000;		//in ms
 	boolean useUDP = false;
 	String udpIPAdress = "localhost";
@@ -31,6 +33,7 @@ public class Settings {
 	//socket settings
 	String socketURI = "wss://cadmas.net:8081/connector"; //wss://cadmas.net:8081/connector
 	//String socketURI = "ws://localhost/connector";
+	//String socketAPIKey = "$2a$11$aLcbCzL/19eDRRe7ggLoQeI5nV85mmDoql06uoX4IZBgIZiwP8K5i";
 	String socketAPIKey = "myapikey";
 	
 	private Settings(){
@@ -188,5 +191,21 @@ public class Settings {
 
 	public void setEmulateCamera(boolean emulateCamera) {
 		this.emulateCamera = emulateCamera;
+	}
+
+	public int getTelemetryRefreshRate() {
+		return telemetryRefreshRate;
+	}
+
+	public void setTelemetryRefreshRate(int telemetryRefreshRate) {
+		this.telemetryRefreshRate = telemetryRefreshRate;
+	}
+
+	public boolean getEmulateCpuTemp() {
+		return emulateCpuTemp;
+	}
+
+	public void setEmulateCpuTemp(boolean emulateCpuTemp) {
+		this.emulateCpuTemp = emulateCpuTemp;
 	}
 }

@@ -90,6 +90,8 @@ public class CameraTransmission extends Thread {
 		
 		while (true) {
 			String filename = "";
+			if(fileIndex>=listOfFiles.length)
+				fileIndex=0;
 			if(listOfFiles[fileIndex].isFile()&&listOfFiles[fileIndex].getName().endsWith(".data")) {
 				filename=listOfFiles[fileIndex].getAbsolutePath();
 				fileIndex++;
@@ -97,8 +99,7 @@ public class CameraTransmission extends Thread {
 				fileIndex++;
 				continue;
 			}
-			if(fileIndex>=listOfFiles.length)
-				fileIndex=0;
+			
 			System.out.println("cam called: "+filename);
 			String everything;
 			String[] everythingSplitted;

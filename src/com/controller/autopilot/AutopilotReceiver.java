@@ -8,6 +8,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.util.concurrent.ThreadLocalRandom;
 
 import com.MAVLink.MAVLinkPacket;
 import com.MAVLink.Parser;
@@ -44,8 +45,9 @@ public class AutopilotReceiver extends Thread {
 	int sequenceLogSize = 5;
 	int[] sequenceLog = new int[sequenceLogSize];
 	int arrayIndex = 0;
+
 	public AutopilotReceiver(SerialPort port) {
-		this.port=port;
+		this.port = port;
 		start();
 	}
 
@@ -54,27 +56,26 @@ public class AutopilotReceiver extends Thread {
 		previousSequence = 0;
 		waitMillis(2000);
 		System.out.println("receiverStart");
-		
-		if(udpInsteadOfSerial){
+
+		if (udpInsteadOfSerial) {
 			try {
 				readUDP();
 			} catch (SocketException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}
-		else{
+		} else {
 			while (true) {
 				MAVLinkPacket mavpacket = getPacket(port);
 				handlePacket(mavpacket);
 			}
 		}
 	}
-	
-	//creates different telemetry objects based on message id of mavlink packets
+
+	// creates different telemetry objects based on message id of mavlink packets
 	private void handlePacket(MAVLinkPacket mavpacket) {
 		calcRSSI(mavpacket);
-		
+
 		switch (mavpacket.msgid) {
 		case msg_sys_status.MAVLINK_MSG_ID_SYS_STATUS:
 			new Battery(new msg_sys_status(mavpacket));
@@ -120,55 +121,59 @@ public class AutopilotReceiver extends Thread {
 		}
 
 	}
-	
-	//calculates connection quality based on messages lost
+
+	// calculates connection quality based on messages lost
 	private void calcRSSI(MAVLinkPacket mavpacket) {
-		sequenceLog[arrayIndex] = Math.min(Math.abs(mavpacket.seq - previousSequence), mavpacket.seq + 255 - previousSequence) - 1;
+		sequenceLog[arrayIndex] = Math.min(Math.abs(mavpacket.seq - previousSequence),
+				mavpacket.seq + 255 - previousSequence) - 1;
 		previousSequence = mavpacket.seq;
-		
-		if(arrayIndex < sequenceLogSize - 1) {
+
+		if (arrayIndex < sequenceLogSize - 1) {
 			arrayIndex++;
-		}
-		else {
+		} else {
 			arrayIndex = 0;
 		}
 	}
-	
-	//reads CPU temperature in celsius
-		private float getCpuTemp() {
+
+	// reads CPU temperature in celsius
+	private float getCpuTemp() {
+		if (Settings.getInstance().getEmulateCpuTemp()) {
+			return ThreadLocalRandom.current().nextInt(60, 70 + 1);
+		} else {
+
 			float temp = 0;
 			String fileName = "/sys/class/thermal/thermal_zone0/temp";
-	        String line = null;
+			String line = null;
 
-	        try {
-	            FileReader fileReader = new FileReader(fileName);
+			try {
+				FileReader fileReader = new FileReader(fileName);
 
-	            BufferedReader bufferedReader = new BufferedReader(fileReader);
+				BufferedReader bufferedReader = new BufferedReader(fileReader);
 
-	            while((line = bufferedReader.readLine()) != null) {
-	                temp = (Integer.parseInt(line) / 1000);
-	            }
+				while ((line = bufferedReader.readLine()) != null) {
+					temp = (Integer.parseInt(line) / 1000);
+				}
 
-	            bufferedReader.close();
-	        }
-	        catch(FileNotFoundException ex) {
-	            //System.out.println("Unable to open file '" + fileName + "'");
-	        }
-	        catch(IOException ex) {
-	            //System.out.println("Error reading file '" + fileName + "'");
-	        }
+				bufferedReader.close();
+			} catch (FileNotFoundException ex) {
+				// System.out.println("Unable to open file '" + fileName + "'");
+			} catch (IOException ex) {
+				// System.out.println("Error reading file '" + fileName + "'");
+			}
 			return temp;
 		}
 
-	//returns a mavlink packet when it was received over serial connection
+	}
+
+	// returns a mavlink packet when it was received over serial connection
 	private MAVLinkPacket getPacket(SerialPort port) {
 		Parser parser = new Parser();
 		try {
 			while (true) {
-				while (port.bytesAvailable() == 0){
+				while (port.bytesAvailable() == 0) {
 				}
 				int bytesToRead = port.bytesAvailable();
-				while(bytesToRead < 0) {
+				while (bytesToRead < 0) {
 					waitMillis(50);
 				}
 				byte[] readBuffer = new byte[bytesToRead];
@@ -192,51 +197,51 @@ public class AutopilotReceiver extends Thread {
 		return null;
 
 	}
-	
-	//continuously reads incoming mavlink packets over UDP connection and passes packets to handlePacket() method
+
+	// continuously reads incoming mavlink packets over UDP connection and passes
+	// packets to handlePacket() method
 	public void readUDP() throws SocketException {
 		Parser parser = new Parser();
 		int port = 14551;
 		DatagramSocket dSocket = new DatagramSocket(port);
-	      try {
-		        byte[] buffer = new byte[2048];
-	
-		        System.out.printf("Listening on udp:%s:%d%n", InetAddress.getLocalHost().getHostAddress(), port);     
-		        DatagramPacket receivePacket = new DatagramPacket(buffer, buffer.length);
-		        while(true) {
-		              dSocket.receive(receivePacket);
-		              byte[] receiveArray = new byte[receivePacket.getLength()];
-		              for (int i = 0; i < receiveArray.length; i++) {
-						receiveArray[i] = buffer[i];
-		              }
-		              int readarr[] = new int[receiveArray.length];
-						for (int i = 0; i < receiveArray.length; i++) {
-							readarr[i] = unsignedToBytes(receiveArray[i]);
-						}
-						MAVLinkPacket mavpacket = null;
-						for (int i = 0; i < readarr.length; i++) {
-							mavpacket = parser.mavlink_parse_char(readarr[i]);
-							if (mavpacket != null) {
-								Settings.getInstance().setUdpOutgoingPort(receivePacket.getPort());
-								handlePacket(mavpacket);
-							}
-						}
-		        }
-	      } 
-	      catch (IOException e) {
-	              System.out.println(e);
-	      }
-	      dSocket.close();
+		try {
+			byte[] buffer = new byte[2048];
+
+			System.out.printf("Listening on udp:%s:%d%n", InetAddress.getLocalHost().getHostAddress(), port);
+			DatagramPacket receivePacket = new DatagramPacket(buffer, buffer.length);
+			while (true) {
+				dSocket.receive(receivePacket);
+				byte[] receiveArray = new byte[receivePacket.getLength()];
+				for (int i = 0; i < receiveArray.length; i++) {
+					receiveArray[i] = buffer[i];
+				}
+				int readarr[] = new int[receiveArray.length];
+				for (int i = 0; i < receiveArray.length; i++) {
+					readarr[i] = unsignedToBytes(receiveArray[i]);
+				}
+				MAVLinkPacket mavpacket = null;
+				for (int i = 0; i < readarr.length; i++) {
+					mavpacket = parser.mavlink_parse_char(readarr[i]);
+					if (mavpacket != null) {
+						Settings.getInstance().setUdpOutgoingPort(receivePacket.getPort());
+						handlePacket(mavpacket);
+					}
+				}
+			}
+		} catch (IOException e) {
+			System.out.println(e);
+		}
+		dSocket.close();
 	}
 
-	//converts unsigned bytes to signed bytes
+	// converts unsigned bytes to signed bytes
 	private static int unsignedToBytes(byte a) {
 		int b = a & 0xFF;
 		return b;
 	}
-	
-	//waits for a specified amount of time in milliseconds
-	public void waitMillis(long t){
+
+	// waits for a specified amount of time in milliseconds
+	public void waitMillis(long t) {
 		try {
 			Thread.sleep(t);
 		} catch (InterruptedException e1) {

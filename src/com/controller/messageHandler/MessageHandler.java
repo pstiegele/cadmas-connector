@@ -15,6 +15,7 @@ import com.telemetry.Position;
 import com.telemetry.Velocity;
 
 import javafx.collections.ListChangeListener;
+import tools.Settings;
 
 public class MessageHandler extends Thread {
 
@@ -28,7 +29,7 @@ public class MessageHandler extends Thread {
 	public MessageHandler() {
 		messageHandler = this;
 		this.setName("MessageHandler");
-		refreshRateAttitude = refreshRateBattery = refreshRateHeartbeat = refreshRateMissionItem = refreshRateMissionState = refreshRatePosition = refreshRateVelocity = 500;
+		refreshRateAttitude = refreshRateBattery = refreshRateHeartbeat = refreshRateMissionItem = refreshRateMissionState = refreshRatePosition = refreshRateVelocity = Settings.getInstance().getTelemetryRefreshRate();
 		start();
 	}
 
