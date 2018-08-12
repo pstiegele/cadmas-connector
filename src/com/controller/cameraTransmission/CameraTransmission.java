@@ -25,7 +25,7 @@ public class CameraTransmission extends Thread {
 
 	public CameraTransmission() {
 		cameraTransmission = this;
-		this.setName("SocketConnection");
+		this.setName("CameraTransmission");
 		start();
 	}
 
@@ -84,10 +84,11 @@ public class CameraTransmission extends Thread {
 	}
 
 	private void emulateCamera() throws IOException {
+		//System.out.println("emulate camera");
 		File folder = new File("C:\\Users\\pstiegele\\Documents\\Workspaces\\Git\\cameratest");
 		File[] listOfFiles = folder.listFiles();
 		int fileIndex=0;
-		
+		//System.out.println(listOfFiles.length);
 		while (true) {
 			String filename = "";
 			if(fileIndex>=listOfFiles.length)
