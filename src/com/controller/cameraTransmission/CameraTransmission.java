@@ -60,7 +60,7 @@ public class CameraTransmission extends Thread {
 				while (true) {
 					try {
 						System.out.println("cam called");
-						cam.takeStill(String.valueOf(System.currentTimeMillis()));
+						//cam.takeStill(String.valueOf(System.currentTimeMillis()));
 						img = cam.takeBufferedStill();
 						ByteArrayOutputStream baos = new ByteArrayOutputStream();
 						ImageIO.write(img, "jpg", baos);
