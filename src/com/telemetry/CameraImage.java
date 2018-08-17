@@ -1,32 +1,30 @@
 package com.telemetry;
 
-import org.json.JSONObject;
+import java.nio.ByteBuffer;
 
-import com.MAVLink.common.msg_attitude;
+import org.json.JSONObject;
 
 import tools.MessageMemory;
 
-public class CameraImage implements TelemetryMessage{
-
+public class CameraImage implements TelemetryMessage {
 
 	long timestamp;
-	byte[] img;
-	
+	ByteBuffer img;
+
 	private static MessageMemory<CameraImage> messageMemory = new MessageMemory<>();
-	public CameraImage(byte[] img) {
+
+	public CameraImage(ByteBuffer img) {
 		timestamp = System.currentTimeMillis();
-		this.img=img;
+		this.img = img;
 		messageMemory.add(this);
 	}
-	
-	
+
 	@Override
 	public JSONObject getJSON() {
 		JSONObject res = new JSONObject();
 		res.put("img", img).put("timestamp", timestamp);
 		return res;
 	}
-
 
 	public static MessageMemory<CameraImage> getMessageMemory() {
 		return messageMemory;
@@ -42,5 +40,8 @@ public class CameraImage implements TelemetryMessage{
 		return timestamp;
 	}
 
+	public ByteBuffer getByteBuffer() {
+		return img;
+	}
 
 }

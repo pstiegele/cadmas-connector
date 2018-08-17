@@ -4,16 +4,14 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 
 import javax.imageio.ImageIO;
 
 import com.hopding.jrpicam.RPiCamera;
 import com.hopding.jrpicam.enums.Exposure;
-import com.hopding.jrpicam.enums.ImageEffect;
-import com.hopding.jrpicam.enums.MeteringMode;
 import com.hopding.jrpicam.exceptions.FailedToRunRaspistillException;
 import com.telemetry.CameraImage;
 
@@ -38,6 +36,7 @@ public class CameraTransmission extends Thread {
 
 	@Override
 	public void run() {
+		
 		if (Settings.getInstance().getEmulateCamera()) {
 			try {
 				emulateCamera();
@@ -67,7 +66,7 @@ public class CameraTransmission extends Thread {
 						baos.flush();
 						byte[] imageInByte = baos.toByteArray();
 						baos.close();
-						new CameraImage(imageInByte);
+						new CameraImage(ByteBuffer.wrap(imageInByte));
 					} catch (IOException | IllegalArgumentException | InterruptedException e) {
 						System.out.println("got no camera image");
 					}
@@ -136,7 +135,7 @@ public class CameraTransmission extends Thread {
 			} finally {
 				br.close();
 			}
-			new CameraImage(everythingSplittedInBytes);
+			new CameraImage(ByteBuffer.wrap(everythingSplittedInBytes));
 			try {
 				Thread.sleep(Settings.getInstance().getCameraIntervall());
 			} catch (InterruptedException e) {

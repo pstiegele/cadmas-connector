@@ -192,7 +192,7 @@ public class MessageHandler extends Thread {
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
-						SocketConnection.getSocketConnection().send(CameraImage.getMessageMemory().getNewestElement());
+						SocketConnection.getSocketConnection().sendBinary(CameraImage.getMessageMemory().getNewestElement().getByteBuffer());
 				}
 			}).start();
 			

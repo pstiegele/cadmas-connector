@@ -62,7 +62,7 @@ public class SocketConnection extends Thread {
 					;
 				// System.out.println("is Open");
 				// while(true) {
-				// test();
+				//test();
 				// Thread.sleep(500);
 				// }
 				runLatch.await();
@@ -75,6 +75,7 @@ public class SocketConnection extends Thread {
 	}
 
 	private void test() {
+		while(true) {
 		Random r = new Random();
 		int rangeMin = -30;
 		int rangeMax = 30;
@@ -95,6 +96,13 @@ public class SocketConnection extends Thread {
 		pos.lat = (int) (49781641 + (rangeMin * 10 + (rangeMax * 10 - rangeMin * 10) * r.nextDouble()));
 		pos.alt = (int) (100 + (rangeMin + (rangeMax - rangeMin) * r.nextDouble()));
 		new Position(pos);
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		}
 	}
 
 	/**
@@ -146,6 +154,23 @@ public class SocketConnection extends Thread {
 					e.printStackTrace();
 				}
 
+			}
+		}
+	}
+	public void sendBinary(ByteBuffer msg) {
+		boolean sending = true;
+		if (sending && clientEndPoint != null && clientEndPoint.session != null && clientEndPoint.session.isOpen()) {
+			synchronized (SocketConnection.class) {
+				
+				try {
+					//String res = createMessage(msg);
+					// System.out.println("send msg: "+res);
+					clientEndPoint.session.getRemote().sendBytes(msg);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
 			}
 		}
 	}
