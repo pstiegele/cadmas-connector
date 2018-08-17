@@ -53,7 +53,14 @@ public class SocketConnection extends Thread {
 			runLatch = new CountDownLatch(1);
 			try {
 				try {
-					connect();
+					boolean connected = false;
+					do {
+						connect();
+						Thread.sleep(2000);
+						if (clientEndPoint != null&&clientEndPoint.session!=null&&clientEndPoint.session.isOpen())
+							connected = true;
+					} while (!connected);
+
 				} catch (MalformedURLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -62,7 +69,7 @@ public class SocketConnection extends Thread {
 					;
 				// System.out.println("is Open");
 				// while(true) {
-				//test();
+				// test();
 				// Thread.sleep(500);
 				// }
 				runLatch.await();
@@ -75,33 +82,33 @@ public class SocketConnection extends Thread {
 	}
 
 	private void test() {
-		while(true) {
-		Random r = new Random();
-		int rangeMin = -30;
-		int rangeMax = 30;
-		msg_attitude att = new msg_attitude();
-		att.pitch = (float) (rangeMin + (rangeMax - rangeMin) * r.nextDouble());
-		att.roll = (float) (rangeMin + (rangeMax - rangeMin) * r.nextDouble());
-		att.yaw = (float) (rangeMin + (rangeMax - rangeMin) * r.nextDouble());
-		new Attitude(att);
+		while (true) {
+			Random r = new Random();
+			int rangeMin = -30;
+			int rangeMax = 30;
+			msg_attitude att = new msg_attitude();
+			att.pitch = (float) (rangeMin + (rangeMax - rangeMin) * r.nextDouble());
+			att.roll = (float) (rangeMin + (rangeMax - rangeMin) * r.nextDouble());
+			att.yaw = (float) (rangeMin + (rangeMax - rangeMin) * r.nextDouble());
+			new Attitude(att);
 
-		msg_vfr_hud vfr = new msg_vfr_hud();
-		vfr.climb = (float) (rangeMin + (rangeMax - rangeMin) * r.nextDouble());
-		vfr.airspeed = (float) (0 + (160 - 0) * r.nextDouble());
-		vfr.alt = (float) (0 + (3000 - 0) * r.nextDouble());
-		new Velocity(vfr);
+			msg_vfr_hud vfr = new msg_vfr_hud();
+			vfr.climb = (float) (rangeMin + (rangeMax - rangeMin) * r.nextDouble());
+			vfr.airspeed = (float) (0 + (160 - 0) * r.nextDouble());
+			vfr.alt = (float) (0 + (3000 - 0) * r.nextDouble());
+			new Velocity(vfr);
 
-		msg_global_position_int pos = new msg_global_position_int();
-		pos.lon = (int) (9970359 + (rangeMin * 10 + (rangeMax * 10 - rangeMin * 10) * r.nextDouble()));
-		pos.lat = (int) (49781641 + (rangeMin * 10 + (rangeMax * 10 - rangeMin * 10) * r.nextDouble()));
-		pos.alt = (int) (100 + (rangeMin + (rangeMax - rangeMin) * r.nextDouble()));
-		new Position(pos);
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+			msg_global_position_int pos = new msg_global_position_int();
+			pos.lon = (int) (9970359 + (rangeMin * 10 + (rangeMax * 10 - rangeMin * 10) * r.nextDouble()));
+			pos.lat = (int) (49781641 + (rangeMin * 10 + (rangeMax * 10 - rangeMin * 10) * r.nextDouble()));
+			pos.alt = (int) (100 + (rangeMin + (rangeMax - rangeMin) * r.nextDouble()));
+			new Position(pos);
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -122,6 +129,7 @@ public class SocketConnection extends Thread {
 
 		SslContextFactory sec = new SslContextFactory();
 		WebSocketClient client = new WebSocketClient(sec);
+		client.setConnectTimeout(2000);
 		clientEndPoint = new CadmasClientEndpoint();
 		try {
 			client.start();
@@ -136,6 +144,7 @@ public class SocketConnection extends Thread {
 
 		} catch (Exception e) {
 			// TODO: handle exception
+			System.out.println("oh: " + e);
 		}
 
 	}
@@ -157,20 +166,21 @@ public class SocketConnection extends Thread {
 			}
 		}
 	}
+
 	public void sendBinary(ByteBuffer msg) {
 		boolean sending = true;
 		if (sending && clientEndPoint != null && clientEndPoint.session != null && clientEndPoint.session.isOpen()) {
 			synchronized (SocketConnection.class) {
-				
+
 				try {
-					//String res = createMessage(msg);
+					// String res = createMessage(msg);
 					// System.out.println("send msg: "+res);
 					clientEndPoint.session.getRemote().sendBytes(msg);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				
+
 			}
 		}
 	}
