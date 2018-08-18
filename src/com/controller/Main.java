@@ -10,7 +10,10 @@ import tools.Settings;
 public class Main {
 
 	public static void main(String[] args) {
-
+		if(args.length!=0&&args[0]!=null) {
+			Settings.getInstance().setSocketAPIKey(args[0]);	
+		}
+		
 		if (Settings.getInstance().getStartMessageHandler())
 			MessageHandler.getMessageHandler();
 		if (Settings.getInstance().getStartAutopilot())

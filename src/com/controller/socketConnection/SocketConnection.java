@@ -16,9 +16,15 @@ import org.eclipse.jetty.websocket.client.WebSocketClient;
 import org.json.JSONObject;
 
 import com.MAVLink.common.msg_attitude;
+import com.MAVLink.common.msg_battery_status;
 import com.MAVLink.common.msg_global_position_int;
+import com.MAVLink.common.msg_heartbeat;
+import com.MAVLink.common.msg_mission_current;
 import com.MAVLink.common.msg_vfr_hud;
 import com.telemetry.Attitude;
+import com.telemetry.Battery;
+import com.telemetry.Heartbeat;
+import com.telemetry.MissionState;
 import com.telemetry.Position;
 import com.telemetry.TelemetryMessage;
 import com.telemetry.Velocity;
@@ -69,7 +75,7 @@ public class SocketConnection extends Thread {
 					;
 				// System.out.println("is Open");
 				// while(true) {
-				// test();
+				 test();
 				// Thread.sleep(500);
 				// }
 				runLatch.await();
@@ -97,6 +103,11 @@ public class SocketConnection extends Thread {
 			vfr.airspeed = (float) (0 + (160 - 0) * r.nextDouble());
 			vfr.alt = (float) (0 + (3000 - 0) * r.nextDouble());
 			new Velocity(vfr);
+			
+			new Battery(new msg_battery_status());
+			int[] a = {1,2,3,4};
+			new Heartbeat(new msg_heartbeat(), a, 26);
+			new MissionState(new msg_mission_current());
 
 			msg_global_position_int pos = new msg_global_position_int();
 			pos.lon = (int) (9970359 + (rangeMin * 10 + (rangeMax * 10 - rangeMin * 10) * r.nextDouble()));
@@ -104,7 +115,7 @@ public class SocketConnection extends Thread {
 			pos.alt = (int) (100 + (rangeMin + (rangeMax - rangeMin) * r.nextDouble()));
 			new Position(pos);
 			try {
-				Thread.sleep(1000);
+				Thread.sleep(Settings.getInstance().getTelemetryRefreshRate());
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

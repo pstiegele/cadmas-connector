@@ -18,7 +18,7 @@ public class Settings {
 	short frameOrientation = MAV_FRAME.MAV_FRAME_GLOBAL_RELATIVE_ALT;
 	
 	//debugging values
-	boolean startAutopilot = true;
+	boolean startAutopilot = false;
 	boolean startMessageHandler = true;
 	boolean startSocketConnection = true;
 	boolean startCameraTransmission = true;
