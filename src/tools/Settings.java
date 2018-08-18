@@ -22,10 +22,10 @@ public class Settings {
 	boolean startMessageHandler = true;
 	boolean startSocketConnection = true;
 	boolean startCameraTransmission = true;
-	boolean emulateCamera = false;
-	boolean emulateCpuTemp = false;
-	int cameraIntervall = 1000;		//in ms
-	boolean useUDP = false;
+	boolean emulateCamera = true;
+	boolean emulateCpuTemp = true;
+	int cameraIntervall = 2000;		//in ms
+	boolean useUDP = true;
 	String udpIPAdress = "localhost";
 	int udpOutgoingPort = 63091;
 	boolean retryOpenArdupilotPort = false;
@@ -33,6 +33,7 @@ public class Settings {
 	//socket settings
 	String socketURI = "wss://cadmas.net:8081/connector"; //wss://cadmas.net:8081/connector
 	//String socketURI = "ws://localhost/connector";
+	//String socketURI = "ws://192.168.188.23/connector";
 	//String socketAPIKey = "$2a$11$aLcbCzL/19eDRRe7ggLoQeI5nV85mmDoql06uoX4IZBgIZiwP8K5i";
 	String socketAPIKey = "myapikey";
 	
