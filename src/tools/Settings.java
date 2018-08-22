@@ -18,7 +18,7 @@ public class Settings {
 	short frameOrientation = MAV_FRAME.MAV_FRAME_GLOBAL_RELATIVE_ALT;
 	
 	//debugging values
-	boolean startAutopilot = false;
+	boolean startAutopilot = true;
 	boolean startMessageHandler = true;
 	boolean startSocketConnection = true;
 	boolean startCameraTransmission = true;
@@ -31,11 +31,12 @@ public class Settings {
 	boolean retryOpenArdupilotPort = false;
 	
 	//socket settings
-	String socketURI = "wss://cadmas.net:8081/connector"; //wss://cadmas.net:8081/connector
-	//String socketURI = "ws://localhost/connector";
+	//String socketURI = "wss://cadmas.net:8081/connector"; //wss://cadmas.net:8081/connector
+	String socketURI = "ws://localhost/connector";
 	//String socketURI = "ws://192.168.188.23/connector";
 	//String socketAPIKey = "$2a$11$aLcbCzL/19eDRRe7ggLoQeI5nV85mmDoql06uoX4IZBgIZiwP8K5i";
 	String socketAPIKey = "myapikey";
+	String emulateCameraFilePath = "C:\\Users\\pstiegele\\Documents\\Workspaces\\Git\\cameratest";
 	
 	private Settings(){
 		
@@ -208,5 +209,13 @@ public class Settings {
 
 	public void setEmulateCpuTemp(boolean emulateCpuTemp) {
 		this.emulateCpuTemp = emulateCpuTemp;
+	}
+
+	public String getEmulateCameraFilePath() {
+		return emulateCameraFilePath;
+	}
+
+	public void setEmulateCameraFilePath(String emulateCameraFilePath) {
+		this.emulateCameraFilePath = emulateCameraFilePath;
 	}
 }

@@ -22,5 +22,6 @@
 	<classpathentry kind="lib" path="lib/websocket-client-9.4.10.v20180503.jar"/>
 	<classpathentry kind="lib" path="lib/websocket-common-9.4.10.v20180503.jar"/>
 	<classpathentry kind="lib" path="lib/jrpicam-1.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/argparser.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

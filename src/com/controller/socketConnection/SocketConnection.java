@@ -75,7 +75,7 @@ public class SocketConnection extends Thread {
 					;
 				// System.out.println("is Open");
 				// while(true) {
-				 test();
+				// test();
 				// Thread.sleep(500);
 				// }
 				runLatch.await();

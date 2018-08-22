@@ -84,7 +84,7 @@ public class CameraTransmission extends Thread {
 
 	private void emulateCamera() throws IOException {
 		//System.out.println("emulate camera");
-		File folder = new File("C:\\Users\\pstiegele\\Documents\\Workspaces\\Git\\cameratest");
+		File folder = new File(Settings.getInstance().getEmulateCameraFilePath());
 		File[] listOfFiles = folder.listFiles();
 		int fileIndex=0;
 		//System.out.println(listOfFiles.length);
