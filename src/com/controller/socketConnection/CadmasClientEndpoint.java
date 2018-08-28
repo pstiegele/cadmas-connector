@@ -45,7 +45,7 @@ public class CadmasClientEndpoint {
 
 	@OnWebSocketMessage
 	public void onMessage(String msg) {
-		// System.out.printf("Got msg: %s%n", msg);
+		 System.out.println("Got msg: " + msg);
 		try {
 			JSONObject jsonMessage = new JSONObject(msg);
 			synchronized (CadmasClientEndpoint.class) {
@@ -69,8 +69,8 @@ public class CadmasClientEndpoint {
 					break;
 				case "setHomePosition":
 					System.out.println("setHomePosition received: " + jsonMessage);
-					CustomMissionItem cmi = new CustomMissionItem(0, jsonMessage.getFloat("latitude"),
-							jsonMessage.getFloat("longitude"), jsonMessage.getInt("altitude"));
+					CustomMissionItem cmi = new CustomMissionItem(0, jsonMessage.getJSONObject("payload").getFloat("latitude"),
+							jsonMessage.getJSONObject("payload").getFloat("longitude"), jsonMessage.getJSONObject("payload").getInt("altitude"));
 					Autopilot.getAutopilot().getAutopilotTransmitter().setHomePosition(cmi);
 					break;
 				case "setMission":
