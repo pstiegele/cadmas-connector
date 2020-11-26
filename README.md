@@ -8,6 +8,8 @@ die Telemetrie des Autopiloten und sendet sie im passenden Format an den Server.
 empfängt er Telekommandos, wandelt diese in das passende Format des Autopiloten
 um und gibt sie weiter.
 
+Written by Maximilian Bührer & Paul Stiegele
+
 ## Installation von Ardupilot-Connector
 1. Zum klonen des Connector-Repositorys ist Git notwendig.
 git-scm.com
